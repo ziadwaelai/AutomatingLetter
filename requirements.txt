@@ -1,0 +1,4 @@
+flask
+langchain-community
+gspread
+oauth2client

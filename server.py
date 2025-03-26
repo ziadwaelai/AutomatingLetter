@@ -2,6 +2,9 @@ from flask import Flask, request, jsonify
 from ai_generator import generate_arabic_letter
 from google_services import get_letter_by_category , append_letter_to_sheet
 # from drive_logger import save_letter_to_drive_and_log
+from dotenv import load_dotenv
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
 
