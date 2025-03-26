@@ -2,6 +2,15 @@ import os
 from langchain_community.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Validate required API keys
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if not OPENAI_API_KEY:
+    raise ValueError("Error: OPENAI_API_KEY is missing. Set it in your environment variables.")
 
 def generate_arabic_letter(
     user_prompt: str, 
@@ -15,7 +24,7 @@ def generate_arabic_letter(
         raise ValueError("prompt is required for generating the letter.")
 
     # Initialize the language model
-    llm = ChatOpenAI(model_name="gpt-4o", temperature=0.2)
+    llm = ChatOpenAI(model_name="gpt-4o", temperature=0.2,openai_api_key=OPENAI_API_KEY)
 
     # Prepare additional context if title or recipient are provided
     additional_context = ""
