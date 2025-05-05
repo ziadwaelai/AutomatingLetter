@@ -1,10 +1,10 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
+from typing import List, Dict, Any
 
-def get_letter_by_category(category):
-
-    """Fetch letter by category from the specified sheet."""
+def get_letter_config_by_category(category):
+    """Fetch letter and instruction by category from two separate Google Sheets."""
     try:
         # Connect to Google Sheets using Service Account credentials
         scope = [
@@ -16,27 +16,36 @@ def get_letter_by_category(category):
         creds = ServiceAccountCredentials.from_json_keyfile_name('automating-letter-creations.json', scope)
         client = gspread.authorize(creds)
 
-        # Open the spreadsheet and select the sheet
-        sheet = client.open("Letters").sheet1  # You can change sheet1 to the desired sheet name if needed
+        # Connect to 'Letters' workbook and 'Ideal' sheet
+        letters_sheet = client.open("Letters").worksheet("Ideal")
+        letters_data = letters_sheet.get_all_values()
 
-        # Fetch all values from the sheet
-        data = sheet.get_all_values()
+        # Connect to 'Instruction' workbook and 'Instructions' sheet
+        instruction_sheet = client.open("Letters").worksheet("Instructions")
+        instruction_data = instruction_sheet.get_all_values()
 
-        # If there are no rows or not enough data, raise an error
-        if len(data) < 2:
-            raise ValueError("❌ The sheet doesn't contain any data or the category is missing.")
+        # Helper to find value by category
+        def find_by_category(data, category):
+            for row in data:
+                if row and row[0].strip().lower() == category.strip().lower():
+                    return row[1]
+            return None
 
-        # Loop through the rows to find the matching category
-        for row in data:
-            if row and row[0].strip().lower() == category.strip().lower():  # Match the category (case insensitive)
-                return row[1]  # Return the letter (second column)
+        # Fetch the values
+        letter_value = find_by_category(letters_data, category)
+        instruction_value = find_by_category(instruction_data, category)
 
-        # If category not found, return a not found message
-        raise ValueError( f"❌ Letter for category '{category}' not found.")
+        if not letter_value and not instruction_value:
+            raise ValueError(f"❌ Neither letter nor instruction found for category '{category}'.")
+
+        return {
+            "ideal": letter_value ,
+            "instruction": instruction_value 
+        }
 
     except Exception as e:
-        raise ValueError (f"❌ Error fetching letter for category '{category}': {e}")
-    
+        raise ValueError(f"❌ Error fetching data for category '{category}': {e}")
+
 
 def append_letter_to_sheet(
     letter_type: str,
@@ -93,9 +102,48 @@ def append_letter_to_sheet(
         }
     
     except Exception as e:
+
         # Detailed error handling
         return {
             "status": "error",
             "message": f"Error appending letter: {str(e)}",
             "details": str(e)
         }
+def Log(
+    creds_json_path: str,
+    spreadsheet_name: str,
+    worksheet_name: str,
+    entries: List[Dict[str, Any]],
+    value_input_option: str = 'RAW'
+) -> Dict[str, Any]:
+    scope = [
+        "https://spreadsheets.google.com/feeds",
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.file",
+        "https://www.googleapis.com/auth/drive"
+    ]
+    creds = ServiceAccountCredentials.from_json_keyfile_name(creds_json_path, scope)
+    client = gspread.authorize(creds)
+
+    worksheet = client.open(spreadsheet_name).worksheet(worksheet_name)
+
+    headers = worksheet.row_values(1)
+    header_map = {h.strip(): idx for idx, h in enumerate(headers)}
+
+    appended = 0
+    for entry in entries:
+        row = [''] * len(headers)
+        for key, value in entry.items():
+            if key in header_map:
+                row[header_map[key]] = value
+            else:
+                raise KeyError(f"Column '{key}' not found in sheet headers {headers}")
+        worksheet.append_row(row, value_input_option=value_input_option)
+        appended += 1
+
+    return {
+        "status": "success",
+        "spreadsheet": spreadsheet_name,
+        "worksheet": worksheet_name,
+        "rows_appended": appended
+    }

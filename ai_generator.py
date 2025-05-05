@@ -1,85 +1,105 @@
 import os
-from langchain_community.chat_models import ChatOpenAI
-from langchain.prompts import PromptTemplate
 from datetime import datetime
 from dotenv import load_dotenv
+from langchain_community.chat_models import ChatOpenAI
+from langchain.prompts import PromptTemplate
 
 # Load environment variables
 load_dotenv()
-
-# Validate required API keys
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 if not OPENAI_API_KEY:
-    raise ValueError("Error: OPENAI_API_KEY is missing. Set it in your environment variables.")
+    raise EnvironmentError("OPENAI_API_KEY is missing. Please set it in your environment variables.")
+
+
+def _initialize_model() -> ChatOpenAI:
+    """Initialize and return the OpenAI language model."""
+    return ChatOpenAI(model_name="gpt-4o", temperature=0, openai_api_key=OPENAI_API_KEY)
+
+
+def _build_additional_context(title: str, recipient: str) -> str:
+    """Construct additional context for the letter, including title, recipient, and current date."""
+    context_parts = []
+    if title:
+        context_parts.append(f"Letter Title: {title}")
+    if recipient:
+        context_parts.append(f"Recipient: {recipient}")
+    context_parts.append(f"Date: {datetime.now().strftime('%d %B %Y')}")
+    return "\n".join(context_parts)
+
+
+def _build_prompt_template() -> PromptTemplate:
+    """Return a prompt template for generating formal Arabic letters."""
+    template = """
+You are a professional Arabic letter writer. Generate a letter using Modern Standard Arabic, maintaining a formal and consistent tone and structure.
+
+Letter Details:
+Prompt: {user_prompt}
+Style Reference: {reference_context}
+Context: {additional_context}
+
+Writing Instructions:
+{writing_instructions}
+
+Make sure to:
+- Follow a clear and professional format
+- Use polished and precise language
+- Reflect the tone and structure seen in the reference letter, unless overridden by user input
+"""
+    return PromptTemplate(
+        template=template,
+        input_variables=["user_prompt", "reference_context", "additional_context", "writing_instructions"]
+    )
+
 
 def generate_arabic_letter(
-    user_prompt: str, 
+    user_prompt: str,
     reference_letter: str = None,
     title: str = None,
-    recipient: str = None
+    recipient: str = None,
+    writing_instructions: str = None
 ) -> str:
-   
-    # Validate inputs
+    """
+    Generate a consistent, professional Arabic letter.
+
+    Args:
+        user_prompt (str): Main instruction describing what the letter should say.
+        reference_letter (str, optional): A model letter to guide style and structure.
+        title (str, optional): Title of the letter (e.g., "طلب شهادة خبرة").
+        recipient (str, optional): Name of the recipient.
+        writing_instructions (str): Explicit instructions to guide tone, structure, and style.
+
+    Returns:
+        str: The generated Arabic letter.
+    """
     if not user_prompt:
-        raise ValueError("prompt is required for generating the letter.")
+        raise ValueError("A prompt is required to generate the letter.")
 
-    # Initialize the language model
-    llm = ChatOpenAI(model_name="gpt-4o", temperature=0.2,openai_api_key=OPENAI_API_KEY)
-
-    # Prepare additional context if title or recipient are provided
-    additional_context = ""
-    if title:
-        additional_context += f"\nالعنوان أو المسمى الوظيفي: {title}"
-    if recipient:
-        additional_context += f"\nالمرسل إليه: {recipient}"
-
-    # Add current date in Arabic
-    current_date = datetime.now().strftime("%d %B %Y")
-    additional_context += f"\nالتاريخ: {current_date}"
-
-    # Create a comprehensive prompt template for Arabic letter
-    prompt_template = PromptTemplate(
-        template="""قم بإنشاء خطاب رسمي احترافي بناءً على التعليمات التالية:
-التعليمات المقدمة: {user_prompt}
-{reference_context}
-{additional_context}
-
-إرشادات كتابة الخطاب:
-- التزم بأسلوب رسمي ومهني
-- استخدم لغة عربية فصحى واضحة ودقيقة
-- راعي القواعد التالية عند كتابة الخطاب:
-  * ضع العنوان الكامل للمرسل إليه
-  * اكتب التاريخ بالطريقة العربية
-  * استخدم التحية المناسبة
-  * اكتب متن الخطاب بشكل منظم وواضح
-  * اختتم الخطاب بعبارة مناسبة
-يُرجى مراعاة الدقة والأسلوب المهني في صياغة الخطاب:
-""",
-        input_variables=["user_prompt", "reference_context", "additional_context"]
-    )
-
-    # Prepare the reference context
-    reference_context = (
-        f"دليل أسلوب الخطاب المرجعي:\n{reference_letter}" 
-        if reference_letter 
-        else "لم يتم تقديم خطاب مرجعي. يُستخدم التنسيق القياسي للخطابات الرسمية."
-    )
-
-    # Generate the letter
+    if not writing_instructions:
+        writing_instructions = (
+            "Please ensure the letter is formal, clear, and adheres to the standard Arabic letter format."
+        )
+        print("No writing instructions provided. Using default instructions.")
     try:
-        # Combine the prompt template with the language model
-        letter_chain = prompt_template | llm
+        llm = _initialize_model()
+        additional_context = _build_additional_context(title, recipient)
+        prompt_template = _build_prompt_template()
 
-        # Generate the letter
-        letter_response = letter_chain.invoke({
+        reference_context = (
+            reference_letter
+            if reference_letter else
+            "Use a standard Arabic formal letter format if no style reference is provided."
+        )
+
+        chain = prompt_template | llm
+        result = chain.invoke({
             "user_prompt": user_prompt,
             "reference_context": reference_context,
-            "additional_context": additional_context
+            "additional_context": additional_context,
+            "writing_instructions": writing_instructions
         })
-        
-        return letter_response.content
+
+        return result.content
+
     except Exception as e:
-        # Detailed error handling with Arabic error message
-        error_message = f"error in generating the letter: {str(e)}"
-        raise ValueError(error_message)
-    
+        raise RuntimeError(f"Letter generation failed: {e}")

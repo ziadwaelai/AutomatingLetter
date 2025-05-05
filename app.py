@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from ai_generator import generate_arabic_letter
-from google_services import get_letter_by_category , append_letter_to_sheet
+from google_services import get_letter_config_by_category , append_letter_to_sheet
 # from drive_logger import save_letter_to_drive_and_log
 from dotenv import load_dotenv
 # Load environment variables
@@ -21,7 +21,8 @@ def generate_letter_route():
         return jsonify({"error": "Missing required fields"}) , 400
     try:
         try:
-            rerference_letter = get_letter_by_category(category)
+            rerference_letter = get_letter_config_by_category(category)["ideal"]
+            instractions = get_letter_config_by_category(category)["instruction"]
         except ValueError as e:
             rerference_letter = None
         letter = generate_arabic_letter(
@@ -29,6 +30,8 @@ def generate_letter_route():
             reference_letter= rerference_letter,
             title = title,
             recipient = recipient,
+            writing_instructions=instractions,
+            
         )
         return jsonify({"letter": letter}), 200
     except Exception as e:
