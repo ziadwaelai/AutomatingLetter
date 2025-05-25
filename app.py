@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify
 from ai_generator import generate_arabic_letter
-from google_services import get_letter_config_by_category , append_letter_to_sheet
-# from drive_logger import save_letter_to_drive_and_log
+from google_services import get_letter_config_by_category , append_letter_to_sheet , get_instruction_by_category,get_letter_by_category
+from drive_logger import save_letter_to_drive_and_log
 from dotenv import load_dotenv
+import os
 # Load environment variables
 load_dotenv()
 
@@ -12,31 +13,33 @@ app = Flask(__name__)
 def generate_letter_route():
     data = request.json
     category = data.get("category")
+    sub_category = data.get("sub_category")
     title = data.get("title")
     recipient = data.get("recipient")
-    is_firstTime = data.get("is_firstTime")
+    is_firstTime = data.get("isFirst")
     prompt = data.get("prompt")
+
 
     if not category or not prompt or not title or not recipient or not is_firstTime:
         return jsonify({"error": "Missing required fields"}) , 400
     try:
         try:
-            rerference_letter = get_letter_config_by_category(category)["ideal"]
-            instractions = get_letter_config_by_category(category)["instruction"]
+            rerference_letter = get_letter_by_category(category, sub_category)
+            instractions = get_instruction_by_category(category)
         except ValueError as e:
             rerference_letter = None
+            instractions = None
         letter = generate_arabic_letter(
             user_prompt=prompt,
-            reference_letter= rerference_letter,
+            reference_letter_context= rerference_letter,
             title = title,
             recipient = recipient,
             writing_instructions=instractions,
-            
+            isFirst=is_firstTime 
         )
         return jsonify({"letter": letter}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 
 @app.route("/save-letter", methods=["POST"])
@@ -64,6 +67,53 @@ def save_letter_route():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+@app.route("/archive-letter", methods=["POST"])
+def upload_pdf_route():
+    # Check if file exists in request
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part in request"}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+    
+    try:
+        letter_content = request.form.get('letter_content', '')
+        letter_type = request.form.get('letter_type', 'General')
+        recipient = request.form.get('recipient', '')
+        title = request.form.get('title', file.filename)
+        is_first = request.form.get('is_first', 'false').lower() == 'true'
+        
+        # Get Google Drive folder ID from environment variables
+        folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
+        if not folder_id:
+            return jsonify({"error": "Google Drive folder ID not configured"}), 500
+        
+        # Use the new function to save and log the letter
+        result = save_letter_to_drive_and_log(
+            letter_file=file,
+            letter_content=letter_content,
+            letter_type=letter_type,
+            recipient=recipient,
+            title=title,
+            is_first=is_first,
+            folder_id=folder_id
+        )
+        
+        if result["status"] == "success":
+            return jsonify({
+                "status": "success",
+                "file_id": result["file_id"],
+                "view_link": result["file_url"],
+                "log_status": result["log_result"]["status"]
+            }), 200
+        else:
+            return jsonify({"error": result["message"]}), 500
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
