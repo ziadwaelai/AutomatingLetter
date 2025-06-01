@@ -8,7 +8,8 @@ def save_letter_to_drive_and_log(
     recipient, 
     title, 
     is_first, 
-    folder_id
+    folder_id,
+    ID,
 ):
     try:
         file_id, file_url = upload_file_to_drive(letter_file, folder_id)        
@@ -20,7 +21,8 @@ def save_letter_to_drive_and_log(
             "Title": title,
             "First Time?": "Yes" if is_first else "No",
             "Content": letter_content,
-            "URL": file_url
+            "URL": file_url,
+            "ID": ID
         }
         log_result = log(
             spreadsheet_name="AI Letter Generating", 

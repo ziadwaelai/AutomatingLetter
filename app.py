@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from ai_generator import generate_arabic_letter
+from ai_generator import ArabicLetterGenerator
 from google_services import get_letter_config_by_category , append_letter_to_sheet , get_instruction_by_category,get_letter_by_category
 from drive_logger import save_letter_to_drive_and_log
 from dotenv import load_dotenv
@@ -8,6 +8,8 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
+# Initialize letter generator once
+letter_generator = ArabicLetterGenerator()
 
 @app.route("/generate-letter", methods=["POST"])
 def generate_letter_route():
@@ -18,26 +20,33 @@ def generate_letter_route():
     recipient = data.get("recipient")
     is_firstTime = data.get("isFirst")
     prompt = data.get("prompt")
-
+    tone = data.get("tone", "رسمي")  # Default to formal tone if not provided
 
     if not category or not prompt or not title or not recipient or not is_firstTime:
         return jsonify({"error": "Missing required fields"}) , 400
     try:
         try:
-            rerference_letter = get_letter_by_category(category, sub_category)
-            instractions = get_instruction_by_category(category)
+            reference_letter = get_letter_by_category(category, sub_category)
+            instructions = get_instruction_by_category(category)
         except ValueError as e:
-            rerference_letter = None
-            instractions = None
-        letter = generate_arabic_letter(
+            reference_letter = None
+            instructions = None
+        
+        # Use the ArabicLetterGenerator instance
+        letter_output = letter_generator.generate_letter(
             user_prompt=prompt,
-            reference_letter_context= rerference_letter,
-            title = title,
-            recipient = recipient,
-            writing_instructions=instractions,
-            isFirst=is_firstTime 
+            reference_letter_context=reference_letter,
+            title=title,
+            recipient=recipient,
+            writing_instructions=instructions,
+            is_first_contact=is_firstTime,
+            tone=tone,
+            category=category,
+            sub_category=sub_category or ""
         )
-        return jsonify({"letter": letter}), 200
+        
+        # Return the JSON response
+        return jsonify(letter_output.model_dump()), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -84,7 +93,8 @@ def upload_pdf_route():
         recipient = request.form.get('recipient', '')
         title = request.form.get('title', file.filename)
         is_first = request.form.get('is_first', 'false').lower() == 'true'
-        
+        ID = request.form.get('ID', '')
+
         # Get Google Drive folder ID from environment variables
         folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
         if not folder_id:
@@ -98,7 +108,8 @@ def upload_pdf_route():
             recipient=recipient,
             title=title,
             is_first=is_first,
-            folder_id=folder_id
+            folder_id=folder_id,
+            ID=ID
         )
         
         if result["status"] == "success":
