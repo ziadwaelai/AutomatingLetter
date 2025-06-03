@@ -2,6 +2,7 @@ import os
 import uuid
 import json
 import re
+import random
 from datetime import datetime
 from typing import Optional, Dict, Any, Union
 
@@ -22,6 +23,16 @@ DATE_FORMAT = "%d %B %Y"
 LOG_SPREADSHEET = "AI Letter Generating"
 LOG_WORKSHEET = "Logs"
 
+# ID Generation
+class IDGenerator:
+    @staticmethod
+    def generate_id() -> str:
+        """Generate a random ID in the format REQ-YYYYMMDD-XXXX."""
+        today = datetime.now().strftime("%Y%m%d")
+        random_num = random.randint(1, 9999)  # Generate random number between 1 and 9999
+        counter = str(random_num).zfill(4)  # Pad with zeros to ensure 4 digits
+        return f"AIZ-{today}-{counter}"
+
 # Load environment variables
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -32,7 +43,7 @@ if not OPENAI_API_KEY:
 
 class LetterOutput(BaseModel):
     """Pydantic model for letter generation output."""
-    ID: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    ID: str = Field(default_factory=IDGenerator.generate_id)
     Title: str
     Letter: str
     Date: str
