@@ -27,10 +27,10 @@ LOG_WORKSHEET = "Logs"
 class IDGenerator:
     @staticmethod
     def generate_id() -> str:
-        """Generate a random ID in the format AIZ-YYYYMMDD-XXXX."""
+        """Generate a random ID in the format AIZ-YYYYMMDD-XXXXX."""
         today = datetime.now().strftime("%Y%m%d")
-        random_num = random.randint(1, 9999)  # Generate random number between 1 and 9999
-        counter = str(random_num).zfill(4)  # Pad with zeros to ensure 4 digits
+        random_num = random.randint(1, 99999)  # Generate random number between 1 and 9999
+        counter = str(random_num).zfill(5)  # Pad with zeros to ensure 5 digits
         return f"AIZ-{today}-{counter}"
 
 # Load environment variables
@@ -43,7 +43,7 @@ if not OPENAI_API_KEY:
 
 class LetterOutput(BaseModel):
     """Pydantic model for letter generation output."""
-    ID: str = Field(default_factory=IDGenerator.generate_id)
+    ID: str 
     Title: str
     Letter: str
     Date: str
@@ -126,13 +126,19 @@ class ArabicLetterGenerator:
         """Parse the LLM response and handle JSON extraction."""
         try:
             # First try direct parsing
-            return json.loads(content)
+            parsed_data = json.loads(content)
+            # Ensure the ID matches what we generated
+            parsed_data["ID"] = letter_id
+            return parsed_data
         except json.JSONDecodeError:
             # Try to extract JSON using regex
             json_match = re.search(r'```json\s*(.*?)\s*```', content, re.DOTALL)
             if json_match:
                 try:
-                    return json.loads(json_match.group(1))
+                    data = json.loads(json_match.group(1))
+                    # Ensure the ID matches what we generated
+                    data["ID"] = letter_id
+                    return data
                 except json.JSONDecodeError:
                     pass
             
@@ -253,9 +259,6 @@ class ArabicLetterGenerator:
             content = result.content
             letter_data = self._parse_llm_response(content, letter_id, title, user_prompt)
             
-            # Ensure ID exists and is not empty
-            if not letter_data.get("ID"):
-                letter_data["ID"] = letter_id
             
             # Log the letter generation
             self._log_letter_generation(
@@ -274,7 +277,7 @@ class ArabicLetterGenerator:
                 Title=letter_data.get("Title", title or user_prompt[:50]),
                 Letter=letter_data.get("Letter", content),
                 Date=letter_data.get("Date", datetime.now().strftime(DATE_FORMAT)),
-                ID=letter_data.get("ID", letter_id)
+                ID=letter_id
             )
 
         except Exception as e:
