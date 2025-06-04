@@ -27,7 +27,7 @@ LOG_WORKSHEET = "Logs"
 class IDGenerator:
     @staticmethod
     def generate_id() -> str:
-        """Generate a random ID in the format REQ-YYYYMMDD-XXXX."""
+        """Generate a random ID in the format AIZ-YYYYMMDD-XXXX."""
         today = datetime.now().strftime("%Y%m%d")
         random_num = random.randint(1, 9999)  # Generate random number between 1 and 9999
         counter = str(random_num).zfill(4)  # Pad with zeros to ensure 4 digits
