@@ -227,7 +227,7 @@ class ArabicLetterGenerator:
         
         try:
             # Generate a unique ID for this letter
-            letter_id = str(uuid.uuid4())
+            letter_id = IDGenerator.generate_id()
             
             # Prepare context and parameters
             additional_context = self._build_additional_context(
