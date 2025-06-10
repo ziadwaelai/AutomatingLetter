@@ -89,8 +89,10 @@ def get_letter_config_by_category(category, sub_category=None):
     """Fetch both letter and instruction by category."""
     letter = get_letter_by_category(category, sub_category)
     all_instructions = get_instruction_by_category("الجميع")
+    all_instructions = all_instructions if all_instructions else ""
     instruction = get_instruction_by_category(category)
-    instruction = all_instructions + instruction
+    instruction = instruction if instruction else ""
+    instruction = all_instructions + "\n" + instruction
 
     if not letter and not instruction:
         raise ValueError(f"❌ Neither letter nor instruction found for category '{category}' and sub-category '{sub_category}'.")
