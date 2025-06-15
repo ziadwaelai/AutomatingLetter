@@ -22,7 +22,7 @@ def generate_letter_route():
     prompt = data.get("prompt")
     tone = data.get("tone", "رسمي")  # Default to formal tone if not provided
 
-    if not category or not prompt or not title or not recipient or not is_firstTime:
+    if not category or not prompt or not title or not recipient or is_firstTime is None:
         return jsonify({"error": "Missing required fields"}) , 400
     try:
         try:
