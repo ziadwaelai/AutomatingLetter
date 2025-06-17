@@ -34,12 +34,64 @@ def get_instruction_by_category(category):
         for row in instruction_data:
             if row and row[0].strip().lower() == category.strip().lower():
                 return row[1]
-        
         return None
 
     except Exception as e:
         raise ValueError(f"❌ Error fetching instruction for category '{category}': {e}")
 
+def get_Data_by_key(key, sheet, flag=False):
+    """
+    Fetches data by key from a specified sheet in the 'Letters' Google Spreadsheet.
+
+    Args:
+        key (str): The key/category to search for (case-insensitive).
+        sheet (str): The worksheet name.
+        flag (bool, optional): If True, fetches up to two matching entries and concatenates them. Defaults to False.
+
+    Returns:
+        str or None: The found data, concatenated if flag is True, or None if not found.
+    """
+    try:
+        creds = ServiceAccountCredentials.from_json_keyfile_name(SERVICE_ACCOUNT_FILE, SCOPES)
+        client = gspread.authorize(creds)
+        worksheet = client.open("Letters").worksheet(sheet)
+        rows = worksheet.get_all_values()
+
+        matches = [
+            row[1] for row in rows
+            if row and row[0].strip().lower() == key.strip().lower()
+        ]
+
+        if flag:
+            # Concatenate up to two matches with separator
+            result = ""
+            for i, match in enumerate(matches[:2]):
+                if i > 0:
+                    result += "\nالخطاب الثاني:\n"
+                result += match
+            return result.strip() if result else None
+        else:
+            return matches[0] if matches else None
+
+    except Exception as e:
+        raise ValueError(f"❌ Error fetching data for key '{key}' from sheet '{sheet}': {e}") from e
+    
+    
+def get_info_by_name(name):
+    if name =="":
+        return None
+    try:
+        creds = ServiceAccountCredentials.from_json_keyfile_name(SERVICE_ACCOUNT_FILE, SCOPES)
+        client = gspread.authorize(creds)
+        sheet = client.open("Letters").worksheet("Info")
+        data = sheet.get_all_values()
+        for row in data:
+            if row and row[0].strip().lower() == name.strip().lower():
+                return row[1]
+        return None
+    except Exception as e:
+        raise ValueError(f"❌ Error fetching info for name '{name}': {e}")
+    
 def get_letter_by_category(category, sub_category=None):
     """
     Fetch letter by category and optionally sub-category from Ideal sheet.
@@ -85,22 +137,44 @@ def get_letter_by_category(category, sub_category=None):
     except Exception as e:
         raise ValueError(f"❌ Error fetching letter for category '{category}' and sub-category '{sub_category}': {e}")
 
-def get_letter_config_by_category(category, sub_category=None):
-    """Fetch both letter and instruction by category."""
-    letter = get_letter_by_category(category, sub_category)
-    all_instructions = get_instruction_by_category("الجميع")
-    all_instructions = all_instructions if all_instructions else ""
-    instruction = get_instruction_by_category(category)
-    instruction = instruction if instruction else ""
-    instruction = all_instructions + "\n" + instruction
+def get_letter_config_by_category(category, name=""):
+    """
+    Fetches letter template, combined instructions, and member info by category and name.
 
-    if not letter and not instruction:
-        raise ValueError(f"❌ Neither letter nor instruction found for category '{category}' and sub-category '{sub_category}'.")
+    Args:
+        category (str): The category to fetch data for.
+        name (str, optional): The member name to fetch info for. Defaults to "".
 
-    return {
-        "ideal": letter,
-        "instruction": instruction
-    }
+    Returns:
+        dict: {
+            "letter": str,
+            "instruction": str,
+            "member_info": str
+        }
+
+    Raises:
+        ValueError: If data fetching fails.
+    """
+    try:
+        letter = get_Data_by_key(category, "Ideal",True) or ""
+        instruction = get_Data_by_key(category, "Instructions") or ""
+        all_instructions = get_Data_by_key("الجميع", "Instructions") or ""
+        member_info = get_Data_by_key(name, "Info") or ""
+
+        # Combine instructions, avoid leading/trailing newlines
+        instructions = "\n".join(
+            filter(None, [all_instructions.strip(), instruction.strip()])
+        )
+
+        return {
+            "letter": letter,
+            "instruction": instructions,
+            "member_info": member_info
+        }
+    except Exception as e:
+        raise ValueError(
+            f"❌ Error fetching letter config for category '{category}': {e}"
+        ) from e
 
 def append_letter_to_sheet(
     letter_type: str,

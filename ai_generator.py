@@ -1,284 +1,242 @@
 import os
-import uuid
 import json
+import logging
 import re
-import random
 from datetime import datetime
-from typing import Optional, Dict, Any, Union
+from typing import Optional, Dict, Any
+from dataclasses import dataclass, field
+
+from typer import prompt
+
+from google_services import log 
 
 from dotenv import load_dotenv
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from pydantic import BaseModel, Field
 from langchain_core.output_parsers import JsonOutputParser
-from google_services import log
+from langchain_core.runnables import Runnable
+import random
 
-# Constants
-DEFAULT_MODEL = "gpt-4.1-2025-04-14"
-DEFAULT_TEMPERATURE = 0.3
-DEFAULT_WRITING_INSTRUCTIONS = "Please ensure the letter is formal, clear, and adheres to the standard Arabic letter format."
-DEFAULT_REFERENCE_CONTEXT = "Use a standard Arabic formal letter format if no style reference is provided."
-DEFAULT_TONE = "رسمي"  # Default formal tone
-DATE_FORMAT = "%d %B %Y"
-LOG_SPREADSHEET = "AI Letter Generating"
-LOG_WORKSHEET = "Logs"
+# Assuming google_services.log exists. If not, this can be swapped with another logger.
+# from google_services import log 
 
-# ID Generation
-class IDGenerator:
-    @staticmethod
-    def generate_id() -> str:
-        """Generate a random ID in the format AIZ-YYYYMMDD-XXXXX."""
-        today = datetime.now().strftime("%Y%m%d")
-        random_num = random.randint(1, 99999)  # Generate random number between 1 and 9999
-        counter = str(random_num).zfill(5)  # Pad with zeros to ensure 5 digits
-        return f"AIZ-{today}-{counter}"
+# --- Setup (Can be moved to a separate config.py) ---
 
-# Load environment variables
-load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# 1. Standardized Logging Setup
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
-if not OPENAI_API_KEY:
-    raise EnvironmentError("OPENAI_API_KEY is missing. Please set it in your environment variables.")
+# 2. Centralized Configuration
+@dataclass
+class LetterGeneratorConfig:
+    """Configuration settings for the letter generator."""
+    model_name: str = "gpt-4.1" 
+    temperature: float = 0.1
+    date_format: str = "%d %B %Y"
+    
+    # Default texts
+    writing_instructions: str = "Please ensure the letter is formal, clear, and adheres to the standard Arabic letter format."
+    reference_context: str = "Use a standard Arabic formal letter format if no style reference is provided."
+    default_tone: str = "رسمي"
+    
+    # Logging Configuration
+    log_spreadsheet: str = "AI Letter Generating"
+    log_worksheet: str = "Logs"
 
+# --- Utility Functions ---
+
+def generate_letter_id() -> str:
+    """Generate a random ID in the format AIZ-YYYYMMDD-XXXXX."""
+    # Using a more robust method for random part to ensure 5 digits
+    random_part = str(random.randint(0, 99999)).zfill(5)
+    date_part = datetime.now().strftime("%Y%m%d")
+    return f"AIZ-{date_part}-{random_part}"
+
+# --- Pydantic Output Model ---
 
 class LetterOutput(BaseModel):
-    """Pydantic model for letter generation output."""
-    ID: str 
-    Title: str
-    Letter: str
-    Date: str
+    """Pydantic model for the final letter output, including the generated ID."""
+    ID: str = Field(description="The unique identifier for the letter.")
+    Title: str = Field(description="The title of the letter in Arabic.")
+    Letter: str = Field(description="The full content of the letter in formal Arabic.")
+    Date: str = Field(description="The date the letter was generated.")
 
+# --- Core Logic ---
 
 class ArabicLetterGenerator:
-    """Class to handle Arabic letter generation using LLM."""
+    """
+    An optimized class to generate professional Arabic letters using an LLM.
     
-    def __init__(self, model_name: str = DEFAULT_MODEL, temperature: float = DEFAULT_TEMPERATURE):
-        """Initialize the generator with model configuration."""
-        self.llm = ChatOpenAI(
-            model_name=model_name, 
-            temperature=temperature, 
-            openai_api_key=OPENAI_API_KEY
-        )
-        self.prompt_template = self._build_prompt_template()
+    This class builds a reusable LangChain Expression Language (LCEL) chain 
+    for efficient and robust letter generation.
+    """
+    
+    def __init__(self, config: LetterGeneratorConfig = LetterGeneratorConfig()):
+        """
+        Initializes the generator with a configuration and sets up the LLM chain.
+        """
+        self.config = config
+        self.api_key = self._load_api_key()
+        self.parser = JsonOutputParser(pydantic_object=LetterOutput)
         
-    def _build_prompt_template(self) -> PromptTemplate:
-        """Return a prompt template for generating formal Arabic letters."""
-        json_parser = JsonOutputParser(pydantic_object=LetterOutput)
-        format_instructions = json_parser.get_format_instructions()
-        
+        # Build the chain once during initialization for efficiency
+        self.chain = self._build_chain()
+
+    def _load_api_key(self) -> str:
+        """Loads OpenAI API key from environment variables."""
+        load_dotenv()
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise EnvironmentError("OPENAI_API_KEY is missing. Please set it in your environment.")
+        return api_key
+
+    def _get_prompt_template(self) -> PromptTemplate:
+        """
+        Creates and returns a robust prompt template for letter generation.
+        This version strictly separates content generation from style guidance.
+        """
         template = """
-أنت كاتب خطابات محترف. مهمتك كتابة خطاب رسمي باللغة العربية الفصحى، مع الالتزام الكامل بالأسلوب الرسمي والهيكل الاحترافي.
+أنت كاتب خطابات محترف ومساعد ذكي لشركة `نيت زيرو`. مهمتك هي كتابة خطاب رسمي باللغة العربية بناءً على المعلومات التالية، مع الالتزام الصارم بالتعليمات المحددة أدناه.
 
-# تفاصيل الخطاب:
-- **الغرض/الموضوع:** {user_prompt}
-- **النموذج المرجعي:** {reference_context}
-- **العناصر السياقية:** {additional_context}
-- **نبرة الخطاب:** {tone}
+# المصادر والمعلومات
+- **1. المحتوى الأساسي (المطلوب كتابته):** {user_prompt}
+- **2. نموذج للهيكل والأسلوب (للاسترشاد بالشكل فقط):** {reference_context}
+- **3. سياق إضافي للخطاب الجديد:** {additional_context}
+- **4. معلومات المُرسِل:** {member_info}
+- **5. تعليمات الكتابة:** {writing_instructions}
+- **6. بيانات الخطاب الجديد:**
+  - معرف الخطاب: {letter_id}
+  - تاريخ اليوم: {current_date}
 
-# تعليمات الكتابة:
-{writing_instructions}
+# تعليمات صارمة يجب اتباعها
+1. ✅ **المحتوى يأتي حصريًا من "1. المحتوى الأساسي":** لا يُسمح باستخدام أي معلومة من خارج هذا القسم.
+2. ✅ **النموذج المرجعي "2" يستخدم فقط للشكل والتنسيق:** استلهم منه طريقة تنسيق التحية، الفقرات، والخاتمة فقط. **يُمنع تمامًا نسخ أي محتوى أو أسماء أو تواريخ منه.**
+3. ⛔ **لا تستخدم أي موضوع أو جملة أو صيغة تهنئة (مثل الأعياد أو المناسبات العامة) إلا إذا تم ذكرها صراحة في "1. المحتوى الأساسي".**
+   - إذا لم يُذكر عيد أو مناسبة، لا تبدأ الخطاب بأي تهنئة.
+4. 🧠 **ركّز على إنشاء خطاب جديد بالكامل حول `{user_prompt}` فقط، ولا تقم بتلخيص أو تعديل النموذج المرجعي.**
+5. 📝 **يجب أن يكون الخطاب مفصلًا واحترافيًا:**
+   - باللغة العربية الفصحى الرسمية.
+   - يتضمن مقدمة رسمية، شرحًا واضحًا للمناسبة أو الغرض، وأهمية الحضور أو التفاعل.
+   - إذا لزم الأمر، أضف فقرة عامة حول فقرات الحدث أو جدول الأعمال.
+   - اختتم الخطاب بدعوة لبقة مع احترام بروتوكول المخاطبة.
+6. ✅ **الإخراج النهائي يجب أن يكون بتنسيق JSON صالح 100%، دون أي نص خارجي أو تعليق، ويطابق المخطط التالي بدقة.**
+7. ⛔ **يُمنع إدخال أي معلومات تواصل (أسماء، أرقام، بريد إلكتروني، توقيعات) من خارج "4. معلومات المُرسِل".**
+   - إذا لم تكن بيانات التواصل موجودة في "4. معلومات المُرسِل"، لا تضفها أبدًا.
+   - لا تستخرج أي بيانات تواصل من "النموذج المرجعي" أو تفترضها.
+8. ✅ **ابدأ الخطاب بتحية رسمية مناسبة، مثل "السلام عليكم ورحمة الله وبركاته"، ووجّه الخطاب للجهة المحددة في السياق.**
+9. ✅ **يجب أن يبدأ الخطاب بـ "بسم الله الرحمن الرحيم"، ثم اسم الجهة المخاطبة، ثم التحية الرسمية.** هذا التسلسل إلزامي.
 
-## الشروط:
-- استخدم لغة عربية فصحى رسمية وواضحة.
-- اتبع الهيكل والأسلوب الموجود في الخطاب المرجعي (إن وجد)، إلا إذا طلب المستخدم خلاف ذلك.
-- التزم بجميع التعليمات المذكورة أعلاه بدقة.
-- لا تخرج عن موضوع الخطاب أو تضف معلومات غير مطلوبة.
-
-## ملاحظات:
-- إذا لم يوجد نموذج مرجعي، استخدم أفضل الممارسات في كتابة الخطابات الرسمية العربية.
-- إذا كان هذا أول تواصل مع الجهة، وضّح ذلك في الخطاب.
-
-تأكد من أن المخرجات تتبع هذا التنسيق بدقة، وأن النص مكتوب بشكل صحيح باللغة العربية الفصحى.
-# هام جداً: يجب أن يكون الرد بتنسيق JSON محدد كالتالي:
 {format_instructions}
-```json
 """
-        return PromptTemplate(
-            template=template,
-            input_variables=[
-                "user_prompt",
-                "reference_context",
-                "additional_context",
-                "writing_instructions",
-                "format_instructions",
-                "tone"
-            ]
+
+
+
+
+        return PromptTemplate.from_template(
+            template,
+            partial_variables={"format_instructions": self.parser.get_format_instructions()}
         )
-        
-    def _build_additional_context(
-        self, 
-        title: Optional[str], 
-        recipient: Optional[str], 
-        is_first_contact: bool
-    ) -> str:
-        """Construct additional context for the letter."""
-        context_parts = []
-        if title:
-            context_parts.append(f"Letter Title: {title}")
-        if recipient:
-            context_parts.append(f"Recipient: {recipient}")
-        if is_first_contact:
-            context_parts.append("هذا أول تواصل مع الجهة")
-        context_parts.append(f"التاريخ: {datetime.now().strftime(DATE_FORMAT)}")
-        return "\n".join(context_parts)
-    
-    def _parse_llm_response(self, content: str, letter_id: str, title: Optional[str] = None, user_prompt: str = "") -> Dict[str, Any]:
-        """Parse the LLM response and handle JSON extraction."""
+    def _build_chain(self) -> Runnable:
+        """Constructs the full LCEL chain: prompt -> llm -> parser."""
+        prompt = self._get_prompt_template()
+        llm = ChatOpenAI(
+            model_name=self.config.model_name,
+            temperature=self.config.temperature,
+            openai_api_key=self.api_key
+        )
+        # print the prompt template for debugging with data 
+        return prompt | llm | self.parser
+
+    def _log_generation(self, request_data: Dict[str, Any], response_data: Dict[str, Any]) -> None:
+        """Logs request and response details."""
         try:
-            # First try direct parsing
-            parsed_data = json.loads(content)
-            # Ensure the ID matches what we generated
-            parsed_data["ID"] = letter_id
-            return parsed_data
-        except json.JSONDecodeError:
-            # Try to extract JSON using regex
-            json_match = re.search(r'```json\s*(.*?)\s*```', content, re.DOTALL)
-            if json_match:
-                try:
-                    data = json.loads(json_match.group(1))
-                    # Ensure the ID matches what we generated
-                    data["ID"] = letter_id
-                    return data
-                except json.JSONDecodeError:
-                    pass
-            
-            # If all parsing fails, create fallback structure
-            return {
-                "Title": title or user_prompt[:50],
-                "Letter": content,
-                "Date": datetime.now().strftime(DATE_FORMAT),
-                "ID": letter_id
+            log_entry = {
+                "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "ID": response_data.get("ID", ""),
+                "Request": json.dumps(request_data, ensure_ascii=False),
+                "Response": json.dumps(response_data, ensure_ascii=False),
             }
-    
-    def _log_letter_generation(self, user_prompt: str, letter_data: Dict[str, Any], 
-                              title: Optional[str], recipient: Optional[str], 
-                              tone: str, is_first_contact: bool, category: str, sub_category: str) -> None:
-        """Log letter generation details to Google Sheets."""
-        try:
-            # Prepare data for logging
-            request_data = {
-                "prompt": user_prompt,
-                "title": title,
-                "recipient": recipient,
-                "tone": tone,
-                "is_first_contact": is_first_contact,
-                "category": category,
-                "sub_category": sub_category
-            }
-            
-            response_data = {
-                "title": letter_data.get("Title", ""),
-                "id": letter_data.get("ID", ""),
-                "date": letter_data.get("Date", ""),
-                "letter_preview": letter_data.get("Letter", "") + "..." if letter_data.get("Letter") else ""
-            }
-            
-            # Convert to JSON strings
-            request_json = json.dumps(request_data, ensure_ascii=False)
-            response_json = json.dumps(response_data, ensure_ascii=False)
-            
+            logger.info(f"Logging generation for ID: {log_entry['ID']}")
             log(
-                spreadsheet_name=LOG_SPREADSHEET,
-                worksheet_name=LOG_WORKSHEET,
-                entries=[{
-                    "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
-                    "Request": request_json,
-                    "Response": response_json,
-                    "ID": letter_data.get("ID", "")
-                }]
+                spreadsheet_name=self.config.log_spreadsheet,
+                worksheet_name=self.config.log_worksheet,
+                entries=[log_entry]
             )
         except Exception as e:
-            print(f"Error logging letter generation: {str(e)}")
-        
+            logger.error(f"Failed to log letter generation: {e}")
+
+ # --- THIS IS THE UPDATED METHOD ---
     def generate_letter(
         self,
         user_prompt: str,
-        reference_letter_context: Optional[str] = None,
-        title: Optional[str] = None,
         recipient: Optional[str] = None,
-        writing_instructions: Optional[str] = None,
+        member_info: str = "غير محدد",
         is_first_contact: bool = False,
-        tone: Optional[str] = None,
-        category: str = "",
-        sub_category: str = ""
+        reference_letter: Optional[str] = None,
+        category: str = "General", # Added for better logging
+        writing_instructions: Optional[str] = None,
+        
     ) -> LetterOutput:
         """
-        Generate a consistent, professional Arabic letter.
+        Generates a professional Arabic letter by invoking the pre-built chain.
 
         Args:
             user_prompt: Main instruction describing what the letter should say.
-            reference_letter_context: A model letter to guide style and structure.
             title: Title of the letter (e.g., "طلب شهادة خبرة").
             recipient: Name of the recipient.
-            writing_instructions: Explicit instructions for tone, structure, and style.
+            member_info: Information about the sender.
             is_first_contact: Whether this is the first communication with the recipient.
+            reference_letter: A model letter to guide style and structure.
             tone: The tone of the letter (e.g., "رسمي", "ودي", "حازم").
-            category: Category of the letter (e.g., "business", "personal").
-            sub_category: Sub-category of the letter.
+            category: Category of the letter for logging purposes.
 
         Returns:
-            LetterOutput: Pydantic model with ID, Title, Letter content, and Date.
+            A LetterOutput object containing the generated letter details.
             
         Raises:
-            ValueError: If no prompt is provided.
-            RuntimeError: If letter generation fails.
+            ValueError: If the user_prompt is empty.
+            RuntimeError: If the LLM fails to generate a valid response.
         """
         if not user_prompt:
             raise ValueError("A prompt is required to generate the letter.")
 
-        # Apply defaults for optional parameters
-        writing_instructions = writing_instructions or DEFAULT_WRITING_INSTRUCTIONS
-        tone = tone or DEFAULT_TONE
-        reference_context = reference_letter_context or DEFAULT_REFERENCE_CONTEXT
+        letter_id = generate_letter_id()
+        current_date = datetime.now().strftime(self.config.date_format)
+
+        context_parts = []
+        if recipient: context_parts.append(f"Recipient: {recipient}")
+        if is_first_contact: context_parts.append("هذا هو الاتصال الأول مع المستلم.")
+        
+        input_data = {
+            "user_prompt": user_prompt,
+            "reference_context": reference_letter or self.config.reference_context,
+            "additional_context": "\n".join(context_parts) or "لا توجد سياقات إضافية.",
+            "writing_instructions": writing_instructions or self.config.writing_instructions,
+            "member_info": member_info,
+            "letter_id": letter_id,
+            "current_date": current_date
+        }
+
         
         try:
-            # Generate a unique ID for this letter
-            letter_id = IDGenerator.generate_id()
+            # The chain returns a dictionary that conforms to the schema
+            print("Invoking the chain with input data...")
+            parsed_dict = self.chain.invoke(input_data)
             
-            # Prepare context and parameters
-            additional_context = self._build_additional_context(
-                title, recipient, is_first_contact
+            # **FIX:** Explicitly create the Pydantic object from the dictionary.
+            # This validates the data and gives us the object we expect.
+            letter_output = LetterOutput(**parsed_dict)
+
+            # Now, call .model_dump() on the Pydantic object for logging
+            self._log_generation(
+                request_data={**input_data, "category": category},
+                response_data=letter_output.model_dump()
             )
             
-            # Get format instructions for JSON output
-            json_parser = JsonOutputParser(pydantic_object=LetterOutput)
-            format_instructions = json_parser.get_format_instructions()
-            
-            # Create and execute the chain
-            chain = self.prompt_template | self.llm
-            result = chain.invoke({
-                "user_prompt": user_prompt,
-                "reference_context": reference_context,
-                "additional_context": additional_context,
-                "writing_instructions": writing_instructions,
-                "format_instructions": format_instructions,
-                "tone": tone
-            })
-            
-            # Extract JSON from the response
-            content = result.content
-            letter_data = self._parse_llm_response(content, letter_id, title, user_prompt)
-            
-            
-            # Log the letter generation
-            self._log_letter_generation(
-                user_prompt=user_prompt,
-                letter_data=letter_data,
-                title=title,
-                recipient=recipient,
-                tone=tone,
-                is_first_contact=is_first_contact,
-                category=category,
-                sub_category=sub_category
-            )
-            
-            # Create and return the Pydantic model with guaranteed ID
-            return LetterOutput(
-                Title=letter_data.get("Title", title or user_prompt[:50]),
-                Letter=letter_data.get("Letter", content),
-                Date=letter_data.get("Date", datetime.now().strftime(DATE_FORMAT)),
-                ID=letter_id
-            )
+            # Return the validated Pydantic object
+            return letter_output
 
         except Exception as e:
-            raise RuntimeError(f"Letter generation failed: {str(e)}")
+            logger.error(f"Letter generation failed for prompt '{user_prompt[:50]}...': {e}")
+            raise RuntimeError(f"Failed to generate or parse the letter. Original error: {e}")

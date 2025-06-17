@@ -15,20 +15,19 @@ letter_generator = ArabicLetterGenerator()
 def generate_letter_route():
     data = request.json
     category = data.get("category")
-    sub_category = data.get("sub_category")
-    title = data.get("title")
     recipient = data.get("recipient")
     is_firstTime = data.get("isFirst")
     prompt = data.get("prompt")
-    tone = data.get("tone", "رسمي")  # Default to formal tone if not provided
+    member_name = data.get("member_name", "")
 
-    if not category or not prompt or not title or not recipient or is_firstTime is None:
-        return jsonify({"error": "Missing required fields"}) , 400
+    if not category or not prompt or not recipient or is_firstTime is None :
+        return jsonify({"error": "Missing required fields"}), 400
     try:
         try:
-            letter_config = get_letter_config_by_category(category, sub_category)
-            reference_letter = letter_config["ideal"]
+            letter_config = get_letter_config_by_category(category, member_name)
+            reference_letter = letter_config["letter"]
             instructions = letter_config["instruction"]
+            member_info = letter_config["member_info"]
         except ValueError as e:
             reference_letter = None
             instructions = None
@@ -36,14 +35,12 @@ def generate_letter_route():
         # Use the ArabicLetterGenerator instance
         letter_output = letter_generator.generate_letter(
             user_prompt=prompt,
-            reference_letter_context=reference_letter,
-            title=title,
+            reference_letter=reference_letter,
             recipient=recipient,
             writing_instructions=instructions,
             is_first_contact=is_firstTime,
-            tone=tone,
             category=category,
-            sub_category=sub_category or ""
+            member_info=member_info
         )
         
         # Return the JSON response
