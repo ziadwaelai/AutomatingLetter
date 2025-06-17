@@ -6,8 +6,6 @@ from datetime import datetime
 from typing import Optional, Dict, Any
 from dataclasses import dataclass, field
 
-from typer import prompt
-
 from google_services import log 
 
 from dotenv import load_dotenv
