@@ -19,6 +19,8 @@ def generate_letter_route():
     is_firstTime = data.get("isFirst")
     prompt = data.get("prompt")
     member_name = data.get("member_name", "")
+    recipient_job_title = data.get("recipient_job_title", "")
+    recipient_title = data.get("recipient_title", "")
 
     if not category or not prompt or not recipient or is_firstTime is None :
         return jsonify({"error": "Missing required fields"}), 400
@@ -40,7 +42,10 @@ def generate_letter_route():
             writing_instructions=instructions,
             is_first_contact=is_firstTime,
             category=category,
-            member_info=member_info
+            member_info=member_info,
+            recipient_job_title=recipient_job_title,
+            recipient_title=recipient_title
+
         )
         
         # Return the JSON response

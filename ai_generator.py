@@ -171,6 +171,8 @@ class ArabicLetterGenerator:
         reference_letter: Optional[str] = None,
         category: str = "General", # Added for better logging
         writing_instructions: Optional[str] = None,
+        recipient_title: Optional[str] = None,
+        recipient_job_title: Optional[str] = None
         
     ) -> LetterOutput:
         """
@@ -200,7 +202,9 @@ class ArabicLetterGenerator:
         current_date = datetime.now().strftime(self.config.date_format)
 
         context_parts = []
-        if recipient: context_parts.append(f"Recipient: {recipient}")
+        if recipient: context_parts.append(f"المرسل إليه: {recipient}")
+        if recipient_title: context_parts.append(f"اللقب المرسل إليه الخطاب يجب وضعه قبل الاسم: {recipient_title}")
+        if recipient_job_title: context_parts.append(f"وظيفة المرسل إليه الخطاب: {recipient_job_title}")
         if is_first_contact: context_parts.append("هذا هو الاتصال الأول مع المستلم.")
         
         input_data = {
