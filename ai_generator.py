@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 class LetterGeneratorConfig:
     """Configuration settings for the letter generator."""
     model_name: str = "gpt-4.1" 
-    temperature: float = 0.1
+    temperature: float = 0.2 # Lower temperature for more deterministic outputs
     date_format: str = "%d %B %Y"
     
     # Default texts
@@ -207,9 +207,9 @@ class ArabicLetterGenerator:
         if recipient_title: context_parts.append(f"اللقب المرسل إليه الخطاب يجب وضعه قبل الاسم: {recipient_title}")
         if recipient_job_title: context_parts.append(f"وظيفة المرسل إليه الخطاب: {recipient_job_title}")
         if organization_name: context_parts.append(f"اسم المؤسسة: {organization_name}")
-        if is_first_contact: context_parts.append("هذا هو الاتصال الأول مع المستلم.")
-
-        
+        if is_first_contact: context_parts.append("""هذا هو الاتصال الأول مع المستلم.
+يجب وضع مقدمة الخطاب عن الشركة أو المشروع بعد المقدمة* (مثال عملي: "وانطلاقًا من هذا النهج الطموح، نود أن نقدم لسعادتكم "نت زيرو"، وهو مشروع اجتماعي وطني، أحد مخرجات برنامج (سدرة) التابع لوزارة البيئة والمياه والزراعة...").""")
+        context_parts.append(f"تاريخ اليوم: {current_date}")
         input_data = {
             "user_prompt": user_prompt,
             "reference_context": reference_letter or self.config.reference_context,

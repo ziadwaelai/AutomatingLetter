@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from ai_generator import ArabicLetterGenerator
-from google_services import  append_letter_to_sheet , get_instruction_by_category,get_letter_by_category , get_letter_config_by_category
+from google_services import  append_letter_to_sheet , get_letter_config_by_category
 from drive_logger import save_letter_to_drive_and_log
 from dotenv import load_dotenv
 import os
@@ -47,7 +47,6 @@ def generate_letter_route():
             recipient_job_title=recipient_job_title,
             recipient_title=recipient_title,
             organization_name=organization_name
-
         )
         
         # Return the JSON response
