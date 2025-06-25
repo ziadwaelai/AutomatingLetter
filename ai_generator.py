@@ -106,6 +106,7 @@ class ArabicLetterGenerator:
 6. **بيانات الخطاب الجديد:**
    - معرف الخطاب: {letter_id}
    - تاريخ اليوم: {current_date}
+7. {previous_letter_info}
 
 # تعليمات صارمة يجب اتباعها
 1. ✅ **يجب أن يستند الخطاب فقط إلى "المحتوى الأساسي".** لا تستخدم أي معلومة أو فكرة من خارج هذا القسم.
@@ -173,7 +174,9 @@ class ArabicLetterGenerator:
         writing_instructions: Optional[str] = None,
         recipient_title: Optional[str] = None,
         recipient_job_title: Optional[str] = None,
-        organization_name: Optional[str] = None
+        organization_name: Optional[str] = None,
+        previous_letter_content: Optional[str] = None,
+        previous_letter_id: Optional[str] = None
         
     ) -> LetterOutput:
         """
@@ -211,6 +214,13 @@ class ArabicLetterGenerator:
 تعليمات مهمة: هذا أول خطاب للمستلم، لذا يجب بعد التحية الرسمية مباشرة إضافة فقرة تعريفية واضحة وكاملة عن شركة "نت زيرو" توضح طبيعتها وأهدافها. 
 يجب أن تكون المقدمة مفصلة وتتضمن: (1) تعريف الشركة كمشروع اجتماعي وطني، (2) ارتباطها ببرنامج سدرة التابع لوزارة البيئة والمياه والزراعة، (3) أهدافها الرئيسية.
 مثال توضيحي: "وانطلاقًا من هذا النهج الطموح، نود أن نقدم لسعادتكم "نت زيرو"، وهو مشروع اجتماعي وطني، أحد مخرجات برنامج (سدرة) التابع لوزارة البيئة والمياه والزراعة، يهدف إلى تعزيز الاستدامة البيئية وتحقيق أهداف الحياد الكربوني في المملكة...".""")
+        
+        # Format previous letter information as a single string (if available)
+        previous_letter_info = ""
+        if previous_letter_content :
+            previous_letter_info = f"""معلومات الخطاب السابق:
+- محتوى الخطاب السابق: {previous_letter_content}
+- معرف الخطاب السابق: {previous_letter_id}"""
 
         input_data = {
             "user_prompt": user_prompt,
@@ -219,7 +229,8 @@ class ArabicLetterGenerator:
             "writing_instructions": writing_instructions or self.config.writing_instructions,
             "member_info": member_info,
             "letter_id": letter_id,
-            "current_date": current_date
+            "current_date": current_date,
+            "previous_letter_info": previous_letter_info
         }
 
         
