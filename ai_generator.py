@@ -209,7 +209,6 @@ class ArabicLetterGenerator:
         if organization_name: context_parts.append(f"اسم المؤسسة: {organization_name}")
         if is_first_contact: context_parts.append("""هذا هو الاتصال الأول مع المستلم.
 يجب وضع مقدمة الخطاب عن الشركة أو المشروع بعد المقدمة* (مثال عملي: "وانطلاقًا من هذا النهج الطموح، نود أن نقدم لسعادتكم "نت زيرو"، وهو مشروع اجتماعي وطني، أحد مخرجات برنامج (سدرة) التابع لوزارة البيئة والمياه والزراعة...").""")
-        context_parts.append(f"تاريخ اليوم: {current_date}")
         input_data = {
             "user_prompt": user_prompt,
             "reference_context": reference_letter or self.config.reference_context,
