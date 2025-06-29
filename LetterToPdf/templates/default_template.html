@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+    body {
+      background: #f7f9fa;
+      font-family: 'Cairo', Tahoma, Arial, sans-serif;
+      padding: 0;
+      margin: 0;
+      direction: rtl;
+    }
+    .invitation-container {
+      background: #fff;
+      border-radius: 22px;
+      max-width: 650px;
+      margin: 40px auto;
+      box-shadow: 0 8px 28px 0 #e1e1e166;
+      border: 2.5px solid #0b9444;
+      padding: 36px 28px 28px 28px;
+      box-sizing: border-box;
+    }
+    .logo-row {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .logo-row img {
+      height: 72px;
+      margin: 0 auto;
+      display: inline-block;
+    }
+    .header-text {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .header-text h2 {
+      color: #0b9444;
+      font-size: 1.7rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .header-text h3 {
+      margin: 0;
+      color: #444;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .section {
+      margin-bottom: 22px;
+      font-size: 1.07rem;
+      color: #222;
+      line-height: 1.9;
+    }
+    .important-info {
+      background: #f2f9f3;
+      border: 1.5px solid #cbe8db;
+      border-radius: 10px;
+      padding: 15px 18px;
+      margin-bottom: 22px;
+      font-size: 1rem;
+      color: #15803d;
+    }
+    .footer-signature {
+      margin-top: 36px;
+      text-align: left;
+      color: #0b9444;
+    }
+    .footer-signature strong {
+      color: #15803d;
+    }
+    @media (max-width: 700px) {
+      .invitation-container { padding: 14px 5vw; }
+      .logo-row img { height: 55px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="invitation-container">
+    <div class="logo-row">
+      <img src="https://cdn.prod.website-files.com/6410e328b794cff2dd663e76/64e36edcfe3bfde7693921e2_Netzero%20Logo.png" alt="Netzero Logo" />
+    </div>
+    <div class="header-text">
+      <h2>{{bismillah}}</h2>
+      <h3>{{title}}</h3>
+    </div>
+    <div class="section">
+      <p><strong>{{recipient}}</strong></p>
+      <p>{{greeting}}</p>
+      <p>{{body}}</p>
+    </div>
+    <div class="important-info">
+      <div><strong>الموعد:</strong> {{date}}</div>
+      <div><strong>المكان:</strong> {{location}}</div>
+      <div><strong>للتنسيق:</strong> {{contact}}</div>
+    </div>
+    <div class="footer-signature">
+      <p>{{closing}}</p>
+      <p><strong>{{signer_title}}</strong><br>{{signer_name}}</p>
+    </div>
+  </div>
+</body>
+</html>

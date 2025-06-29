@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from ai_generator import ArabicLetterGenerator
 from google_services import  append_letter_to_sheet , get_letter_config_by_category
 from drive_logger import save_letter_to_drive_and_log
+from LetterToPdf.letterToPdf import LetterPDF
 from dotenv import load_dotenv
 import os
 # Load environment variables
@@ -10,6 +11,7 @@ load_dotenv()
 app = Flask(__name__)
 # Initialize letter generator once
 letter_generator = ArabicLetterGenerator()
+pdfMaker = LetterPDF(template_dir="LetterToPdf/templates")
 
 @app.route("/generate-letter", methods=["POST"])
 def generate_letter_route():
@@ -87,27 +89,32 @@ def save_letter_route():
 
 @app.route("/archive-letter", methods=["POST"])
 def upload_pdf_route():
-    # Check if file exists in request
-    if 'file' not in request.files:
-        return jsonify({"error": "No file part in request"}), 400
+    data = request.json
     
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
+    if not data:
+        return jsonify({"error": "No JSON data provided"}), 400
     
     try:
-        letter_content = request.form.get('letter_content', '')
-        letter_type = request.form.get('letter_type', 'General')
-        recipient = request.form.get('recipient', '')
-        title = request.form.get('title', file.filename)
-        is_first = request.form.get('is_first', 'false').lower() == 'true'
-        ID = request.form.get('ID', '')
+        letter_content = data.get('letter_content', '')
+        letter_type = data.get('letter_type', 'General')
+        recipient = data.get('recipient', '')
+        title = data.get('title', 'undefined')
+        is_first = data.get('is_first', False)
+        ID = data.get('ID', '')
+        template = data.get('template', 'default_template.html')
+        
+        if not letter_content:
+            return jsonify({"error": "letter_content is required"}), 400
 
         # Get Google Drive folder ID from environment variables
         folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
         if not folder_id:
             return jsonify({"error": "Google Drive folder ID not configured"}), 500
-        
+        file =  pdfMaker.save_pdf(
+            template_filename=template,
+            letter_text=letter_content,
+            pdf_path="output.pdf"
+        )
         # Use the new function to save and log the letter
         result = save_letter_to_drive_and_log(
             letter_file=file,
@@ -119,7 +126,10 @@ def upload_pdf_route():
             folder_id=folder_id,
             ID=ID
         )
-        
+        try:
+            os.remove(file)
+        except Exception as e:
+            print(f"Error deleting temporary file: {e}")
         if result["status"] == "success":
             return jsonify({
                 "status": "success",
@@ -129,7 +139,7 @@ def upload_pdf_route():
             }), 200
         else:
             return jsonify({"error": result["message"]}), 500
-            
+        # delete the temporary PDF file after upload
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     

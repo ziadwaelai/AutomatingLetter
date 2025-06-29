@@ -304,3 +304,37 @@ def upload_file_to_drive(file, folder_id):
                 break
             except PermissionError:
                 time.sleep(1)
+
+def upload_file_path_to_drive(file_path, folder_id, filename=None):
+    """Upload a file from file path to Google Drive and return its ID and web view link."""
+    creds = service_account.Credentials.from_service_account_file(
+        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    drive_service = build('drive', 'v3', credentials=creds)
+    
+    # Use provided filename or extract from path
+    if filename is None:
+        filename = os.path.basename(file_path)
+    
+    try:
+        file_metadata = {
+            'name': filename,
+            'parents': [folder_id]
+        }
+        
+        media = MediaFileUpload(
+            file_path, 
+            mimetype='application/pdf',
+            resumable=True
+        )
+        
+        uploaded = drive_service.files().create(
+            body=file_metadata,
+            media_body=media,
+            fields='id, webViewLink'
+        ).execute()
+        
+        time.sleep(0.5)
+        return uploaded['id'], uploaded['webViewLink']
+    except Exception as e:
+        print(f"Error uploading file to Drive: {e}")
+        raise

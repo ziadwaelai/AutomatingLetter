@@ -1,5 +1,6 @@
-from google_services import upload_file_to_drive, log
+from google_services import upload_file_to_drive, upload_file_path_to_drive, log
 import datetime
+import os
 
 def save_letter_to_drive_and_log(
     letter_file, 
@@ -12,7 +13,14 @@ def save_letter_to_drive_and_log(
     ID,
 ):
     try:
-        file_id, file_url = upload_file_to_drive(letter_file, folder_id)        
+        # Check if letter_file is a string (file path) or file object
+        if isinstance(letter_file, str):
+            # It's a file path, use the new function
+            filename = f"{title}_{ID}.pdf" if title != 'undefined' else f"letter_{ID}.pdf"
+            file_id, file_url = upload_file_path_to_drive(letter_file, folder_id, filename)
+        else:
+            # It's a file object, use the original function
+            file_id, file_url = upload_file_to_drive(letter_file, folder_id)        
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         log_entry = {
             "Timestamp": timestamp,
