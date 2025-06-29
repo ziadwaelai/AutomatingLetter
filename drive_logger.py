@@ -10,13 +10,13 @@ def save_letter_to_drive_and_log(
     title, 
     is_first, 
     folder_id,
-    ID,
+    id,
 ):
     try:
         # Check if letter_file is a string (file path) or file object
         if isinstance(letter_file, str):
             # It's a file path, use the new function
-            filename = f"{title}_{ID}.pdf" if title != 'undefined' else f"letter_{ID}.pdf"
+            filename = f"{title}_{id}.pdf" if title != 'undefined' else f"letter_{id}.pdf"
             file_id, file_url = upload_file_path_to_drive(letter_file, folder_id, filename)
         else:
             # It's a file object, use the original function
@@ -30,7 +30,7 @@ def save_letter_to_drive_and_log(
             "First Time?": "Yes" if is_first else "No",
             "Content": letter_content,
             "URL": file_url,
-            "ID": ID
+            "ID": id
         }
         log_result = log(
             spreadsheet_name="AI Letter Generating", 

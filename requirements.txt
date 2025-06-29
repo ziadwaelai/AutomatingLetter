@@ -4,3 +4,5 @@ gspread
 oauth2client
 google-api-python-client
 playwright
+pytz
+hijri-converter

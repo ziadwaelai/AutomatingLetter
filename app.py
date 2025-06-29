@@ -100,7 +100,7 @@ def upload_pdf_route():
         recipient = data.get('recipient', '')
         title = data.get('title', 'undefined')
         is_first = data.get('is_first', False)
-        ID = data.get('ID', '')
+        id = data.get('ID', '')
         template = data.get('template', 'default_template.html')
         
         if not letter_content:
@@ -113,6 +113,7 @@ def upload_pdf_route():
         file =  pdfMaker.save_pdf(
             template_filename=template,
             letter_text=letter_content,
+            id=id,
             pdf_path="output.pdf"
         )
         # Use the new function to save and log the letter
@@ -124,7 +125,7 @@ def upload_pdf_route():
             title=title,
             is_first=is_first,
             folder_id=folder_id,
-            ID=ID
+            id=id
         )
         try:
             os.remove(file)
