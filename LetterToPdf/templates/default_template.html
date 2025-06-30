@@ -6,10 +6,10 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
     body {
-      background: #f7f9fa;
+      background: #f5f6fa;
       font-family: 'Cairo', Tahoma, Arial, sans-serif;
-      padding: 0;
       margin: 0;
+      padding: 0;
       direction: rtl;
     }
     .invitation-container {
@@ -24,7 +24,7 @@
     }
     .logo-row {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 28px;
     }
     .logo-row img {
       height: 72px;
@@ -36,48 +36,69 @@
       margin-bottom: 16px;
     }
     .header-text h2 {
-      color: #0b9444;
+      color: #283046;
       font-size: 1.7rem;
       margin-bottom: 10px;
-      font-weight: bold;
+      font-weight: 700;
+      letter-spacing: 1px;
     }
     .header-text h3 {
       margin: 0;
-      color: #444;
-      font-size: 1.2rem;
-      font-weight: 700;
+      color: #283046;
+      font-size: 1.17rem;
+      font-weight: 600;
     }
     .section {
-      margin-bottom: 22px;
-      font-size: 1.07rem;
-      color: #222;
-      line-height: 1.9;
+      margin-bottom: 24px;
+      font-size: 1.08rem;
+      color: #283046;
+      line-height: 2;
+    }
+    .section p {
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 1.08rem;
+    }
+    .section strong {
+      font-weight: 600;
+      color: #283046;
     }
     .important-info {
-      background: #f2f9f3;
-      border: 1.5px solid #cbe8db;
-      border-radius: 10px;
-      padding: 15px 18px;
-      margin-bottom: 22px;
-      font-size: 1rem;
-      color: #15803d;
+      background: #f7f7fb;
+      border: 1.2px solid #dee2e6;
+      border-radius: 7px;
+      padding: 15px 20px 15px 20px;
+      margin-bottom: 28px;
+      font-size: 1.01rem;
+      color: #495057;
+    }
+    .important-info div {
+      margin-bottom: 4px;
     }
     .footer-signature {
-      margin-top: 36px;
-      text-align: left;
-      color: #0b9444;
+      margin-top: 38px;
+      text-align: right;
+      color: #283046;
+      font-size: 1.01rem;
     }
     .footer-signature strong {
-      color: #15803d;
+      color: #283046;
+      font-weight: 700;
+      font-size: 1.06rem;
     }
     @media (max-width: 700px) {
-      .invitation-container { padding: 14px 5vw; }
-      .logo-row img { height: 55px; }
+      .invitation-container { padding: 15px 3vw; }
+      .logo-row img { height: 44px; }
+      .document-info { top: 10px; right: 14px; font-size: 0.93rem;}
     }
   </style>
 </head>
 <body>
   <div class="invitation-container">
+    <div class="document-info">
+      <div class="doc-date">التاريخ: {{document_date}}</div>
+      <div class="doc-id">رقم الخطاب: {{document_id}}</div>
+    </div>
     <div class="logo-row">
       <img src="https://cdn.prod.website-files.com/6410e328b794cff2dd663e76/64e36edcfe3bfde7693921e2_Netzero%20Logo.png" alt="Netzero Logo" />
     </div>
@@ -93,7 +114,7 @@
     <div class="important-info">
       <div><strong>الموعد:</strong> {{date}}</div>
       <div><strong>المكان:</strong> {{location}}</div>
-      <div><strong>للتنسيق:</strong> {{contact}}</div>
+      <div><strong>للتواصل/التنسيق:</strong> {{contact}}</div>
     </div>
     <div class="footer-signature">
       <p>{{closing}}</p>

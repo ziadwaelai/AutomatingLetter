@@ -208,7 +208,12 @@ class ArabicLetterGenerator:
         context_parts = []
         if recipient: context_parts.append(f"المرسل إليه: {recipient}")
         if recipient_title: context_parts.append(f"اللقب المرسل إليه الخطاب يجب وضعه قبل الاسم: {recipient_title}")
-        if recipient_job_title: context_parts.append(f"وظيفة المرسل إليه الخطاب: {recipient_job_title}")
+        if recipient_job_title: context_parts.append(f"""تعليمات هامة حول المخاطبة:
+- يجب مراعاة التذكير والتأنيث في الألقاب والوظائف حسب جنس المرسل إليه
+- للإناث: استخدم صيغة التأنيث (مثل: مهندسة، دكتورة، أستاذة، مديرة)
+- للذكور: استخدم صيغة التذكير (مثل: مهندس، دكتور، أستاذ، مدير)
+- أمثلة توضيحية: (مهندسة فاطمة وليس مهندس فاطمة) (الدكتورة نورة وليس الدكتور نورة)
+- وظيفة المرسل إليه الخطاب: {recipient_job_title}""")
         if organization_name: context_parts.append(f"اسم المؤسسة: {organization_name}")
         if is_first_contact: context_parts.append("""هذا هو الاتصال الأول مع المستلم.
 تعليمات مهمة: هذا أول خطاب للمستلم، لذا يجب بعد التحية الرسمية مباشرة إضافة فقرة تعريفية واضحة وكاملة عن شركة "نت زيرو" توضح طبيعتها وأهدافها. 

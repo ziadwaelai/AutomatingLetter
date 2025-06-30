@@ -5,6 +5,7 @@ from drive_logger import save_letter_to_drive_and_log
 from LetterToPdf.letterToPdf import LetterPDF
 from dotenv import load_dotenv
 import os
+import threading
 # Load environment variables
 load_dotenv()
 
@@ -110,13 +111,33 @@ def upload_pdf_route():
         folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
         if not folder_id:
             return jsonify({"error": "Google Drive folder ID not configured"}), 500
-        file =  pdfMaker.save_pdf(
+            
+        # Start a background thread to process the letter
+        background_thread = threading.Thread(
+            target=process_letter_in_background,
+            args=(template, letter_content, id, letter_type, recipient, title, is_first, folder_id)
+        )
+        background_thread.daemon = True  # Make thread exit when main thread exits
+        background_thread.start()
+        
+        # Immediately return success response
+        return jsonify({
+            "status": "success",
+            "message": f"Letter processing started for ID: {id}",
+            "processing": "background"
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+def process_letter_in_background(template, letter_content, id, letter_type, recipient, title, is_first, folder_id):
+    try:
+        file = pdfMaker.save_pdf(
             template_filename=template,
             letter_text=letter_content,
             id=id,
-            pdf_path="output.pdf"
+            pdf_path=f"output_{id}.pdf"
         )
-        # Use the new function to save and log the letter
+        
+        # Use the function to save and log the letter
         result = save_letter_to_drive_and_log(
             letter_file=file,
             letter_content=letter_content,
@@ -127,23 +148,18 @@ def upload_pdf_route():
             folder_id=folder_id,
             id=id
         )
+        
+        # Clean up temporary file
         try:
             os.remove(file)
         except Exception as e:
             print(f"Error deleting temporary file: {e}")
-        if result["status"] == "success":
-            return jsonify({
-                "status": "success",
-                "file_id": result["file_id"],
-                "view_link": result["file_url"],
-                "log_status": result["log_result"]["status"]
-            }), 200
-        else:
-            return jsonify({"error": result["message"]}), 500
-        # delete the temporary PDF file after upload
+            
+        print(f"Background processing completed for letter ID: {id}")
+        print(f"Result: {result}")
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    
+        print(f"Error in background processing for letter ID {id}: {str(e)}")
 
+    
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
