@@ -1,11 +1,9 @@
 import os
 import json
 import logging
-import re
 from datetime import datetime
 from typing import Optional, Dict, Any
-from dataclasses import dataclass, field
-import threading
+from dataclasses import dataclass
 
 from google_services import log 
 
@@ -97,6 +95,7 @@ class ArabicLetterGenerator:
         """
         template = """
 أنت كاتب خطابات محترف ومساعد ذكي لشركة `نت زيرو`. مهمتك هي كتابة خطاب رسمي باللغة العربية بناءً على المعلومات التالية، مع الالتزام الصارم بجميع التعليمات المحددة أدناه.
+
 # المصادر والمعلومات
 1. **المحتوى الأساسي (المطلوب كتابته):** {user_prompt}
 2. **نموذج للهيكل والأسلوب (للاسترشاد بالشكل فقط):** {reference_context}
@@ -132,7 +131,6 @@ class ArabicLetterGenerator:
 16. ✅ **في الخطابات الرسمية (غير التهنئة)، عند كتابة عبارة الخاتمة (مثل: "وتفضلوا بقبول فائق الاحترام والتقدير")، أضف ثلاث فواصل (،،،) بعد العبارة.**
 17. ✅ **قسّم الطلبات والتوصيات إلى فقرات واضحة، وتجنب تكرار نفس الطلب أو التوصية في أكثر من فقرة. حسن الانتقال بين الفقرات بحيث يكون الخطاب متسقاً وسلساً.**
 18. ⛔ **يُمنع منعًا باتًا على المساعد إضافة أو افتراض أو استنتاج أي تواريخ أو مواعيد أو أيام أحداث (مثل: "في اليوم الموافق ...") إلا إذا وردت صراحة في "المحتوى الأساسي" المُدخل من المستخدم.**
-
 {format_instructions}
 """
 
@@ -265,19 +263,14 @@ class ArabicLetterGenerator:
             # **FIX:** Explicitly create the Pydantic object from the dictionary.
             # This validates the data and gives us the object we expect.
             letter_output = LetterOutput(**parsed_dict)
+
+            # Now, call .model_dump() on the Pydantic object for logging
+            self._log_generation(
+                request_data={**input_data, "category": category},
+                response_data=letter_output.model_dump()
+            )
             
-            # Create a copy of the data for logging to avoid any reference issues
-            log_request_data = {**input_data, "category": category}
-            log_response_data = letter_output.model_dump()
-            
-            # Start a background thread for logging to avoid blocking the response
-            threading.Thread(
-                target=self._log_generation,
-                args=(log_request_data, log_response_data),
-                daemon=True
-            ).start()
-            
-            # Return the validated Pydantic object immediately
+            # Return the validated Pydantic object
             return letter_output
 
         except Exception as e:
