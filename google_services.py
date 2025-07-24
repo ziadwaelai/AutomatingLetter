@@ -8,6 +8,7 @@ from googleapiclient.http import MediaFileUpload
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
 import time
+import concurrent.futures
 
 SERVICE_ACCOUNT_FILE = 'automating-letter-creations.json'
 SCOPES = [
@@ -140,6 +141,7 @@ def get_letter_by_category(category, sub_category=None):
 def get_letter_config_by_category(category, name=""):
     """
     Fetches letter template, combined instructions, and member info by category and name.
+    Uses parallel execution to improve response time.
 
     Args:
         category (str): The category to fetch data for.
@@ -156,10 +158,32 @@ def get_letter_config_by_category(category, name=""):
         ValueError: If data fetching fails.
     """
     try:
-        letter = get_Data_by_key(category, "Ideal",True) or ""
-        instruction = get_Data_by_key(category, "Instructions") or ""
-        all_instructions = get_Data_by_key("الجميع", "Instructions") or ""
-        member_info = get_Data_by_key(name, "Info") or ""
+        # Define the tasks to be executed in parallel
+        def get_letter():
+            return get_Data_by_key(category, "Ideal", True) or ""
+            
+        def get_instruction():
+            return get_Data_by_key(category, "Instructions") or ""
+            
+        def get_all_instructions():
+            return get_Data_by_key("الجميع", "Instructions") or ""
+            
+        def get_member_info():
+            return get_Data_by_key(name, "Info") or ""
+        
+        # Execute all tasks in parallel using ThreadPoolExecutor
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+            # Submit all tasks and get future objects
+            letter_future = executor.submit(get_letter)
+            instruction_future = executor.submit(get_instruction)
+            all_instructions_future = executor.submit(get_all_instructions)
+            member_info_future = executor.submit(get_member_info)
+            
+            # Get results from futures
+            letter = letter_future.result()
+            instruction = instruction_future.result()
+            all_instructions = all_instructions_future.result()
+            member_info = member_info_future.result()
 
         # Combine instructions, avoid leading/trailing newlines
         instructions = "\n".join(
