@@ -5,6 +5,7 @@ import re
 from datetime import datetime
 from typing import Optional, Dict, Any
 from dataclasses import dataclass, field
+import threading
 
 from google_services import log 
 
@@ -263,14 +264,19 @@ class ArabicLetterGenerator:
             # **FIX:** Explicitly create the Pydantic object from the dictionary.
             # This validates the data and gives us the object we expect.
             letter_output = LetterOutput(**parsed_dict)
-
-            # Now, call .model_dump() on the Pydantic object for logging
-            self._log_generation(
-                request_data={**input_data, "category": category},
-                response_data=letter_output.model_dump()
-            )
             
-            # Return the validated Pydantic object
+            # Create a copy of the data for logging to avoid any reference issues
+            log_request_data = {**input_data, "category": category}
+            log_response_data = letter_output.model_dump()
+            
+            # Start a background thread for logging to avoid blocking the response
+            threading.Thread(
+                target=self._log_generation,
+                args=(log_request_data, log_response_data),
+                daemon=True
+            ).start()
+            
+            # Return the validated Pydantic object immediately
             return letter_output
 
         except Exception as e:
