@@ -264,11 +264,11 @@ class ArabicLetterGenerator:
             # This validates the data and gives us the object we expect.
             letter_output = LetterOutput(**parsed_dict)
 
-            # Now, call .model_dump() on the Pydantic object for logging
-            self._log_generation(
-                request_data={**input_data, "category": category},
-                response_data=letter_output.model_dump()
-            )
+            # # Now, call .model_dump() on the Pydantic object for logging
+            # self._log_generation(
+            #     request_data={**input_data, "category": category},
+            #     response_data=letter_output.model_dump()
+            # )
             
             # Return the validated Pydantic object
             return letter_output
