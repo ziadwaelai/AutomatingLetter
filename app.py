@@ -33,9 +33,9 @@ def generate_letter_route():
     try:
         try:
             letter_config = get_letter_config_by_category(category, member_name)
-            reference_letter = letter_config["letter"]
-            instructions = letter_config["instruction"]
-            member_info = letter_config["member_info"]
+            reference_letter = letter_config["letter"] if letter_config["letter"] else " "
+            instructions = letter_config["instruction"] if letter_config["instruction"] else " "
+            member_info = letter_config["member_info"] if letter_config["member_info"] else " "
         except ValueError as e:
             reference_letter = None
             instructions = None
