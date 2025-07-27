@@ -30,7 +30,7 @@ def save_letter_to_drive_and_log(
             "First Time?": "Yes" if is_first else "No",
             "Content": letter_content,
             "URL": file_url,
-            "Revision":"في الانتظار",
+            "Revision":"pending",
             "ID": id,
         }
         log_result = log(
