@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.runnables import Runnable
 import random
-
+import threading
 # Assuming google_services.log exists. If not, this can be swapped with another logger.
 # from google_services import log 
 
@@ -27,6 +27,8 @@ logger = logging.getLogger(__name__)
 class LetterGeneratorConfig:
     """Configuration settings for the letter generator."""
     model_name: str = "gpt-4.1" 
+    timeout: int = 10  # Timeout for LLM requests
+    max_retries: int = 3  # Number of retries for LLM requests  
     temperature: float = 0.2 # Lower temperature for more deterministic outputs
     date_format: str = "%d %B %Y"
     
@@ -139,28 +141,34 @@ class ArabicLetterGenerator:
         llm = ChatOpenAI(
             model_name=self.config.model_name,
             temperature=self.config.temperature,
-            openai_api_key=self.api_key
+            openai_api_key=self.api_key,
+            timeout=self.config.timeout,
+            max_retries=self.config.max_retries
+
         )
         # print the prompt template for debugging with data 
         return prompt | llm | self.parser
 
     def _log_generation(self, request_data: Dict[str, Any], response_data: Dict[str, Any]) -> None:
-        """Logs request and response details."""
-        try:
-            log_entry = {
-                "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "ID": response_data.get("ID", ""),
-                "Request": json.dumps(request_data, ensure_ascii=False),
-                "Response": json.dumps(response_data, ensure_ascii=False),
-            }
-            logger.info(f"Logging generation for ID: {log_entry['ID']}")
-            log(
-                spreadsheet_name=self.config.log_spreadsheet,
-                worksheet_name=self.config.log_worksheet,
-                entries=[log_entry]
-            )
-        except Exception as e:
-            logger.error(f"Failed to log letter generation: {e}")
+        """Runs logging in a background thread."""
+        def _background_log():
+            try:
+                log_entry = {
+                    "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "ID": response_data.get("ID", ""),
+                    "Request": json.dumps(request_data, ensure_ascii=False),
+                    "Response": json.dumps(response_data, ensure_ascii=False),
+                }
+                logger.info(f"Logging generation for ID: {log_entry['ID']}")
+                log(
+                    spreadsheet_name=self.config.log_spreadsheet,
+                    worksheet_name=self.config.log_worksheet,
+                    entries=[log_entry]
+                )
+            except Exception as e:
+                logger.error(f"Failed to log letter generation: {e}")
+
+        threading.Thread(target=_background_log, daemon=True).start()
 
  # --- THIS IS THE UPDATED METHOD ---
     def generate_letter(
@@ -226,7 +234,6 @@ class ArabicLetterGenerator:
 تعليمات مهمة: هذا أول خطاب للمستلم، لذا يجب بعد التحية الرسمية مباشرة إضافة فقرة تعريفية واضحة وكاملة عن شركة "نت زيرو" توضح طبيعتها وأهدافها. 
 يجب أن تكون المقدمة مفصلة وتتضمن: (1) تعريف الشركة كمشروع اجتماعي وطني، (2) ارتباطها ببرنامج سدرة التابع لوزارة البيئة والمياه والزراعة، (3) أهدافها الرئيسية.
 مثال توضيحي: "وانطلاقًا من هذا النهج الطموح، نود أن نقدم لسعادتكم "نت زيرو"، وهو مشروع اجتماعي وطني، أحد مخرجات برنامج (سدرة) التابع لوزارة البيئة والمياه والزراعة، يهدف إلى تعزيز الاستدامة البيئية وتحقيق أهداف الحياد الكربوني في المملكة...".""")
-        else: context_parts.append("""هذا ليس الاتصال الأول مع المستلم.""")
         # Format previous letter information as a single string (if available)
         previous_letter_info = ""
         if previous_letter_content :
@@ -254,7 +261,7 @@ class ArabicLetterGenerator:
             # This validates the data and gives us the object we expect.
             letter_output = LetterOutput(**parsed_dict)
 
-            # Now, call .model_dump() on the Pydantic object for logging
+            # # Now, call .model_dump() on the Pydantic object for logging
             self._log_generation(
                 request_data={**input_data, "category": category},
                 response_data=letter_output.model_dump()
