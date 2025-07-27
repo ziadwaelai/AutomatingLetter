@@ -4,9 +4,7 @@ import logging
 from datetime import datetime
 from typing import Optional, Dict, Any
 from dataclasses import dataclass
-
 from google_services import log 
-
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
@@ -95,7 +93,6 @@ class ArabicLetterGenerator:
         """
         template = """
 أنت كاتب خطابات محترف ومساعد ذكي لشركة `نت زيرو`. مهمتك هي كتابة خطاب رسمي باللغة العربية بناءً على المعلومات التالية، مع الالتزام الصارم بجميع التعليمات المحددة أدناه.
-
 # المصادر والمعلومات
 1. **المحتوى الأساسي (المطلوب كتابته):** {user_prompt}
 2. **نموذج للهيكل والأسلوب (للاسترشاد بالشكل فقط):** {reference_context}
@@ -111,7 +108,6 @@ class ArabicLetterGenerator:
    - معرف الخطاب: {letter_id}
    - تاريخ اليوم: {current_date}
 7. {previous_letter_info}
-
 # تعليمات صارمة يجب اتباعها
 1. ✅ **يجب أن يستند الخطاب فقط إلى "المحتوى الأساسي".** لا تستخدم أي معلومة أو فكرة من خارج هذا القسم.
 2. ✅ **النموذج المرجعي يستخدم فقط لتقليد الشكل والتنسيق (مقدمة/تنسيق الفقرات/الخاتمة)**، ويُمنع تمامًا الاقتباس أو إعادة صياغة أي جملة، أو أخذ أسماء أو أرقام أو تواريخ منه.
@@ -133,11 +129,6 @@ class ArabicLetterGenerator:
 18. ⛔ **يُمنع منعًا باتًا على المساعد إضافة أو افتراض أو استنتاج أي تواريخ أو مواعيد أو أيام أحداث (مثل: "في اليوم الموافق ...") إلا إذا وردت صراحة في "المحتوى الأساسي" المُدخل من المستخدم.**
 {format_instructions}
 """
-
-
-
-
-
         return PromptTemplate.from_template(
             template,
             partial_variables={"format_instructions": self.parser.get_format_instructions()}
@@ -235,7 +226,7 @@ class ArabicLetterGenerator:
 تعليمات مهمة: هذا أول خطاب للمستلم، لذا يجب بعد التحية الرسمية مباشرة إضافة فقرة تعريفية واضحة وكاملة عن شركة "نت زيرو" توضح طبيعتها وأهدافها. 
 يجب أن تكون المقدمة مفصلة وتتضمن: (1) تعريف الشركة كمشروع اجتماعي وطني، (2) ارتباطها ببرنامج سدرة التابع لوزارة البيئة والمياه والزراعة، (3) أهدافها الرئيسية.
 مثال توضيحي: "وانطلاقًا من هذا النهج الطموح، نود أن نقدم لسعادتكم "نت زيرو"، وهو مشروع اجتماعي وطني، أحد مخرجات برنامج (سدرة) التابع لوزارة البيئة والمياه والزراعة، يهدف إلى تعزيز الاستدامة البيئية وتحقيق أهداف الحياد الكربوني في المملكة...".""")
-        
+        else: context_parts.append("""هذا ليس الاتصال الأول مع المستلم.""")
         # Format previous letter information as a single string (if available)
         previous_letter_info = ""
         if previous_letter_content :
