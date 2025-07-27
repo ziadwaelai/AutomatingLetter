@@ -254,7 +254,6 @@ class ArabicLetterGenerator:
             "previous_letter_info": previous_letter_info
         }
 
-        
         try:
             # The chain returns a dictionary that conforms to the schema
             print("Invoking the chain with input data...")
