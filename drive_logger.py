@@ -30,8 +30,8 @@ def save_letter_to_drive_and_log(
             "First Time?": "Yes" if is_first else "No",
             "Content": letter_content,
             "URL": file_url,
+            "Revision":"في الانتظار",
             "ID": id,
-            "Revision":"في الانتظار"
         }
         log_result = log(
             spreadsheet_name="AI Letter Generating", 
