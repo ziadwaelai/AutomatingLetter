@@ -242,7 +242,7 @@ class ArabicLetterGenerator:
 - معرف الخطاب السابق: {previous_letter_id}"""
 
         input_data = {
-            "user_prompt": user_prompt,
+            "user_prompt": str(user_prompt),
             "reference_context": reference_letter or self.config.reference_context,
             "additional_context": "\n".join(context_parts) or "لا توجد سياقات إضافية.",
             "writing_instructions": writing_instructions or self.config.writing_instructions,
