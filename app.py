@@ -6,6 +6,7 @@ from LetterToPdf.letterToPdf import LetterPDF
 from dotenv import load_dotenv
 import os
 import threading
+from n8n.app import n8n_get_context
 # Load environment variables
 load_dotenv()
 
@@ -160,6 +161,20 @@ def process_letter_in_background(template, letter_content, id, letter_type, reci
     except Exception as e:
         print(f"Error in background processing for letter ID {id}: {str(e)}")
 
+
+@app.route("/get-context", methods=["GET"])
+def get_context_route():
+    category = request.args.get("category")
+    member_name = request.args.get("member_name", None)
     
+    if not category:
+        return jsonify({"error": "Category is required"}), 400
+    
+    try:
+        context = n8n_get_context(category, member_name)
+        return jsonify(context), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
