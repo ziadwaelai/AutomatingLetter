@@ -162,14 +162,15 @@ def process_letter_in_background(template, letter_content, id, letter_type, reci
         print(f"Error in background processing for letter ID {id}: {str(e)}")
 
 
-@app.route("/get-context", methods=["GET"])
+@app.route("/get-context", methods=["POST"])
 def get_context_route():
-    category = request.args.get("category")
-    member_name = request.args.get("member_name", None)
-    
+    data = request.json
+    if not data:
+        return jsonify({"error": "No JSON data provided"}), 400
+    category = data.get("category")
+    member_name = data.get("member_name", None)
     if not category:
         return jsonify({"error": "Category is required"}), 400
-    
     try:
         context = n8n_get_context(category, member_name)
         return jsonify(context), 200
