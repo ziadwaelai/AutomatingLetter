@@ -8,6 +8,7 @@ import os
 import threading
 from n8n.app import n8n_get_context , n8n_get_system_prompt
 from ai_generator import generate_letter_id
+from UserFeedback.interactive_chat import edit_letter_based_on_feedback
 # Load environment variables
 load_dotenv()
 
@@ -209,6 +210,26 @@ def get_context_route():
         }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+@app.route("/edit-letter", methods=["POST"])
+def edit_letter_route():
+    data = request.json
+    if not data:
+        return jsonify({"error": "No JSON data provided"}), 400
+    letter = data.get("letter")
+    feedback = data.get("feedback")
+    if not letter or not feedback:
+        return jsonify({"error": "Letter and feedback are required"}), 400
+    try:
+        edited_letter = edit_letter_based_on_feedback(letter, feedback)
+        return jsonify({
+            "status": "success",
+            "edited_letter": edited_letter
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
