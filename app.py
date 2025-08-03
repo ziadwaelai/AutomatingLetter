@@ -106,6 +106,7 @@ def upload_pdf_route():
         is_first = data.get('is_first', False)
         id = data.get('ID', '')
         template = data.get('template', 'default_template.html')
+        username = data.get('username', 'unknown') 
         
         if not letter_content:
             return jsonify({"error": "letter_content is required"}), 400
@@ -118,7 +119,7 @@ def upload_pdf_route():
         # Start a background thread to process the letter
         background_thread = threading.Thread(
             target=process_letter_in_background,
-            args=(template, letter_content, id, letter_type, recipient, title, is_first, folder_id)
+            args=(template, letter_content, id, letter_type, recipient, title, is_first, folder_id, username)
         )
         background_thread.daemon = True  # Make thread exit when main thread exits
         background_thread.start()
@@ -131,7 +132,7 @@ def upload_pdf_route():
         }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-def process_letter_in_background(template, letter_content, id, letter_type, recipient, title, is_first, folder_id):
+def process_letter_in_background(template, letter_content, id, letter_type, recipient, title, is_first, folder_id, username):
     try:
         file = pdfMaker.save_pdf(
             template_filename=template,
@@ -149,7 +150,8 @@ def process_letter_in_background(template, letter_content, id, letter_type, reci
             title=title,
             is_first=is_first,
             folder_id=folder_id,
-            id=id
+            id=id,
+            username=username
         )
         
         # Clean up temporary file

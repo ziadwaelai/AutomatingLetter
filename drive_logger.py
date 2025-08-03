@@ -11,6 +11,7 @@ def save_letter_to_drive_and_log(
     is_first, 
     folder_id,
     id,
+    username
 ):
     try:
         # Check if letter_file is a string (file path) or file object
@@ -32,6 +33,7 @@ def save_letter_to_drive_and_log(
             "URL": file_url,
             "Revision":"في الانتظار",
             "ID": id,
+            "Username": username
         }
         log_result = log(
             spreadsheet_name="AI Letter Generating", 
