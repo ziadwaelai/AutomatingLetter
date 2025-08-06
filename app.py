@@ -9,6 +9,7 @@ import threading
 from n8n.app import n8n_get_context , n8n_get_system_prompt
 from ai_generator import generate_letter_id
 from UserFeedback.interactive_chat import edit_letter_based_on_feedback
+from UserFeedback.enhanced_chat import chat_manager
 # Load environment variables
 load_dotenv()
 
@@ -228,6 +229,104 @@ def edit_letter_route():
         return jsonify({
             "status": "success",
             "edited_letter": edited_letter
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# Enhanced Chat Endpoints with Session Management
+
+@app.route("/chat/session/create", methods=["POST"])
+def create_chat_session():
+    """Create a new chat session with optional original letter."""
+    data = request.json or {}
+    original_letter = data.get("original_letter")
+    
+    try:
+        session_id = chat_manager.create_session(original_letter=original_letter)
+        return jsonify({
+            "status": "success",
+            "session_id": session_id,
+            "message": "Chat session created successfully"
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/chat/edit-letter", methods=["POST"])
+def enhanced_edit_letter():
+    """Edit letter with session-based memory."""
+    data = request.json
+    if not data:
+        return jsonify({"error": "No JSON data provided"}), 400
+    
+    session_id = data.get("session_id")
+    current_letter = data.get("letter")
+    feedback = data.get("feedback")
+    
+    if not session_id or not current_letter or not feedback:
+        return jsonify({
+            "error": "session_id, letter, and feedback are required"
+        }), 400
+    
+    try:
+        result = chat_manager.edit_letter(session_id, current_letter, feedback)
+        return jsonify(result), 200 if result["status"] == "success" else 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/chat/ask", methods=["POST"])
+def chat_about_letter():
+    """Ask questions about the letter or writing in general."""
+    data = request.json
+    if not data:
+        return jsonify({"error": "No JSON data provided"}), 400
+    
+    session_id = data.get("session_id")
+    question = data.get("question")
+    current_letter = data.get("current_letter")  # Optional
+    
+    if not session_id or not question:
+        return jsonify({
+            "error": "session_id and question are required"
+        }), 400
+    
+    try:
+        result = chat_manager.chat_about_letter(session_id, question, current_letter)
+        return jsonify(result), 200 if result["status"] == "success" else 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/chat/session/info/<session_id>", methods=["GET"])
+def get_session_info(session_id):
+    """Get information about a chat session."""
+    try:
+        result = chat_manager.get_session_info(session_id)
+        return jsonify(result), 200 if result["status"] == "success" else 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/chat/session/clear/<session_id>", methods=["DELETE"])
+def clear_chat_session(session_id):
+    """Manually clear a chat session."""
+    try:
+        result = chat_manager.clear_session(session_id)
+        return jsonify(result), 200 if result["status"] == "success" else 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/chat/sessions/count", methods=["GET"])
+def get_active_sessions_count():
+    """Get count of active chat sessions."""
+    try:
+        count = chat_manager.get_active_sessions_count()
+        return jsonify({
+            "status": "success",
+            "active_sessions": count
         }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

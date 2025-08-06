@@ -1,8 +1,11 @@
 flask
 langchain-community
+langchain-openai
+langchain
 gspread
 oauth2client
 google-api-python-client
 playwright
 pytz
 hijri-converter
+python-dotenv

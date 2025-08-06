@@ -1,27 +1,68 @@
 ## 🔧 **Project Name**: Automating Letter with AI  
-**Summary**: AI-powered tool to auto-generate and manage formal letters using pre-made templates + user input, with storage on Google Drive.
+**Summary**: AI-powered tool to auto-generate and manage formal letters using pre-made templates + user input, with storage on Google Drive and enhanced interactive chat for editing.
 
 ---
 
 ## 🧩 **Main Features & Flow**
 
-### **1. UI (User Interface)**
+### **1. Letter Generation**
+- **AI-powered letter generation** using OpenAI GPT models
+- **Template-based approach** with category-specific instructions
+- **Arabic language support** with formal letter formatting
+- **Member-specific customization** with sender information
 
-#### Components:
-- **Dropdown Menu**: Choose letter type/category (e.g., President, HR, Finance, etc.)
-- **Prompt Input Box**: User writes the purpose/details of the letter  
-  _Example: "اكتب خطاب لي رئيس مجلس الإدارة لتهنئة عيد الفطر"_
+### **2. Enhanced Interactive Chat System** 🆕
+- **Session-based conversations** with memory buffer
+- **Contextual letter editing** with conversation history
+- **Multi-turn dialogue** for refining letters
+- **Automatic session management** with cleanup
+- **Thread-safe operations** for concurrent users
 
-- **Generate Button**: Sends template + user prompt to AI for generating the letter
+### **3. Storage & Management**
+- **Google Drive integration** for file storage
+- **Google Sheets logging** for tracking and analytics
+- **PDF generation** with customizable templates
+- **Automated archiving** with metadata
 
-- **Letter Preview Section**:  
-  Display the generated letter and allow manual edits  
-  (e.g., WYSIWYG editor or simple text area with formatting options)
+---
 
-- **Save Button**:  
-  Once finalized, clicking "Save" will:
-  - Save the letter (PDF/Docx format) into a specific Google Drive folder
-  - Log metadata (Sheet name, Date, Time, Link) into a **Google Sheet** called `logs`
+## 🔥 **New: Enhanced Interactive Chat**
+
+The project now includes a powerful interactive chat system that allows:
+
+### **Session Management**
+- Create chat sessions with unique IDs
+- Maintain conversation context across multiple interactions
+- Automatic session expiration and cleanup
+- Thread-safe concurrent access
+
+### **Contextual Editing**
+```http
+POST /chat/edit-letter
+{
+    "session_id": "uuid",
+    "letter": "current letter text",
+    "feedback": "user feedback"
+}
+```
+
+### **Question & Answer**
+```http
+POST /chat/ask
+{
+    "session_id": "uuid", 
+    "question": "How can I make this letter more formal?",
+    "current_letter": "letter text"
+}
+```
+
+### **API Endpoints**
+- `POST /chat/session/create` - Create new session
+- `POST /chat/edit-letter` - Edit with context
+- `POST /chat/ask` - Ask questions
+- `GET /chat/session/info/{id}` - Get session info
+- `DELETE /chat/session/clear/{id}` - Clear session
+- `GET /chat/sessions/count` - Active sessions count
 
 ---
 
@@ -30,6 +71,8 @@
 - Choose the right template based on dropdown
 - Append user prompt and feed to AI model
 - Generate personalized letter with consistent tone and format
+- **Enhanced with memory**: Context-aware editing across conversations
+- **Strict instruction following**: Same guidelines as main generator
 - Return the letter as editable content in the UI
 
 ---
