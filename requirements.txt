@@ -1,4 +1,5 @@
 flask
+flask-cors
 langchain-community
 langchain-openai
 langchain
@@ -9,3 +10,7 @@ playwright
 pytz
 hijri-converter
 python-dotenv
+pydantic
+wkhtmltopdf
+pdfkit
+jinja2
