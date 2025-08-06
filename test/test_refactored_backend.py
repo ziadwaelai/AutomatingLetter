@@ -149,7 +149,7 @@ def test_flask_app():
     try:
         # Import Flask app
         sys.path.insert(0, os.path.dirname(__file__))
-        from new_app import create_app
+        from app import create_app
         
         app = create_app()
         

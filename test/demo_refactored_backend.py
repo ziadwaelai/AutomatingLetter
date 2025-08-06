@@ -90,7 +90,7 @@ def demo_flask_app():
     print("-" * 40)
     
     try:
-        from new_app import create_app
+        from app import create_app
         app = create_app()
         
         print(f"✅ Flask app created: {app.name}")

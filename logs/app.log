@@ -1007,3 +1007,155 @@ is_first
 2025-08-06 19:11:16,495 - werkzeug - INFO -  * Detected change in 'C:\\Users\\ziad.abdlhamed\\AppData\\Roaming\\Python\\Python313\\site-packages\\playwright\\_impl\\_frame.py', reloading
 2025-08-06 19:11:16,504 - werkzeug - INFO -  * Detected change in 'C:\\Users\\ziad.abdlhamed\\AppData\\Roaming\\Python\\Python313\\site-packages\\playwright\\_impl\\_page.py', reloading
 2025-08-06 19:11:17,673 - werkzeug - INFO -  * Restarting with watchdog (windowsapi)
+2025-08-06 19:11:21,881 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-06 19:11:21,915 - werkzeug - WARNING -  * Debugger is active!
+2025-08-06 19:11:21,924 - werkzeug - INFO -  * Debugger PIN: 862-217-201
+2025-08-06 19:11:30,466 - __main__ - INFO - POST http://localhost:5000/api/v1/archive/letter - 127.0.0.1
+2025-08-06 19:11:30,468 - src.api.archive_routes - INFO - Starting background archiving for letter ID: UNIQUE-ID
+2025-08-06 19:11:30,468 - src.api.archive_routes - INFO - Letter archiving initiated for ID: UNIQUE-ID
+2025-08-06 19:11:30,469 - src.utils.helpers - INFO - archive_letter executed in 0.002s
+2025-08-06 19:11:30,470 - __main__ - INFO - Response: 200 - archive.archive_letter
+2025-08-06 19:11:30,471 - werkzeug - INFO - 127.0.0.1 - - [06/Aug/2025 19:11:30] "POST /api/v1/archive/letter HTTP/1.1" 200 -
+2025-08-06 19:11:30,910 - src.services.enhanced_pdf_service - INFO - Enhanced PDF service initialized
+2025-08-06 19:11:30,911 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-08-06 19:11:30,911 - src.api.archive_routes - INFO - Generating PDF for letter ID: UNIQUE-ID
+2025-08-06 19:11:49,605 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-06 19:11:52,213 - src.services.enhanced_pdf_service - INFO - PDF generated successfully: Invitation_Letter_LET-20250806-91479.pdf (261003 bytes) in 0.00s
+2025-08-06 19:11:52,213 - src.api.archive_routes - INFO - PDF generated successfully: Invitation_Letter_LET-20250806-91479.pdf
+2025-08-06 19:11:52,214 - src.api.archive_routes - INFO - Uploading to Drive and logging for letter ID: UNIQUE-ID
+2025-08-06 19:11:52,836 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-08-06 19:11:57,491 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_UNIQUE-ID.pdf (ID: 1-MjegnhmgTc9qQDzgT-MJM-6Sbm-0Hcp)
+2025-08-06 19:12:02,485 - src.services.google_services - INFO - Successfully logged 1 entries to AI Letter Generating/Submissions
+2025-08-06 19:12:02,486 - src.utils.helpers - INFO - log_to_sheet executed in 4.994s
+2025-08-06 19:12:02,487 - src.services.drive_logger - INFO - Successfully archived letter UNIQUE-ID to Drive and logged to sheets
+2025-08-06 19:12:02,490 - src.api.archive_routes - INFO - Background archiving completed successfully for letter ID: UNIQUE-ID
+2025-08-06 19:12:02,490 - src.api.archive_routes - INFO - Drive URL: https://drive.google.com/file/d/1-MjegnhmgTc9qQDzgT-MJM-6Sbm-0Hcp/view?usp=drivesdk
+2025-08-06 19:13:20,178 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\demo_refactored_backend.py', reloading
+2025-08-06 19:13:20,189 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\legacy_backup\\LetterToPdf\\letterToPdf.py', reloading
+2025-08-06 19:13:20,241 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\legacy_backup\\ai_generator.py', reloading
+2025-08-06 19:13:20,244 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\legacy_backup\\drive_logger.py', reloading
+2025-08-06 19:13:20,245 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\legacy_backup\\example_client.py', reloading
+2025-08-06 19:13:20,247 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\legacy_backup\\google_services.py', reloading
+2025-08-06 19:13:20,249 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\legacy_backup\\n8n\\app.py', reloading
+2025-08-06 19:13:20,275 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\api\\letter_routes.py', reloading
+2025-08-06 19:13:20,317 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\letter_generator.py', reloading
+2025-08-06 19:13:20,327 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\utils\\exceptions.py', reloading
+2025-08-06 19:13:20,347 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\test_refactored_backend.py', reloading
+2025-08-06 19:13:21,627 - werkzeug - INFO -  * Restarting with watchdog (windowsapi)
+2025-08-06 19:13:25,680 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-06 19:13:25,712 - werkzeug - WARNING -  * Debugger is active!
+2025-08-06 19:13:25,719 - werkzeug - INFO -  * Debugger PIN: 862-217-201
+2025-08-06 19:16:34,584 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\legacy_backup\\test.py', reloading
+2025-08-06 19:16:34,597 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\LetterToPdf\\letterToPdf.py', reloading
+2025-08-06 19:16:34,656 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\demo_refactored_backend.py', reloading
+2025-08-06 19:16:34,657 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\test\\demo_refactored_backend.py', reloading
+2025-08-06 19:16:35,264 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_openai\\__init__.py', reloading
+2025-08-06 19:16:35,268 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\dotenv\\__init__.py', reloading
+2025-08-06 19:16:35,291 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\flask\\__init__.py', reloading
+2025-08-06 19:16:35,304 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_openai\\chat_models\\__init__.py', reloading
+2025-08-06 19:16:35,306 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_openai\\chat_models\\base.py', reloading
+2025-08-06 19:16:35,323 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\certifi\\__init__.py', reloading
+2025-08-06 19:16:35,327 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\openai\\__init__.py', reloading
+2025-08-06 19:16:35,330 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\_api\\deprecation.py', reloading
+2025-08-06 19:16:35,334 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\callbacks\\__init__.py', reloading
+2025-08-06 19:16:35,338 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\language_models\\chat_models.py', reloading
+2025-08-06 19:16:35,342 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\messages\\__init__.py', reloading
+2025-08-06 19:16:35,345 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\runnables\\__init__.py', reloading
+2025-08-06 19:16:35,349 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\utils\\utils.py', reloading
+2025-08-06 19:16:35,353 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\__init__.py', reloading
+2025-08-06 19:16:35,356 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\httpx\\__init__.py', reloading
+2025-08-06 19:16:35,367 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\_api\\__init__.py', reloading
+2025-08-06 19:16:35,370 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\caches.py', reloading
+2025-08-06 19:16:35,371 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\language_models\\base.py', reloading
+2025-08-06 19:16:35,375 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\prompt_values.py', reloading
+2025-08-06 19:16:35,378 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\rate_limiters.py', reloading
+2025-08-06 19:16:35,382 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\runnables\\base.py', reloading
+2025-08-06 19:16:35,384 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\runnables\\utils.py', reloading
+2025-08-06 19:16:35,392 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\_api\\beta_decorator.py', reloading
+2025-08-06 19:16:35,395 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\load\\serializable.py', reloading
+2025-08-06 19:16:35,399 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\fields.py', reloading
+2025-08-06 19:16:35,400 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\_migration.py', reloading
+2025-08-06 19:16:35,404 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic_core\\__init__.py', reloading
+2025-08-06 19:16:35,408 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic_core\\core_schema.py', reloading
+2025-08-06 19:16:35,410 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\aliases.py', reloading
+2025-08-06 19:16:35,412 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\config.py', reloading
+2025-08-06 19:16:35,413 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\errors.py', reloading
+2025-08-06 19:16:35,415 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\functional_validators.py', reloading
+2025-08-06 19:16:35,418 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\main.py', reloading
+2025-08-06 19:16:35,421 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\networks.py', reloading
+2025-08-06 19:16:35,433 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\types.py', reloading
+2025-08-06 19:16:35,436 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\deprecated\\class_validators.py', reloading
+2025-08-06 19:16:35,439 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\deprecated\\tools.py', reloading
+2025-08-06 19:16:35,443 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\_internal\\_repr.py', reloading
+2025-08-06 19:16:35,446 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\_internal\\_decorators.py', reloading
+2025-08-06 19:16:35,448 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\_internal\\_model_construction.py', reloading
+2025-08-06 19:16:35,453 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\_internal\\_utils.py', reloading
+2025-08-06 19:16:35,461 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain\\prompts\\__init__.py', reloading
+2025-08-06 19:16:35,462 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\annotated_types\\__init__.py', reloading
+2025-08-06 19:16:35,463 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\output_parsers\\__init__.py', reloading
+2025-08-06 19:16:35,464 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\_internal\\_internal_dataclass.py', reloading
+2025-08-06 19:16:35,467 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\_internal\\_generate_schema.py', reloading
+2025-08-06 19:16:35,474 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\messages\\base.py', reloading
+2025-08-06 19:16:35,476 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\messages\\utils.py', reloading
+2025-08-06 19:16:35,484 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\flask\\json\\__init__.py', reloading
+2025-08-06 19:16:35,486 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\flask\\app.py', reloading
+2025-08-06 19:16:35,488 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\flask\\blueprints.py', reloading
+2025-08-06 19:16:35,491 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\flask\\globals.py', reloading
+2025-08-06 19:16:35,492 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\flask\\wrappers.py', reloading
+2025-08-06 19:16:35,498 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\werkzeug\\wrappers\\__init__.py', reloading
+2025-08-06 19:16:35,501 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\werkzeug\\wrappers\\request.py', reloading
+2025-08-06 19:16:35,502 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\werkzeug\\wrappers\\response.py', reloading
+2025-08-06 19:16:35,504 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\werkzeug\\datastructures\\__init__.py', reloading
+2025-08-06 19:16:35,508 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\language_models\\__init__.py', reloading
+2025-08-06 19:16:35,509 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\werkzeug\\sansio\\response.py', reloading
+2025-08-06 19:16:35,512 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\flask\\typing.py', reloading
+2025-08-06 19:16:35,513 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\messages\\ai.py', reloading
+2025-08-06 19:16:35,515 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\runnables\\config.py', reloading
+2025-08-06 19:16:35,516 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\flask\\sansio\\app.py', reloading
+2025-08-06 19:16:35,519 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\flask\\sansio\\scaffold.py', reloading
+2025-08-06 19:16:35,520 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\v1\\__init__.py', reloading
+2025-08-06 19:16:35,521 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\flask\\sansio\\blueprints.py', reloading
+2025-08-06 19:16:35,524 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\dotenv\\main.py', reloading
+2025-08-06 19:16:35,526 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\werkzeug\\datastructures\\headers.py', reloading
+2025-08-06 19:16:35,531 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\werkzeug\\sansio\\request.py', reloading
+2025-08-06 19:16:35,533 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\output_parsers\\base.py', reloading
+2025-08-06 19:16:35,541 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\certifi\\core.py', reloading
+2025-08-06 19:16:35,543 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\callbacks\\base.py', reloading
+2025-08-06 19:16:35,544 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\prompts\\base.py', reloading
+2025-08-06 19:16:35,565 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\pydantic\\_internal\\_generics.py', reloading
+2025-08-06 19:16:35,580 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\hijri_converter\\__init__.py', reloading
+2025-08-06 19:16:35,584 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\playwright\\async_api\\__init__.py', reloading
+2025-08-06 19:16:35,588 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\messages\\human.py', reloading
+2025-08-06 19:16:35,596 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\prompts\\__init__.py', reloading
+2025-08-06 19:16:35,598 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\prompts\\prompt.py', reloading
+2025-08-06 19:16:35,600 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\.venv\\Lib\\site-packages\\langchain_core\\prompts\\string.py', reloading
+2025-08-06 19:16:35,896 - werkzeug - INFO -  * Restarting with watchdog (windowsapi)
+2025-08-06 19:16:40,437 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-06 19:16:40,474 - werkzeug - WARNING -  * Debugger is active!
+2025-08-06 19:16:40,483 - werkzeug - INFO -  * Debugger PIN: 862-217-201
+2025-08-06 19:16:43,486 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\test_chat.py', reloading
+2025-08-06 19:16:43,487 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\test\\test_chat.py', reloading
+2025-08-06 19:16:43,489 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\test\\test_chat.py', reloading
+2025-08-06 19:16:44,197 - werkzeug - INFO -  * Restarting with watchdog (windowsapi)
+2025-08-06 19:16:51,613 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-06 19:16:51,651 - werkzeug - WARNING -  * Debugger is active!
+2025-08-06 19:16:51,658 - werkzeug - INFO -  * Debugger PIN: 862-217-201
+2025-08-06 19:16:57,090 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\new_app.py', reloading
+2025-08-06 19:16:57,093 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\app.py', reloading
+2025-08-06 19:16:57,612 - werkzeug - INFO -  * Restarting with watchdog (windowsapi)
+2025-08-06 19:17:57,389 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-06 19:17:57,447 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://localhost:5000
+2025-08-06 19:17:57,447 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-06 19:17:57,456 - werkzeug - INFO -  * Restarting with stat
+2025-08-06 19:18:00,949 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-06 19:18:00,967 - werkzeug - WARNING -  * Debugger is active!
+2025-08-06 19:18:00,978 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-06 19:18:24,158 - __main__ - INFO - GET http://localhost:5000/health - 127.0.0.1
+2025-08-06 19:18:24,158 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
+2025-08-06 19:18:25,018 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
+2025-08-06 19:18:25,018 - src.services.chat_service - INFO - Started background cleanup thread
+2025-08-06 19:18:25,018 - src.services.chat_service - INFO - Chat service initialized
+2025-08-06 19:18:25,025 - src.services.pdf_service - INFO - PDF service initialized
+2025-08-06 19:18:25,028 - __main__ - INFO - Response: 200 - health_check
+2025-08-06 19:18:25,028 - werkzeug - INFO - 127.0.0.1 - - [06/Aug/2025 19:18:25] "GET /health HTTP/1.1" 200 -
