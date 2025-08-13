@@ -376,6 +376,77 @@ def handle_validation_error(error):
         "details": error.errors()
     }), 400
 
+@chat_bp.route('/memory/stats', methods=['GET'])
+@measure_performance
+def get_memory_stats():
+    """
+    Get memory service statistics.
+    
+    Returns:
+        Memory statistics including instruction counts and types
+    """
+    with ErrorContext("get_memory_stats"):
+        try:
+            from ..services import get_memory_service
+            memory_service = get_memory_service()
+            stats = memory_service.get_memory_stats()
+            
+            return jsonify({
+                "status": "success",
+                "data": stats
+            }), 200
+            
+        except Exception as e:
+            logger.error(f"Failed to get memory stats: {e}")
+            return build_error_response(
+                error="Failed to retrieve memory statistics",
+                details={"error_message": str(e)},
+                status_code=500
+            )
+
+@chat_bp.route('/memory/instructions', methods=['GET'])
+@measure_performance  
+def get_memory_instructions():
+    """
+    Get formatted memory instructions for a category/session.
+    
+    Query Parameters:
+        category: str - Letter category (optional)
+        session_id: str - Session ID (optional)
+        
+    Returns:
+        Formatted memory instructions
+    """
+    with ErrorContext("get_memory_instructions"):
+        try:
+            category = request.args.get('category')
+            session_id = request.args.get('session_id')
+            
+            from ..services import get_memory_service
+            memory_service = get_memory_service()
+            instructions_text = memory_service.format_instructions_for_prompt(
+                category=category,
+                session_id=session_id
+            )
+            
+            return jsonify({
+                "status": "success",
+                "data": {
+                    "instructions": instructions_text,
+                    "category": category,
+                    "session_id": session_id
+                }
+            }), 200
+            
+        except Exception as e:
+            logger.error(f"Failed to get memory instructions: {e}")
+            return build_error_response(
+                error="Failed to retrieve memory instructions",
+                details={"error_message": str(e)},
+                status_code=500
+            )
+
+# Error handlers
 @chat_bp.errorhandler(404)
 def handle_not_found(error):
     """Handle 404 errors."""

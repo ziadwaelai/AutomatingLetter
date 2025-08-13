@@ -43,6 +43,7 @@ class LetterGenerationContext:
     previous_letter_content: Optional[str] = None
     previous_letter_id: Optional[str] = None
     letter_id: Optional[str] = None
+    session_id: Optional[str] = None
     
     def __post_init__(self):
         """Validate and process context data."""
@@ -79,6 +80,19 @@ class ArabicLetterGenerationService:
         
         logger.info(f"Using AI model: {self.config.ai.model_name}")
     
+    def _get_memory_instructions(self, context: LetterGenerationContext) -> str:
+        """Get formatted memory instructions for the prompt."""
+        try:
+            from .memory_service import get_memory_service
+            memory_service = get_memory_service()
+            return memory_service.format_instructions_for_prompt(
+                category=context.category,
+                session_id=context.session_id
+            )
+        except Exception as e:
+            logger.warning(f"Failed to get memory instructions: {e}")
+            return ""
+    
     def _get_prompt_template(self) -> PromptTemplate:
         """
         Creates and returns the comprehensive prompt template for letter generation.
@@ -104,6 +118,8 @@ class ArabicLetterGenerationService:
    - معرف الخطاب: {letter_id}
    - تاريخ اليوم: {current_date}
 7. {previous_letter_info}
+
+{memory_instructions}
 
 # تعليمات صارمة يجب اتباعها
 1. ✅ **يجب أن يستند الخطاب فقط إلى "المحتوى الأساسي".** لا تستخدم أي معلومة أو فكرة من خارج هذا القسم.
@@ -199,7 +215,8 @@ class ArabicLetterGenerationService:
                 "member_info": context.member_info,
                 "letter_id": context.letter_id,
                 "current_date": get_current_arabic_date(),
-                "previous_letter_info": self._build_previous_letter_info(context)
+                "previous_letter_info": self._build_previous_letter_info(context),
+                "memory_instructions": self._get_memory_instructions(context)
             }
             
             logger.info(f"Generating letter with ID: {context.letter_id}")

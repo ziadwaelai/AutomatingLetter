@@ -10,16 +10,17 @@ from enum import Enum
 
 class LetterCategory(str, Enum):
     """Enumeration of letter categories."""
-    GENERAL = "General"
-    PRESIDENT = "President"
-    HR = "HR"
-    FINANCE = "Finance"
-    ACADEMIC = "Academic"
-    OFFICIAL = "Official"
-    INVITATION = "Invitation"
-    CONGRATULATION = "Congratulation"
-    REQUEST = "Request"
-    COMPLAINT = "Complaint"
+    GENERAL = "عام"
+    FINANCE = "مالي"
+    REPLAY = "رد"
+    NEW_LETTER = "رسالة جديدة"
+    INVITATION = "دعوة"
+    CONGRATULATION = "تهنئة"
+    REQUEST = "طلب"
+    CONFRANCE = "مؤتمر"
+    COMPLAINT = "شكوى"
+    THANK_YOU = "شكر"
+    SUPPLEMENTARY = "خطاب إلحاقي"
 
 class LetterStatus(str, Enum):
     """Enumeration of letter processing status."""

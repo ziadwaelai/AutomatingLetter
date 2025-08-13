@@ -14,6 +14,7 @@ from .pdf_service import PDFService, get_pdf_service
 from .enhanced_pdf_service import EnhancedPDFService, get_enhanced_pdf_service
 from .drive_logger import DriveLoggerService, get_drive_logger_service
 from .chat_service import ChatService, get_chat_service
+from .memory_service import EnhancedMemoryService, get_memory_service
 
 __all__ = [
     # Letter Generation
@@ -40,6 +41,10 @@ __all__ = [
     # Chat Services
     "ChatService",
     "get_chat_service",
+    
+    # Memory Services
+    "EnhancedMemoryService",
+    "get_memory_service",
     
     # Helper Functions
     "get_letter_config_by_category",

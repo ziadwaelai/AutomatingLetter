@@ -75,6 +75,9 @@ class ChatService:
         self._total_messages = 0
         self._active_sessions = 0
         
+        # Memory service (lazy import to avoid circular dependency)
+        self._memory_service = None
+        
         # Start background cleanup
         self._start_cleanup_thread()
         
@@ -92,6 +95,16 @@ class ChatService:
         self.cleanup_thread = threading.Thread(target=cleanup_worker, daemon=True)
         self.cleanup_thread.start()
         logger.info("Started background cleanup thread")
+    
+    def _get_memory_service(self):
+        """Get memory service instance (lazy import to avoid circular dependency)."""
+        if self._memory_service is None:
+            try:
+                from .memory_service import get_memory_service
+                self._memory_service = get_memory_service()
+            except Exception as e:
+                logger.warning(f"Failed to load memory service: {e}")
+        return self._memory_service
     
     @service_error_handler
     def create_session(
@@ -192,6 +205,15 @@ class ChatService:
             
             session.messages.append(user_message)
             
+            # Process message for long-term memory (background)
+            memory_service = self._get_memory_service()
+            if memory_service:
+                memory_service.process_message_async(
+                    session_id=session_id,
+                    message=message,
+                    context=session.context
+                )
+            
             # Create editing prompt
             editing_prompt = self._create_editing_prompt(
                 session=session,
@@ -213,7 +235,8 @@ class ChatService:
                     reference_letter=current_letter,
                     category="تحرير",
                     writing_instructions="قم بتحرير الخطاب وفقاً للطلب مع المحافظة على الطابع الرسمي",
-                    previous_letter_content=current_letter
+                    previous_letter_content=current_letter,
+                    session_id=session_id
                 )
                 
                 # Generate edited letter
@@ -473,6 +496,11 @@ class ChatService:
             
             del self.sessions[session_id]
             self._active_sessions -= 1
+            
+            # Clear associated memory
+            memory_service = self._get_memory_service()
+            if memory_service:
+                memory_service.clear_session_memory(session_id)
             
             logger.info(f"Deleted session: {session_id}")
             return True

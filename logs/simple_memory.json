@@ -1,0 +1,136 @@
+{
+  "instructions": [
+    {
+      "id": "instr_style_20250813_141502",
+      "instruction_text": "اكتب خطابات مختصره",
+      "instruction_type": "style",
+      "normalized_text": "اكتب خطابات مختصره",
+      "created_at": "2025-08-13T14:15:02.670002",
+      "last_used": "2025-08-13T15:21:09.292464",
+      "usage_count": 37,
+      "is_active": true
+    },
+    {
+      "id": "instr_style_20250813_141505",
+      "instruction_text": "اكتب باسلوب رسمي ومهذب",
+      "instruction_type": "style",
+      "normalized_text": "اكتب باسلوب رسمي ومهذب",
+      "created_at": "2025-08-13T14:15:05.549900",
+      "last_used": "2025-08-13T15:21:09.292464",
+      "usage_count": 36,
+      "is_active": true
+    },
+    {
+      "id": "instr_style_20250813_142126",
+      "instruction_text": "اجعل الخطاب مهذباً ورسمياً",
+      "instruction_type": "style",
+      "normalized_text": "اكتب بأسلوب مهذب",
+      "created_at": "2025-08-13T14:21:26.198117",
+      "last_used": "2025-08-13T15:21:09.292464",
+      "usage_count": 32,
+      "is_active": true
+    },
+    {
+      "id": "instr_style_20250813_143321",
+      "instruction_text": "اجعل الخطاب اقصر",
+      "instruction_type": "style",
+      "normalized_text": "اجعل الخطاب اقصر",
+      "created_at": "2025-08-13T14:33:21.675079",
+      "last_used": "2025-08-13T15:15:01.098421",
+      "usage_count": 3,
+      "is_active": true
+    },
+    {
+      "id": "instr_format_20250813_141503",
+      "instruction_text": "استخدم فقرات قصيره في كل الخطابات",
+      "instruction_type": "format",
+      "normalized_text": "استخدم فقرات قصيره في كل الخطابات",
+      "created_at": "2025-08-13T14:15:03.670219",
+      "last_used": "2025-08-13T15:21:09.292464",
+      "usage_count": 36,
+      "is_active": true
+    },
+    {
+      "id": "instr_content_20250813_141504",
+      "instruction_text": "اضف دعوه للتواصل في نهايه كل خطاب",
+      "instruction_type": "content",
+      "normalized_text": "اضف دعوه للتواصل في نهايه كل خطاب",
+      "created_at": "2025-08-13T14:15:04.616711",
+      "last_used": "2025-08-13T15:21:09.292464",
+      "usage_count": 36,
+      "is_active": true
+    },
+    {
+      "id": "instr_content_20250813_143158",
+      "instruction_text": "اضف فقره شكر وتقدير",
+      "instruction_type": "content",
+      "normalized_text": "اضف فقره شكر وتقدير",
+      "created_at": "2025-08-13T14:31:58.521317",
+      "last_used": "2025-08-13T14:31:58.521317",
+      "usage_count": 0,
+      "is_active": true
+    },
+    {
+      "id": "instr_style_20250813_144508",
+      "instruction_text": "اكتب الخطاب بأسلوب مختصر",
+      "instruction_type": "style",
+      "normalized_text": "اكتب الخطاب باسلوب مختصر",
+      "created_at": "2025-08-13T14:45:08.773858",
+      "last_used": "2025-08-13T14:45:08.773858",
+      "usage_count": 0,
+      "is_active": true
+    },
+    {
+      "id": "instr_format_20250813_144509",
+      "instruction_text": "استخدم فقرات قصيرة",
+      "instruction_type": "format",
+      "normalized_text": "استخدم فقرات قصيره",
+      "created_at": "2025-08-13T14:45:09.116316",
+      "last_used": "2025-08-13T14:45:09.116317",
+      "usage_count": 0,
+      "is_active": true
+    },
+    {
+      "id": "instr_content_20250813_144511",
+      "instruction_text": "أضف شكر في بداية الخطاب",
+      "instruction_type": "content",
+      "normalized_text": "اضف شكر في بدايه الخطاب",
+      "created_at": "2025-08-13T14:45:11.383451",
+      "last_used": "2025-08-13T14:45:11.383452",
+      "usage_count": 0,
+      "is_active": true
+    },
+    {
+      "id": "instr_style_20250813_151620",
+      "instruction_text": "اكتب الخطابات بوضوح",
+      "instruction_type": "style",
+      "normalized_text": "اكتب الخطابات بوضوح",
+      "created_at": "2025-08-13T15:16:20.740767",
+      "last_used": "2025-08-13T15:18:58.658495",
+      "usage_count": 1,
+      "is_active": true
+    },
+    {
+      "id": "instr_content_20250813_151830",
+      "instruction_text": "اكتب الخطابات بكلمة نت في البداية",
+      "instruction_type": "content",
+      "normalized_text": "اكتب الخطابات بكلمه نت في البدايه",
+      "created_at": "2025-08-13T15:18:30.740017",
+      "last_used": "2025-08-13T15:18:30.740017",
+      "usage_count": 0,
+      "is_active": true
+    },
+    {
+      "id": "instr_style_20250813_151951",
+      "instruction_text": "اكتب خطابات واضحة",
+      "instruction_type": "style",
+      "normalized_text": "اكتب خطابات واضحه",
+      "created_at": "2025-08-13T15:19:51.242726",
+      "last_used": "2025-08-13T15:21:10.390033",
+      "usage_count": 3,
+      "is_active": true
+    }
+  ],
+  "last_updated": "2025-08-13T15:21:10.392094",
+  "version": "2.0-simplified"
+}
