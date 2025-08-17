@@ -569,3 +569,11 @@
 2025-08-17 16:46:16,288 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 16:46:16] "POST /api/v1/letter/validate HTTP/1.1" 200 -
 2025-08-17 16:47:45,466 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\app.py', reloading
 2025-08-17 16:47:45,800 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:48:40,887 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-08-17 16:48:40,887 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-17 16:48:40,896 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:48:43,469 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:48:43,481 - werkzeug - INFO -  * Debugger PIN: 129-536-069
