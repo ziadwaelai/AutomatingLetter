@@ -552,3 +552,20 @@
 2025-08-17 16:28:56,833 - __main__ - INFO - Starting development server on localhost:5000
 2025-08-17 16:28:56,849 - werkzeug - WARNING -  * Debugger is active!
 2025-08-17 16:28:56,856 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 16:42:02,849 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\test_session_timeout.py', reloading
+2025-08-17 16:42:04,229 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:42:08,412 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:42:08,435 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:42:08,447 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 16:44:32,270 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\app.py', reloading
+2025-08-17 16:44:32,472 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:44:36,072 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:44:36,079 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 16:46:15,386 - __main__ - INFO - POST http://localhost:5000/api/v1/letter/validate - 127.0.0.1
+2025-08-17 16:46:15,387 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
+2025-08-17 16:46:16,284 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
+2025-08-17 16:46:16,284 - src.utils.helpers - INFO - validate_letter executed in 0.897s
+2025-08-17 16:46:16,288 - __main__ - INFO - Response: 200 - letter.validate_letter
+2025-08-17 16:46:16,288 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 16:46:16] "POST /api/v1/letter/validate HTTP/1.1" 200 -
+2025-08-17 16:47:45,466 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\app.py', reloading
+2025-08-17 16:47:45,800 - werkzeug - INFO -  * Restarting with stat
