@@ -45,7 +45,7 @@ class AIConfig:
 class ChatConfig:
     """Interactive chat configuration settings."""
     memory_window: int = 10
-    session_timeout_minutes: int = 30
+    session_timeout_minutes: int = 60  # Changed to 1 hour (60 minutes)
     cleanup_interval_minutes: int = 5
     max_concurrent_sessions: int = 100
     
@@ -126,7 +126,7 @@ class AppConfig:
         self.cors_origins = os.getenv("CORS_ORIGINS", "*").split(",")
         
         # Chat settings (aliases for easier access)
-        self.chat_session_timeout_minutes = self.chat.session_timeout_minutes
+        self.chat_session_timeout_minutes = int(os.getenv("CHAT_SESSION_TIMEOUT_MINUTES", self.chat.session_timeout_minutes))
         self.chat_max_memory_size = self.chat.memory_window
         
         # Logging settings

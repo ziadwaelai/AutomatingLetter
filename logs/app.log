@@ -537,3 +537,18 @@
 2025-08-17 16:20:51,885 - __main__ - INFO - Starting development server on localhost:5000
 2025-08-17 16:20:51,910 - werkzeug - WARNING -  * Debugger is active!
 2025-08-17 16:20:51,923 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 16:25:50,917 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\config\\settings.py', reloading
+2025-08-17 16:25:51,138 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:25:54,513 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:25:54,534 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:25:54,541 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 16:26:15,964 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\config\\settings.py', reloading
+2025-08-17 16:26:16,166 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:26:19,168 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:26:19,184 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:26:19,189 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 16:28:53,779 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\config\\settings.py', reloading
+2025-08-17 16:28:53,993 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:28:56,833 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:28:56,849 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:28:56,856 - werkzeug - INFO -  * Debugger PIN: 129-536-069

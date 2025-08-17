@@ -39,6 +39,7 @@ All endpoints return standardized error responses:
 - Default request timeout: 30 seconds
 - Max content length: 16MB
 - Concurrent sessions: Up to 100 active chat sessions
+- Session timeout: 60 minutes (1 hour)
 
 ## Health Monitoring
 The API includes comprehensive health check endpoints at:
@@ -190,7 +191,7 @@ Creates a new chat session for interactive letter editing.
   "status": "success",
   "session_id": "session_20250817_001",
   "message": "Chat session created successfully",
-  "expires_in": 1800
+  "expires_in": 3600
 }
 ```
 
@@ -490,7 +491,7 @@ Comprehensive health check for all services.
 
 ---
 
-## Environment Configuration
+## Configuration
 
 ### Required Environment Variables
 ```bash
@@ -527,7 +528,7 @@ MAX_WORKERS=4
 REQUEST_TIMEOUT=30
 
 # Chat Settings
-CHAT_SESSION_TIMEOUT=30
+CHAT_SESSION_TIMEOUT_MINUTES=60  # Session timeout in minutes (default: 60 = 1 hour)
 CHAT_MAX_MEMORY_SIZE=10
 ```
 
