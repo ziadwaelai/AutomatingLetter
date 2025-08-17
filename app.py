@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 from src.config import get_config, setup_logging
 from src.api import register_api_routes
-from src.services import get_chat_service, get_letter_service, get_pdf_service, get_sheets_service
+from src.services import get_chat_service, get_letter_service, get_enhanced_pdf_service, get_sheets_service
 from src.utils import build_error_response
 
 # Initialize logging
@@ -70,7 +70,7 @@ def create_app() -> Flask:
                 services_status['chat_service'] = f'unhealthy: {str(e)}'
             
             try:
-                get_pdf_service().get_service_stats()
+                get_enhanced_pdf_service().get_service_stats()
             except Exception as e:
                 services_status['pdf_service'] = f'unhealthy: {str(e)}'
             
@@ -111,7 +111,8 @@ def create_app() -> Flask:
                 'health': '/health',
                 'letter_generation': '/api/v1/letter',
                 'chat_editing': '/api/v1/chat',
-                'pdf_generation': '/api/v1/pdf'
+                'pdf_generation': '/api/v1/pdf',
+                'archive': '/api/v1/archive'
             },
             'documentation': {
                 'swagger': '/api/docs',

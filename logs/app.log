@@ -206,3 +206,334 @@
 2025-08-13 15:22:37,905 - src.utils.helpers - INFO - edit_letter_chat executed in 0.000s
 2025-08-13 15:22:37,905 - __main__ - INFO - Response: 404 - chat.edit_letter_chat
 2025-08-13 15:22:37,909 - werkzeug - INFO - 127.0.0.1 - - [13/Aug/2025 15:22:37] "[33mPOST /api/v1/chat/sessions/0e879322-e942-4304-bc36-b0f7674c64e8/edit HTTP/1.1[0m" 404 -
+2025-08-13 23:19:21,899 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:19:22,050 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://localhost:5000
+2025-08-13 23:19:22,050 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-13 23:19:22,074 - werkzeug - INFO -  * Restarting with stat
+2025-08-13 23:19:25,437 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:19:25,452 - werkzeug - WARNING -  * Debugger is active!
+2025-08-13 23:19:25,456 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-13 23:19:40,307 - __main__ - INFO - GET http://localhost:5000/health - 127.0.0.1
+2025-08-13 23:19:40,308 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
+2025-08-13 23:19:40,720 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
+2025-08-13 23:19:40,720 - src.services.chat_service - INFO - Started background cleanup thread
+2025-08-13 23:19:40,720 - src.services.chat_service - INFO - Chat service initialized
+2025-08-13 23:19:40,720 - src.services.pdf_service - INFO - PDF service initialized
+2025-08-13 23:19:40,737 - __main__ - INFO - Response: 200 - health_check
+2025-08-13 23:19:40,738 - werkzeug - INFO - 127.0.0.1 - - [13/Aug/2025 23:19:40] "GET /health HTTP/1.1" 200 -
+2025-08-13 23:20:04,770 - __main__ - INFO - GET http://localhost:5000/api/v1/chat/memory/stats - 127.0.0.1
+2025-08-13 23:20:04,801 - src.services.memory_service - INFO - Loaded 13 instructions from simplified memory
+2025-08-13 23:20:04,805 - src.services.memory_service - INFO - Enhanced Memory service initialized
+2025-08-13 23:20:04,806 - src.utils.helpers - INFO - get_memory_stats executed in 0.036s
+2025-08-13 23:20:04,806 - __main__ - INFO - Response: 200 - chat.get_memory_stats
+2025-08-13 23:20:04,806 - werkzeug - INFO - 127.0.0.1 - - [13/Aug/2025 23:20:04] "GET /api/v1/chat/memory/stats HTTP/1.1" 200 -
+2025-08-13 23:20:26,615 - __main__ - INFO - GET http://localhost:5000/api/v1/chat/memory/instructions - 127.0.0.1
+2025-08-13 23:20:26,620 - src.utils.helpers - INFO - get_memory_instructions executed in 0.004s
+2025-08-13 23:20:26,620 - __main__ - INFO - Response: 200 - chat.get_memory_instructions
+2025-08-13 23:20:26,620 - werkzeug - INFO - 127.0.0.1 - - [13/Aug/2025 23:20:26] "GET /api/v1/chat/memory/instructions HTTP/1.1" 200 -
+2025-08-13 23:20:43,469 - __main__ - INFO - POST http://localhost:5000/api/v1/chat/sessions - 127.0.0.1
+2025-08-13 23:20:43,469 - src.services.chat_service - INFO - Created chat session: e31abfc5-3dc2-4d16-b91a-c5db06438e58
+2025-08-13 23:20:43,469 - src.api.chat_routes - INFO - Created chat session: e31abfc5-3dc2-4d16-b91a-c5db06438e58
+2025-08-13 23:20:43,469 - src.utils.helpers - INFO - create_chat_session executed in 0.000s
+2025-08-13 23:20:43,469 - __main__ - INFO - Response: 201 - chat.create_chat_session
+2025-08-13 23:20:43,469 - werkzeug - INFO - 127.0.0.1 - - [13/Aug/2025 23:20:43] "[35m[1mPOST /api/v1/chat/sessions HTTP/1.1[0m" 201 -
+2025-08-13 23:20:59,552 - __main__ - INFO - POST http://localhost:5000/api/v1/chat/sessions/e31abfc5-3dc2-4d16-b91a-c5db06438e58/edit - 127.0.0.1
+2025-08-13 23:20:59,557 - src.services.letter_generator - INFO - Generating letter with ID: LET-20250813-70928
+2025-08-13 23:21:02,223 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-13 23:21:11,019 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-13 23:21:11,056 - src.services.letter_generator - INFO - Letter generated successfully: LET-20250813-70928
+2025-08-13 23:21:11,057 - src.utils.helpers - INFO - generate_letter executed in 11.503s
+2025-08-13 23:21:11,057 - src.services.chat_service - INFO - Processed edit request for session e31abfc5-3dc2-4d16-b91a-c5db06438e58 in 0.00s
+2025-08-13 23:21:11,057 - src.api.chat_routes - INFO - Processed chat edit for session e31abfc5-3dc2-4d16-b91a-c5db06438e58
+2025-08-13 23:21:11,057 - src.utils.helpers - INFO - edit_letter_chat executed in 11.506s
+2025-08-13 23:21:11,057 - __main__ - INFO - Response: 200 - chat.edit_letter_chat
+2025-08-13 23:21:11,057 - werkzeug - INFO - 127.0.0.1 - - [13/Aug/2025 23:21:11] "POST /api/v1/chat/sessions/e31abfc5-3dc2-4d16-b91a-c5db06438e58/edit HTTP/1.1" 200 -
+2025-08-13 23:23:43,149 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\memory_service.py', reloading
+2025-08-13 23:23:43,540 - werkzeug - INFO -  * Restarting with stat
+2025-08-13 23:23:46,909 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:23:46,942 - werkzeug - WARNING -  * Debugger is active!
+2025-08-13 23:23:46,949 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-13 23:23:57,124 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\memory_service.py', reloading
+2025-08-13 23:23:57,329 - werkzeug - INFO -  * Restarting with stat
+2025-08-13 23:24:00,373 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:24:00,390 - werkzeug - WARNING -  * Debugger is active!
+2025-08-13 23:24:00,401 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-13 23:24:03,983 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\memory_service.py', reloading
+2025-08-13 23:24:04,249 - werkzeug - INFO -  * Restarting with stat
+2025-08-13 23:24:07,067 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:24:07,079 - werkzeug - WARNING -  * Debugger is active!
+2025-08-13 23:24:07,090 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-13 23:24:17,299 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\memory_service.py', reloading
+2025-08-13 23:24:17,507 - werkzeug - INFO -  * Restarting with stat
+2025-08-13 23:24:20,214 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:24:20,230 - werkzeug - WARNING -  * Debugger is active!
+2025-08-13 23:24:20,236 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-13 23:24:25,993 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\memory_service.py', reloading
+2025-08-13 23:24:26,189 - werkzeug - INFO -  * Restarting with stat
+2025-08-13 23:24:29,642 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:24:29,659 - werkzeug - WARNING -  * Debugger is active!
+2025-08-13 23:24:29,666 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-13 23:24:36,522 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\memory_service.py', reloading
+2025-08-13 23:24:36,727 - werkzeug - INFO -  * Restarting with stat
+2025-08-13 23:24:39,701 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:24:39,725 - werkzeug - WARNING -  * Debugger is active!
+2025-08-13 23:24:39,730 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-13 23:24:42,153 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\memory_service.py', reloading
+2025-08-13 23:24:42,389 - werkzeug - INFO -  * Restarting with stat
+2025-08-13 23:24:46,166 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:24:46,183 - werkzeug - WARNING -  * Debugger is active!
+2025-08-13 23:24:46,188 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-13 23:24:49,754 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\memory_service.py', reloading
+2025-08-13 23:24:49,946 - werkzeug - INFO -  * Restarting with stat
+2025-08-13 23:24:52,865 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:24:52,881 - werkzeug - WARNING -  * Debugger is active!
+2025-08-13 23:24:52,885 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-13 23:24:55,327 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\memory_service.py', reloading
+2025-08-13 23:24:55,562 - werkzeug - INFO -  * Restarting with stat
+2025-08-13 23:24:58,724 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:24:58,738 - werkzeug - WARNING -  * Debugger is active!
+2025-08-13 23:24:58,738 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-13 23:25:02,282 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\memory_service.py', reloading
+2025-08-13 23:25:02,499 - werkzeug - INFO -  * Restarting with stat
+2025-08-13 23:25:05,664 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:25:05,680 - werkzeug - WARNING -  * Debugger is active!
+2025-08-13 23:25:05,684 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-13 23:28:28,598 - __main__ - INFO - GET http://localhost:5000/api/v1/letters/categories - 127.0.0.1
+2025-08-13 23:28:28,598 - __main__ - INFO - Response: 404 - None
+2025-08-13 23:28:28,598 - werkzeug - INFO - 127.0.0.1 - - [13/Aug/2025 23:28:28] "[33mGET /api/v1/letters/categories HTTP/1.1[0m" 404 -
+2025-08-13 23:28:44,534 - __main__ - INFO - GET http://localhost:5000/api/v1/letters - 127.0.0.1
+2025-08-13 23:28:44,535 - __main__ - INFO - Response: 404 - None
+2025-08-13 23:28:44,535 - werkzeug - INFO - 127.0.0.1 - - [13/Aug/2025 23:28:44] "[33mGET /api/v1/letters HTTP/1.1[0m" 404 -
+2025-08-13 23:29:52,544 - __main__ - INFO - POST http://localhost:5000/api/v1/letter/generate - 127.0.0.1
+2025-08-13 23:29:52,910 - src.utils.helpers - INFO - generate_letter executed in 0.366s
+2025-08-13 23:29:52,917 - __main__ - INFO - Response: 400 - letter.generate_letter
+2025-08-13 23:29:52,917 - werkzeug - INFO - 127.0.0.1 - - [13/Aug/2025 23:29:52] "[31m[1mPOST /api/v1/letter/generate HTTP/1.1[0m" 400 -
+2025-08-13 23:30:02,290 - __main__ - INFO - POST http://localhost:5000/api/v1/letter/generate - 127.0.0.1
+2025-08-13 23:30:02,297 - src.utils.helpers - INFO - generate_letter executed in 0.007s
+2025-08-13 23:30:02,298 - __main__ - INFO - Response: 400 - letter.generate_letter
+2025-08-13 23:30:02,298 - werkzeug - INFO - 127.0.0.1 - - [13/Aug/2025 23:30:02] "[31m[1mPOST /api/v1/letter/generate HTTP/1.1[0m" 400 -
+2025-08-13 23:35:00,846 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\memory_service.py', reloading
+2025-08-13 23:35:01,079 - werkzeug - INFO -  * Restarting with stat
+2025-08-13 23:53:11,358 - src.services.memory_service - INFO - Loaded 16 instructions from perfect memory
+2025-08-13 23:53:11,358 - src.services.memory_service - INFO - AutomatingLetter optimizations applied successfully
+2025-08-13 23:53:11,358 - src.services.memory_service - INFO - PERFECT AutomatingLetter Memory initialized with 16 instructions
+2025-08-13 23:56:11,400 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:56:11,450 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://localhost:5000
+2025-08-13 23:56:11,450 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-13 23:56:11,453 - werkzeug - INFO -  * Restarting with stat
+2025-08-13 23:56:13,986 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:56:14,002 - werkzeug - WARNING -  * Debugger is active!
+2025-08-13 23:56:14,012 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-13 23:57:37,790 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\test_live_workflow.py', reloading
+2025-08-13 23:57:37,994 - werkzeug - INFO -  * Restarting with stat
+2025-08-13 23:57:40,733 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-13 23:57:40,750 - werkzeug - WARNING -  * Debugger is active!
+2025-08-13 23:57:40,755 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 15:41:05,646 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 15:41:05,848 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://localhost:5000
+2025-08-17 15:41:05,848 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-17 15:41:05,863 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 15:41:08,857 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 15:41:08,874 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 15:41:08,879 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 15:45:21,170 - __main__ - INFO - GET http://localhost:5000/ - 127.0.0.1
+2025-08-17 15:45:21,170 - __main__ - INFO - Response: 200 - root
+2025-08-17 15:45:21,172 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:45:21] "GET / HTTP/1.1" 200 -
+2025-08-17 15:45:23,221 - __main__ - INFO - POST http://localhost:5000/api/chat - 127.0.0.1
+2025-08-17 15:45:23,222 - __main__ - INFO - Response: 404 - None
+2025-08-17 15:45:23,223 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:45:23] "[33mPOST /api/chat HTTP/1.1[0m" 404 -
+2025-08-17 15:45:26,277 - __main__ - INFO - POST http://localhost:5000/api/chat - 127.0.0.1
+2025-08-17 15:45:26,277 - __main__ - INFO - Response: 404 - None
+2025-08-17 15:45:26,277 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:45:26] "[33mPOST /api/chat HTTP/1.1[0m" 404 -
+2025-08-17 15:45:29,356 - __main__ - INFO - POST http://localhost:5000/api/chat - 127.0.0.1
+2025-08-17 15:45:29,357 - __main__ - INFO - Response: 404 - None
+2025-08-17 15:45:29,357 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:45:29] "[33mPOST /api/chat HTTP/1.1[0m" 404 -
+2025-08-17 15:45:32,401 - __main__ - INFO - GET http://localhost:5000/api/memory/stats - 127.0.0.1
+2025-08-17 15:45:32,402 - __main__ - INFO - Response: 404 - None
+2025-08-17 15:45:32,402 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:45:32] "[33mGET /api/memory/stats HTTP/1.1[0m" 404 -
+2025-08-17 15:45:34,475 - __main__ - INFO - POST http://localhost:5000/api/generate-letter - 127.0.0.1
+2025-08-17 15:45:34,475 - __main__ - INFO - Response: 404 - None
+2025-08-17 15:45:34,475 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:45:34] "[33mPOST /api/generate-letter HTTP/1.1[0m" 404 -
+2025-08-17 15:45:36,519 - __main__ - INFO - GET http://localhost:5000/api/memory/stats - 127.0.0.1
+2025-08-17 15:45:36,520 - __main__ - INFO - Response: 404 - None
+2025-08-17 15:45:36,520 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:45:36] "[33mGET /api/memory/stats HTTP/1.1[0m" 404 -
+2025-08-17 15:46:33,694 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\memory_service.py', reloading
+2025-08-17 15:46:33,891 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 15:46:37,174 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 15:46:37,194 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 15:46:37,200 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 15:46:45,930 - __main__ - INFO - GET http://localhost:5000/ - 127.0.0.1
+2025-08-17 15:46:45,930 - __main__ - INFO - Response: 200 - root
+2025-08-17 15:46:45,931 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:46:45] "GET / HTTP/1.1" 200 -
+2025-08-17 15:46:47,999 - __main__ - INFO - POST http://localhost:5000/api/chat - 127.0.0.1
+2025-08-17 15:46:47,999 - __main__ - INFO - Response: 404 - None
+2025-08-17 15:46:48,000 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:46:48] "[33mPOST /api/chat HTTP/1.1[0m" 404 -
+2025-08-17 15:46:51,064 - __main__ - INFO - POST http://localhost:5000/api/chat - 127.0.0.1
+2025-08-17 15:46:51,064 - __main__ - INFO - Response: 404 - None
+2025-08-17 15:46:51,064 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:46:51] "[33mPOST /api/chat HTTP/1.1[0m" 404 -
+2025-08-17 15:46:54,132 - __main__ - INFO - POST http://localhost:5000/api/chat - 127.0.0.1
+2025-08-17 15:46:54,132 - __main__ - INFO - Response: 404 - None
+2025-08-17 15:46:54,132 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:46:54] "[33mPOST /api/chat HTTP/1.1[0m" 404 -
+2025-08-17 15:46:57,200 - __main__ - INFO - GET http://localhost:5000/api/memory/stats - 127.0.0.1
+2025-08-17 15:46:57,201 - __main__ - INFO - Response: 404 - None
+2025-08-17 15:46:57,201 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:46:57] "[33mGET /api/memory/stats HTTP/1.1[0m" 404 -
+2025-08-17 15:46:59,259 - __main__ - INFO - POST http://localhost:5000/api/generate-letter - 127.0.0.1
+2025-08-17 15:46:59,259 - __main__ - INFO - Response: 404 - None
+2025-08-17 15:46:59,259 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:46:59] "[33mPOST /api/generate-letter HTTP/1.1[0m" 404 -
+2025-08-17 15:47:01,298 - __main__ - INFO - GET http://localhost:5000/api/memory/stats - 127.0.0.1
+2025-08-17 15:47:01,298 - __main__ - INFO - Response: 404 - None
+2025-08-17 15:47:01,298 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:47:01] "[33mGET /api/memory/stats HTTP/1.1[0m" 404 -
+2025-08-17 15:48:12,212 - __main__ - INFO - GET http://localhost:5000/ - 127.0.0.1
+2025-08-17 15:48:12,214 - __main__ - INFO - Response: 200 - root
+2025-08-17 15:48:12,214 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:48:12] "GET / HTTP/1.1" 200 -
+2025-08-17 15:48:26,880 - __main__ - INFO - GET http://localhost:5000/api/docs - 127.0.0.1
+2025-08-17 15:48:26,880 - __main__ - INFO - Response: 404 - None
+2025-08-17 15:48:26,880 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:48:26] "[33mGET /api/docs HTTP/1.1[0m" 404 -
+2025-08-17 15:48:31,708 - __main__ - INFO - GET http://localhost:5000/health - 127.0.0.1
+2025-08-17 15:48:31,709 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
+2025-08-17 15:48:32,311 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
+2025-08-17 15:48:32,312 - src.services.chat_service - INFO - Started background cleanup thread
+2025-08-17 15:48:32,312 - src.services.chat_service - INFO - Chat service initialized
+2025-08-17 15:48:32,317 - src.services.pdf_service - INFO - PDF service initialized
+2025-08-17 15:48:32,331 - __main__ - INFO - Response: 200 - health_check
+2025-08-17 15:48:32,332 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:48:32] "GET /health HTTP/1.1" 200 -
+2025-08-17 15:48:41,911 - __main__ - INFO - POST http://localhost:5000/api/v1/letter/generate - 127.0.0.1
+2025-08-17 15:48:41,984 - src.utils.helpers - INFO - generate_letter executed in 0.073s
+2025-08-17 15:48:41,984 - __main__ - INFO - Response: 400 - letter.generate_letter
+2025-08-17 15:48:41,984 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:48:41] "[31m[1mPOST /api/v1/letter/generate HTTP/1.1[0m" 400 -
+2025-08-17 15:48:53,086 - __main__ - INFO - POST http://localhost:5000/api/v1/letter/generate - 127.0.0.1
+2025-08-17 15:48:56,374 - src.utils.helpers - INFO - get_data_by_key executed in 3.210s
+2025-08-17 15:48:56,664 - src.utils.helpers - INFO - get_data_by_key executed in 3.571s
+2025-08-17 15:48:56,826 - src.utils.helpers - INFO - get_data_by_key executed in 3.708s
+2025-08-17 15:48:56,854 - src.utils.helpers - INFO - get_data_by_key executed in 3.708s
+2025-08-17 15:48:56,854 - src.utils.helpers - INFO - get_letter_config_by_category executed in 3.768s
+2025-08-17 15:48:56,896 - src.services.memory_service - INFO - Memory service initialized with LangGraph agent
+2025-08-17 15:48:57,344 - src.services.letter_generator - INFO - Generating letter with ID: LET-20250817-17659
+2025-08-17 15:49:01,640 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-17 15:49:01,660 - src.services.letter_generator - INFO - Letter generated successfully: LET-20250817-17659
+2025-08-17 15:49:01,661 - src.utils.helpers - INFO - generate_letter executed in 4.807s
+2025-08-17 15:49:01,661 - src.api.letter_routes - INFO - Letter generated successfully: LET-20250817-17659
+2025-08-17 15:49:01,661 - src.utils.helpers - INFO - generate_letter executed in 8.576s
+2025-08-17 15:49:01,661 - __main__ - INFO - Response: 200 - letter.generate_letter
+2025-08-17 15:49:01,661 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:49:01] "POST /api/v1/letter/generate HTTP/1.1" 200 -
+2025-08-17 15:49:17,861 - __main__ - INFO - POST http://localhost:5000/api/v1/chat/sessions - 127.0.0.1
+2025-08-17 15:49:17,877 - src.services.chat_service - INFO - Created chat session: 9559182d-eff5-43ec-888e-bce1d2047413
+2025-08-17 15:49:17,884 - src.api.chat_routes - INFO - Created chat session: 9559182d-eff5-43ec-888e-bce1d2047413
+2025-08-17 15:49:17,886 - src.utils.helpers - INFO - create_chat_session executed in 0.008s
+2025-08-17 15:49:17,886 - __main__ - INFO - Response: 201 - chat.create_chat_session
+2025-08-17 15:49:17,886 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:49:17] "[35m[1mPOST /api/v1/chat/sessions HTTP/1.1[0m" 201 -
+2025-08-17 15:49:45,455 - __main__ - INFO - POST http://localhost:5000/api/v1/chat/sessions/9559182d-eff5-43ec-888e-bce1d2047413/edit - 127.0.0.1
+2025-08-17 15:49:45,471 - src.services.letter_generator - INFO - Generating letter with ID: LET-20250817-49976
+2025-08-17 15:49:46,559 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-17 15:49:49,243 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-17 15:49:49,251 - src.services.letter_generator - INFO - Letter generated successfully: LET-20250817-49976
+2025-08-17 15:49:49,252 - src.utils.helpers - INFO - generate_letter executed in 3.797s
+2025-08-17 15:49:49,252 - src.services.chat_service - INFO - Processed edit request for session 9559182d-eff5-43ec-888e-bce1d2047413 in 0.00s
+2025-08-17 15:49:49,253 - src.api.chat_routes - INFO - Processed chat edit for session 9559182d-eff5-43ec-888e-bce1d2047413
+2025-08-17 15:49:49,253 - src.utils.helpers - INFO - edit_letter_chat executed in 3.798s
+2025-08-17 15:49:49,253 - __main__ - INFO - Response: 200 - chat.edit_letter_chat
+2025-08-17 15:49:49,253 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:49:49] "POST /api/v1/chat/sessions/9559182d-eff5-43ec-888e-bce1d2047413/edit HTTP/1.1" 200 -
+2025-08-17 15:51:02,689 - __main__ - INFO - POST http://localhost:5000/api/v1/chat/sessions/9559182d-eff5-43ec-888e-bce1d2047413/edit - 127.0.0.1
+2025-08-17 15:51:02,703 - src.services.letter_generator - INFO - Generating letter with ID: LET-20250817-77289
+2025-08-17 15:51:04,293 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-17 15:51:06,873 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-17 15:51:06,889 - src.services.letter_generator - INFO - Letter generated successfully: LET-20250817-77289
+2025-08-17 15:51:06,890 - src.utils.helpers - INFO - generate_letter executed in 4.199s
+2025-08-17 15:51:06,890 - src.services.chat_service - INFO - Processed edit request for session 9559182d-eff5-43ec-888e-bce1d2047413 in 0.00s
+2025-08-17 15:51:06,890 - src.api.chat_routes - INFO - Processed chat edit for session 9559182d-eff5-43ec-888e-bce1d2047413
+2025-08-17 15:51:06,890 - src.utils.helpers - INFO - edit_letter_chat executed in 4.200s
+2025-08-17 15:51:06,890 - __main__ - INFO - Response: 200 - chat.edit_letter_chat
+2025-08-17 15:51:06,890 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:51:06] "POST /api/v1/chat/sessions/9559182d-eff5-43ec-888e-bce1d2047413/edit HTTP/1.1" 200 -
+2025-08-17 15:51:31,583 - __main__ - INFO - POST http://localhost:5000/api/v1/chat/sessions/9559182d-eff5-43ec-888e-bce1d2047413/edit - 127.0.0.1
+2025-08-17 15:51:31,588 - src.services.letter_generator - INFO - Generating letter with ID: LET-20250817-40089
+2025-08-17 15:51:32,983 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-17 15:51:36,054 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-17 15:51:36,063 - src.services.letter_generator - INFO - Letter generated successfully: LET-20250817-40089
+2025-08-17 15:51:36,063 - src.utils.helpers - INFO - generate_letter executed in 4.478s
+2025-08-17 15:51:36,070 - src.services.chat_service - INFO - Processed edit request for session 9559182d-eff5-43ec-888e-bce1d2047413 in 0.00s
+2025-08-17 15:51:36,070 - src.api.chat_routes - INFO - Processed chat edit for session 9559182d-eff5-43ec-888e-bce1d2047413
+2025-08-17 15:51:36,070 - src.utils.helpers - INFO - edit_letter_chat executed in 4.487s
+2025-08-17 15:51:36,070 - __main__ - INFO - Response: 200 - chat.edit_letter_chat
+2025-08-17 15:51:36,073 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:51:36] "POST /api/v1/chat/sessions/9559182d-eff5-43ec-888e-bce1d2047413/edit HTTP/1.1" 200 -
+2025-08-17 15:52:00,904 - __main__ - INFO - POST http://localhost:5000/api/v1/letter/generate - 127.0.0.1
+2025-08-17 15:52:02,143 - src.utils.helpers - INFO - get_data_by_key executed in 1.174s
+2025-08-17 15:52:02,155 - src.utils.helpers - INFO - get_data_by_key executed in 1.190s
+2025-08-17 15:52:02,641 - src.utils.helpers - INFO - get_data_by_key executed in 1.676s
+2025-08-17 15:52:02,683 - src.utils.helpers - INFO - get_data_by_key executed in 1.715s
+2025-08-17 15:52:02,734 - src.utils.helpers - INFO - get_letter_config_by_category executed in 1.826s
+2025-08-17 15:52:02,747 - src.services.letter_generator - INFO - Generating letter with ID: LET-20250817-60361
+2025-08-17 15:52:06,055 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-17 15:52:06,063 - src.services.letter_generator - INFO - Letter generated successfully: LET-20250817-60361
+2025-08-17 15:52:06,063 - src.utils.helpers - INFO - generate_letter executed in 3.329s
+2025-08-17 15:52:06,063 - src.api.letter_routes - INFO - Letter generated successfully: LET-20250817-60361
+2025-08-17 15:52:06,063 - src.utils.helpers - INFO - generate_letter executed in 5.154s
+2025-08-17 15:52:06,063 - __main__ - INFO - Response: 200 - letter.generate_letter
+2025-08-17 15:52:06,070 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 15:52:06] "POST /api/v1/letter/generate HTTP/1.1" 200 -
+2025-08-17 15:53:32,316 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-17 15:58:25,066 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\api\\__init__.py', reloading
+2025-08-17 15:58:25,460 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:03:13,532 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:03:13,579 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://localhost:5000
+2025-08-17 16:03:13,579 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-17 16:03:13,583 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:03:16,475 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:03:16,490 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:03:16,500 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 16:04:12,531 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\api\\__init__.py', reloading
+2025-08-17 16:04:12,769 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:17:35,061 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:17:35,110 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://localhost:5000
+2025-08-17 16:17:35,110 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-17 16:17:35,113 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:17:37,917 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:17:37,928 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:17:37,940 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 16:17:38,058 - __main__ - INFO - POST http://localhost:5000/api/v1/validate - 127.0.0.1
+2025-08-17 16:17:38,066 - __main__ - INFO - Response: 404 - None
+2025-08-17 16:17:38,066 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 16:17:38] "[33mPOST /api/v1/validate HTTP/1.1[0m" 404 -
+2025-08-17 16:17:57,456 - __main__ - INFO - POST http://localhost:5000/api/v1/letter/validate - 127.0.0.1
+2025-08-17 16:17:57,456 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
+2025-08-17 16:17:57,981 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
+2025-08-17 16:17:57,981 - src.utils.helpers - INFO - validate_letter executed in 0.525s
+2025-08-17 16:17:57,981 - __main__ - INFO - Response: 200 - letter.validate_letter
+2025-08-17 16:17:57,981 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 16:17:57] "POST /api/v1/letter/validate HTTP/1.1" 200 -
+2025-08-17 16:20:07,945 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\__init__.py', reloading
+2025-08-17 16:20:08,225 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:20:11,535 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:20:11,557 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:20:11,557 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 16:20:16,234 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\__init__.py', reloading
+2025-08-17 16:20:16,431 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:20:19,655 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:20:19,675 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:20:19,680 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 16:20:22,191 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\__init__.py', reloading
+2025-08-17 16:20:22,427 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:20:25,875 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:20:25,895 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:20:25,903 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 16:20:28,375 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\__init__.py', reloading
+2025-08-17 16:20:28,649 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:20:31,649 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:20:31,663 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:20:31,669 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 16:20:32,960 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\__init__.py', reloading
+2025-08-17 16:20:33,144 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:20:36,225 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:20:36,251 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:20:36,256 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 16:20:40,961 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\__init__.py', reloading
+2025-08-17 16:20:41,115 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:20:44,314 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:20:44,332 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:20:44,337 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 16:20:48,005 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\__init__.py', reloading
+2025-08-17 16:20:48,360 - werkzeug - INFO -  * Restarting with stat
+2025-08-17 16:20:51,885 - __main__ - INFO - Starting development server on localhost:5000
+2025-08-17 16:20:51,910 - werkzeug - WARNING -  * Debugger is active!
+2025-08-17 16:20:51,923 - werkzeug - INFO -  * Debugger PIN: 129-536-069

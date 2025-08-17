@@ -10,11 +10,10 @@ from .google_services import (
     log,
     upload_file_path_to_drive
 )
-from .pdf_service import PDFService, get_pdf_service
 from .enhanced_pdf_service import EnhancedPDFService, get_enhanced_pdf_service
 from .drive_logger import DriveLoggerService, get_drive_logger_service
 from .chat_service import ChatService, get_chat_service
-from .memory_service import EnhancedMemoryService, get_memory_service
+from .memory_service import MemoryService, get_memory_service
 
 __all__ = [
     # Letter Generation
@@ -29,8 +28,6 @@ __all__ = [
     "get_drive_service",
     
     # PDF Services
-    "PDFService",
-    "get_pdf_service",
     "EnhancedPDFService",
     "get_enhanced_pdf_service",
     
@@ -43,7 +40,7 @@ __all__ = [
     "get_chat_service",
     
     # Memory Services
-    "EnhancedMemoryService",
+    "MemoryService",
     "get_memory_service",
     
     # Helper Functions
