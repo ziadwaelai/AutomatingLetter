@@ -577,3 +577,83 @@
 2025-08-17 16:48:40,896 - werkzeug - INFO -  * Restarting with stat
 2025-08-17 16:48:43,469 - werkzeug - WARNING -  * Debugger is active!
 2025-08-17 16:48:43,481 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-17 17:10:33,022 - __main__ - INFO - GET http://localhost:5000/ - 127.0.0.1
+2025-08-17 17:10:33,037 - __main__ - INFO - Response: 200 - root
+2025-08-17 17:10:33,042 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 17:10:33] "GET / HTTP/1.1" 200 -
+2025-08-17 17:10:40,544 - __main__ - INFO - GET http://localhost:5000/health - 127.0.0.1
+2025-08-17 17:10:40,546 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
+2025-08-17 17:10:41,683 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
+2025-08-17 17:10:41,683 - src.services.chat_service - INFO - Started background cleanup thread
+2025-08-17 17:10:41,683 - src.services.chat_service - INFO - Chat service initialized
+2025-08-17 17:10:41,701 - src.services.enhanced_pdf_service - INFO - Enhanced PDF service initialized
+2025-08-17 17:10:41,709 - __main__ - INFO - Response: 200 - health_check
+2025-08-17 17:10:41,709 - werkzeug - INFO - 127.0.0.1 - - [17/Aug/2025 17:10:41] "GET /health HTTP/1.1" 200 -
+2025-08-17 17:15:41,699 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-20 10:25:53,488 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-08-20 10:25:53,488 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-20 10:25:53,499 - werkzeug - INFO -  * Restarting with stat
+2025-08-20 10:25:58,092 - werkzeug - WARNING -  * Debugger is active!
+2025-08-20 10:25:58,108 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-20 10:26:38,146 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/chat/sessions - 127.0.0.1
+2025-08-20 10:26:38,146 - src.services.chat_service - INFO - Started background cleanup thread
+2025-08-20 10:26:38,146 - src.services.chat_service - INFO - Chat service initialized
+2025-08-20 10:26:38,152 - src.services.chat_service - INFO - Created chat session: 0ce7eace-d00b-455b-a48c-2e99461d8831
+2025-08-20 10:26:38,152 - src.api.chat_routes - INFO - Created chat session: 0ce7eace-d00b-455b-a48c-2e99461d8831
+2025-08-20 10:26:38,152 - src.utils.helpers - INFO - create_chat_session executed in 0.007s
+2025-08-20 10:26:38,152 - __main__ - INFO - Response: 201 - chat.create_chat_session
+2025-08-20 10:26:38,152 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:26:38] "[35m[1mPOST /api/v1/chat/sessions HTTP/1.1[0m" 201 -
+2025-08-20 10:26:55,012 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:26:55,020 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:26:55,020 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:26:55] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:26:58,354 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:26:58,354 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:26:58,354 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:26:58] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:27:01,726 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:27:01,726 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:27:01,726 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:27:01] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:27:03,808 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:27:03,808 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:27:03,812 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:27:03] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:27:05,696 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:27:05,696 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:27:05,696 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:27:05] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:27:07,272 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:27:07,276 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:27:07,276 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:27:07] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:27:23,192 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:27:23,192 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:27:23,192 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:27:23] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:27:24,462 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:27:24,462 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:27:24,462 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:27:24] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:27:25,574 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:27:25,574 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:27:25,574 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:27:25] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:27:26,658 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:27:26,659 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:27:26,659 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:27:26] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:27:27,726 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:27:27,726 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:27:27,726 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:27:27] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:27:28,960 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:27:28,960 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:27:28,960 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:27:28] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:27:30,217 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:27:30,217 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:27:30,217 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:27:30] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:27:31,565 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:27:31,565 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:27:31,565 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:27:31] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:27:32,960 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status - 127.0.0.1
+2025-08-20 10:27:32,960 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-20 10:27:32,962 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:27:32] "GET /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831/status HTTP/1.1" 200 -
+2025-08-20 10:27:39,902 - __main__ - INFO - DELETE http://127.0.0.1:5000/api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831 - 127.0.0.1
+2025-08-20 10:27:43,992 - src.services.memory_service - INFO - Memory service initialized with LangGraph agent
+2025-08-20 10:27:43,992 - src.services.chat_service - INFO - Deleted session: 0ce7eace-d00b-455b-a48c-2e99461d8831
+2025-08-20 10:27:43,992 - src.api.chat_routes - INFO - Deleted chat session: 0ce7eace-d00b-455b-a48c-2e99461d8831
+2025-08-20 10:27:43,992 - src.utils.helpers - INFO - delete_chat_session executed in 4.090s
+2025-08-20 10:27:43,992 - __main__ - INFO - Response: 200 - chat.delete_chat_session
+2025-08-20 10:27:43,992 - werkzeug - INFO - 127.0.0.1 - - [20/Aug/2025 10:27:43] "DELETE /api/v1/chat/sessions/0ce7eace-d00b-455b-a48c-2e99461d8831 HTTP/1.1" 200 -

@@ -183,13 +183,17 @@ class ChatService:
                     raise ValueError(f"Session {session_id} not found")
                 
                 session = self.sessions[session_id]
+                now = datetime.now()
                 
-                # Check if session is expired
-                if datetime.now() > session.expires_at:
-                    raise ValueError(f"Session {session_id} has expired")
+                # Check if session is expired and remove it immediately
+                if now > session.expires_at:
+                    del self.sessions[session_id]
+                    self._active_sessions -= 1
+                    logger.info(f"Removed expired session during edit request: {session_id}")
+                    raise ValueError(f"Session {session_id} has expired and was removed")
                 
                 # Update last activity
-                session.last_activity = datetime.now()
+                session.last_activity = now
             
             # Add user message to session
             user_message = ChatMessage(
@@ -443,7 +447,14 @@ class ChatService:
                 return False
             
             session = self.sessions[session_id]
-            return session.is_active and datetime.now() <= session.expires_at
+            # Check if session is expired and remove it immediately to prevent race conditions
+            if datetime.now() > session.expires_at:
+                del self.sessions[session_id]
+                self._active_sessions -= 1
+                logger.info(f"Removed expired session during lookup: {session_id}")
+                return False
+            
+            return session.is_active
     
     def get_session_info(self, session_id: str) -> Dict[str, Any]:
         """Get detailed session information."""
@@ -452,6 +463,14 @@ class ChatService:
                 raise ValueError(f"Session {session_id} not found")
             
             session = self.sessions[session_id]
+            now = datetime.now()
+            
+            # Check if session is expired and remove it immediately
+            if now > session.expires_at:
+                del self.sessions[session_id]
+                self._active_sessions -= 1
+                logger.info(f"Removed expired session during info lookup: {session_id}")
+                raise ValueError(f"Session {session_id} has expired and was removed")
             
             return {
                 "session_id": session_id,
@@ -459,7 +478,7 @@ class ChatService:
                 "last_activity": session.last_activity.isoformat(),
                 "expires_at": session.expires_at.isoformat(),
                 "is_active": session.is_active,
-                "is_expired": datetime.now() > session.expires_at,
+                "is_expired": False,  # Already checked above
                 "message_count": len(session.messages),
                 "letter_versions": len(session.letter_versions),
                 "context": session.context
