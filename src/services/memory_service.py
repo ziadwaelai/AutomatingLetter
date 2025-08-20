@@ -241,14 +241,15 @@ def get_instructions_for_prompt() -> str:
             reverse=True
         )[:5]  # Top 5 instructions
         
-        # Update usage stats
-        for instr in sorted_instructions:
-            instr['usage_count'] = instr.get('usage_count', 0) + 1
-            instr['last_used'] = datetime.now().isoformat()
-        
-        # Save updated stats
-        data['last_updated'] = datetime.now().isoformat()
-        _save_data_atomically(data, memory_file)
+        # Update usage stats (only if we actually have instructions to use)
+        if sorted_instructions:
+            for instr in sorted_instructions:
+                instr['usage_count'] = instr.get('usage_count', 0) + 1
+                instr['last_used'] = datetime.now().isoformat()
+            
+            # Save updated stats
+            data['last_updated'] = datetime.now().isoformat()
+            _save_data_atomically(data, memory_file)
         
         # Format for AI prompt
         formatted = ["## تعليمات من ذاكرة المستخدم:"]
@@ -315,19 +316,26 @@ class MemoryService:
             current_instructions = load_instructions.invoke({})
             
             prompt = f"""
-أنت مساعد ذكي لإدارة ذاكرة التعليمات. حلل رسالة المستخدم وقرر الإجراء المناسب.
+أنت مساعد ذكي لإدارة ذاكرة التعليمات. حلل رسالة المستخدم واستخرج أي تعليمات مفيدة للمستقبل.
 
+التعليمات الحالية:
 {current_instructions}
 
 رسالة المستخدم: {state['user_message']}
 
-الأدوات المتاحة:
-- add_instruction: إضافة تعليم جديد
-- update_instruction: تحديث تعليم موجود  
-- delete_instruction: حذف تعليم موجود
-- get_instructions_for_prompt: جلب التعليمات للعرض
+المهمة:
+1. حلل الرسالة لاستخراج تعليمات مفيدة (مثل: طلبات تنسيق، أساليب كتابة، تفضيلات معينة)
+2. إذا وجدت تعليم جديد مفيد، استخدم add_instruction لحفظه
+3. إذا كان التعليم مشابه لموجود، استخدم update_instruction لتحديثه
+4. ركز على التعليمات القابلة للتطبيق في المستقبل
 
-قرر الإجراء المناسب واستخدم الأداة المناسبة.
+أمثلة على التعليمات المفيدة:
+- "إضافة فقرة شكر وتقدير"
+- "استخدام توقيع رسمي مع المسمى الوظيفي"
+- "الحفاظ على الطابع الرسمي"
+- "إضافة تفاصيل إضافية"
+
+قم بتحليل الرسالة واتخذ الإجراء المناسب:
 """
             
             response = llm_with_tools.invoke([{"role": "user", "content": prompt}])
