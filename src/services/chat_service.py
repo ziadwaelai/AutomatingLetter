@@ -67,7 +67,7 @@ class ChatService:
         
         # Background cleanup
         self.cleanup_thread = None
-        self.cleanup_interval = 300  # 5 minutes
+        self.cleanup_interval = 60  # 1 minute
         self.shutdown_event = threading.Event()
         
         # Service stats
@@ -447,11 +447,9 @@ class ChatService:
                 return False
             
             session = self.sessions[session_id]
-            # Check if session is expired and remove it immediately to prevent race conditions
+            # Check if session is expired but don't delete here to prevent race conditions
+            # Let the background cleanup thread handle expired session removal
             if datetime.now() > session.expires_at:
-                del self.sessions[session_id]
-                self._active_sessions -= 1
-                logger.info(f"Removed expired session during lookup: {session_id}")
                 return False
             
             return session.is_active
@@ -464,13 +462,12 @@ class ChatService:
             
             session = self.sessions[session_id]
             now = datetime.now()
+            is_expired = now > session.expires_at
             
-            # Check if session is expired and remove it immediately
-            if now > session.expires_at:
-                del self.sessions[session_id]
-                self._active_sessions -= 1
-                logger.info(f"Removed expired session during info lookup: {session_id}")
-                raise ValueError(f"Session {session_id} has expired and was removed")
+            # Don't delete here to prevent race conditions
+            # Let the background cleanup thread handle expired session removal
+            if is_expired:
+                raise ValueError(f"Session {session_id} has expired")
             
             return {
                 "session_id": session_id,
@@ -478,7 +475,7 @@ class ChatService:
                 "last_activity": session.last_activity.isoformat(),
                 "expires_at": session.expires_at.isoformat(),
                 "is_active": session.is_active,
-                "is_expired": False,  # Already checked above
+                "is_expired": is_expired,
                 "message_count": len(session.messages),
                 "letter_versions": len(session.letter_versions),
                 "context": session.context
