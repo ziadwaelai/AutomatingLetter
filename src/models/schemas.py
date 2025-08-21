@@ -46,6 +46,7 @@ class GenerateLetterRequest(BaseModel):
     organization_name: Optional[str] = Field(None, max_length=100)
     previous_letter_content: Optional[str] = Field(None, max_length=5000)
     previous_letter_id: Optional[str] = Field(None, max_length=50)
+    session_id: Optional[str] = Field(None, max_length=50, description="Optional session ID for memory context")
     
     @validator('prompt')
     def validate_prompt(cls, v):

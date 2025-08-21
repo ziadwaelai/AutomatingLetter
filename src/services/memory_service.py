@@ -655,22 +655,136 @@ class MemoryService:
             return {"error": str(e)}
     
     def format_instructions_for_prompt(self, category: str = None, session_id: str = None) -> str:
-        """Enhanced method for AI prompt integration with category filtering."""
+        """Enhanced method for AI prompt integration - returns ALL instructions regardless of category."""
         try:
             instructions = _load_instructions_cached()
-            
-            # Filter by category if specified
-            if category and instructions:
-                instructions = [instr for instr in instructions if instr.get('category') == category]
             
             if not instructions:
                 return ""
             
-            # Use the optimized selection logic
-            return self.get_instructions_for_prompt()
+            # Use ALL instructions without category filtering
+            return self._format_all_instructions(instructions)
             
         except Exception as e:
             logger.error(f"Failed to format instructions: {e}")
+            return ""
+    
+    def _format_all_instructions(self, instructions: List[Dict[str, Any]]) -> str:
+        """Format ALL instructions for AI prompt - just the text without categories."""
+        try:
+            if not instructions:
+                return ""
+            
+            # Sort by effectiveness, usage, and recency
+            sorted_instructions = sorted(
+                instructions,
+                key=lambda x: (
+                    x.get('effectiveness_score', 1.0) * 0.4 +
+                    min(x.get('usage_count', 0) / 10, 3.0) * 0.4 +
+                    (1.0 if x.get('last_used') and 
+                     (datetime.now() - datetime.fromisoformat(x['last_used'])).days < 7 
+                     else 0.5) * 0.2
+                ),
+                reverse=True
+            )[:8]  # Top 8 instructions
+            
+            # Update usage stats for selected instructions
+            current_time = datetime.now().isoformat()
+            for instr in sorted_instructions:
+                instr['usage_count'] = instr.get('usage_count', 0) + 1
+                instr['last_used'] = current_time
+            
+            # Save updated stats (need to reload full instructions list to update)
+            if sorted_instructions:
+                all_instructions = _load_instructions_cached()
+                # Update the stats in the original instructions list
+                instr_ids = {instr['id']: instr for instr in all_instructions}
+                for updated_instr in sorted_instructions:
+                    if updated_instr['id'] in instr_ids:
+                        instr_ids[updated_instr['id']]['usage_count'] = updated_instr['usage_count']
+                        instr_ids[updated_instr['id']]['last_used'] = updated_instr['last_used']
+                
+                data = {
+                    "instructions": all_instructions,
+                    "last_updated": current_time,
+                    "stats": {"total_instructions": len(all_instructions)}
+                }
+                _save_data_atomically(data, _get_memory_file())
+            
+            # Format for AI prompt - just the instruction text
+            formatted = ["## تعليمات من ذاكرة المستخدم:"]
+            
+            for instr in sorted_instructions:
+                formatted.append(f"• {instr['text']}")
+            
+            return "\n".join(formatted) + "\n"
+            
+        except Exception as e:
+            logger.error(f"Failed to format all instructions: {e}")
+            return ""
+    
+    def _format_filtered_instructions(self, instructions: List[Dict[str, Any]]) -> str:
+        """Format filtered instructions for AI prompt with intelligent selection."""
+        try:
+            if not instructions:
+                return ""
+            
+            # Sort by effectiveness, usage, and recency
+            sorted_instructions = sorted(
+                instructions,
+                key=lambda x: (
+                    x.get('effectiveness_score', 1.0) * 0.4 +
+                    min(x.get('usage_count', 0) / 10, 3.0) * 0.4 +
+                    (1.0 if x.get('last_used') and 
+                     (datetime.now() - datetime.fromisoformat(x['last_used'])).days < 7 
+                     else 0.5) * 0.2
+                ),
+                reverse=True
+            )[:8]  # Top 8 instructions
+            
+            # Update usage stats for selected instructions
+            current_time = datetime.now().isoformat()
+            for instr in sorted_instructions:
+                instr['usage_count'] = instr.get('usage_count', 0) + 1
+                instr['last_used'] = current_time
+            
+            # Save updated stats (need to reload full instructions list to update)
+            if sorted_instructions:
+                all_instructions = _load_instructions_cached()
+                # Update the stats in the original instructions list
+                instr_ids = {instr['id']: instr for instr in all_instructions}
+                for updated_instr in sorted_instructions:
+                    if updated_instr['id'] in instr_ids:
+                        instr_ids[updated_instr['id']]['usage_count'] = updated_instr['usage_count']
+                        instr_ids[updated_instr['id']]['last_used'] = updated_instr['last_used']
+                
+                data = {
+                    "instructions": all_instructions,
+                    "last_updated": current_time,
+                    "stats": {"total_instructions": len(all_instructions)}
+                }
+                _save_data_atomically(data, _get_memory_file())
+            
+            # Format for AI prompt with categories
+            categories = defaultdict(list)
+            for instr in sorted_instructions:
+                category = instr.get('category', 'general')
+                categories[category].append(instr)
+            
+            formatted = ["## تعليمات من ذاكرة المستخدم:"]
+            
+            for category, instrs in categories.items():
+                if category != 'general':
+                    formatted.append(f"\n### {category}:")
+                for instr in instrs:
+                    effectiveness = instr.get('effectiveness_score', 1.0)
+                    usage = instr.get('usage_count', 0)
+                    formatted.append(f"• {instr['text']} (فعالية: {effectiveness:.1f}, استخدام: {usage})")
+            
+            return "\n".join(formatted) + "\n"
+            
+        except Exception as e:
+            logger.error(f"Failed to format filtered instructions: {e}")
             return ""
     
     def get_formatted_instructions(self, category: str = None, session_id: str = None) -> str:
