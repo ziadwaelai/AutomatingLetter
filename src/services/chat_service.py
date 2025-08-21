@@ -145,9 +145,9 @@ class ChatService:
         self._save_pending = False
         self._save_timer = None
         
-        # Background cleanup
+        # Background cleanup - less aggressive
         self.cleanup_thread = None
-        self.cleanup_interval = 60  # 1 minute
+        self.cleanup_interval = 300  # 5 minutes instead of 1 minute
         self.shutdown_event = threading.Event()
         
         # Service stats
@@ -294,10 +294,10 @@ class ChatService:
                 self.sessions[session_id] = session
                 self._total_sessions += 1
                 self._active_sessions += 1
-                # Save to file immediately
-                self._save_session(session_id)
+                # Save to file immediately (synchronously) for session creation
+                self._save_sessions_to_file()
             
-            logger.info(f"Created chat session: {session_id}")
+            logger.info(f"Created chat session: {session_id} (immediately persisted)")
             return session_id
     
     def find_session_by_idempotency_key(self, idempotency_key: str) -> Optional[str]:
@@ -335,9 +335,34 @@ class ChatService:
         with ErrorContext("process_edit_request", {"session_id": session_id}):
             timer = Timer()
             
+            # Import session manager to check session existence
+            from . import get_session_manager
+            session_manager = get_session_manager()
+            
+            # Check session exists in the unified session management
+            if not session_manager.session_exists(session_id):
+                raise ValueError(f"Session {session_id} not found or expired")
+            
             with self.session_lock:
+                # If session doesn't exist in our local cache, create it from session manager
                 if session_id not in self.sessions:
-                    raise ValueError(f"Session {session_id} not found")
+                    session_data = session_manager.get_session(session_id)
+                    if session_data:
+                        # Convert session manager data to chat session format
+                        chat_session = ChatSession(
+                            session_id=session_id,
+                            created_at=datetime.fromisoformat(session_data['created_at']) if isinstance(session_data['created_at'], str) else session_data['created_at'],
+                            last_activity=datetime.fromisoformat(session_data['last_activity']) if isinstance(session_data['last_activity'], str) else session_data['last_activity'],
+                            expires_at=datetime.fromisoformat(session_data['expires_at']) if isinstance(session_data['expires_at'], str) else session_data['expires_at'],
+                            context=session_data.get('context', ''),
+                            messages=[],
+                            letter_versions=[],
+                            is_active=session_data.get('is_active', True),
+                            idempotency_key=session_data.get('idempotency_key')
+                        )
+                        self.sessions[session_id] = chat_session
+                    else:
+                        raise ValueError(f"Session {session_id} not found in session manager")
                 
                 session = self.sessions[session_id]
                 now = datetime.now()
@@ -603,19 +628,16 @@ class ChatService:
             ]
     
     def session_exists(self, session_id: str) -> bool:
-        """Check if session exists and is active."""
+        """Check if session exists and is active (non-destructive check)."""
         with self.session_lock:
             if session_id not in self.sessions:
                 return False
             
             session = self.sessions[session_id]
-            # Check if session is expired and remove it immediately
+            # Only check expiration, don't remove the session here
+            # Let the background cleanup handle expired sessions
             if datetime.now() > session.expires_at:
-                # Remove expired session immediately
-                del self.sessions[session_id]
-                self._active_sessions -= 1
-                self._schedule_debounced_save()
-                logger.info(f"Removed expired session on access: {session_id}")
+                logger.debug(f"Session {session_id} is expired but still in memory (cleanup will handle)")
                 return False
             
             return session.is_active
@@ -631,13 +653,22 @@ class ChatService:
             now = datetime.now()
             is_expired = now > session.expires_at
             
-            # Remove expired session immediately
+            # Don't remove expired session here - return the info but mark as expired
+            # Let the background cleanup handle the removal
             if is_expired:
-                del self.sessions[session_id]
-                self._active_sessions -= 1
-                self._schedule_debounced_save()
-                logger.info(f"Removed expired session on info access: {session_id}")
-                raise ValueError(f"Session {session_id} has expired and was removed")
+                logger.debug(f"Returning info for expired session {session_id} (cleanup will handle removal)")
+                # Still return the session info but marked as expired
+                return {
+                    "session_id": session_id,
+                    "created_at": session.created_at.isoformat(),
+                    "last_activity": session.last_activity.isoformat(),
+                    "expires_at": session.expires_at.isoformat(),
+                    "is_active": False,  # Mark as inactive since it's expired
+                    "is_expired": True,
+                    "message_count": len(session.messages),
+                    "letter_versions": len(session.letter_versions),
+                    "context": session.context
+                }
             
             # Session is valid, return info
             return {
@@ -699,14 +730,18 @@ class ChatService:
             return True
     
     def list_sessions(self, include_expired: bool = False) -> List[Dict[str, Any]]:
-        """List all sessions."""
+        """List all sessions with improved thread safety."""
         with self.session_lock:
             sessions_info = []
             now = datetime.now()
             
-            for session_id, session in self.sessions.items():
+            # Create a snapshot of sessions to avoid modification during iteration
+            sessions_snapshot = dict(self.sessions)
+            
+            for session_id, session in sessions_snapshot.items():
                 is_expired = now > session.expires_at
                 
+                # For active sessions, only include if they're not expired or if include_expired is True
                 if not include_expired and is_expired:
                     continue
                 
@@ -715,38 +750,51 @@ class ChatService:
                     "created_at": session.created_at.isoformat(),
                     "last_activity": session.last_activity.isoformat(),
                     "expires_at": session.expires_at.isoformat(),
-                    "is_active": session.is_active,
+                    "is_active": session.is_active and not is_expired,  # Mark as inactive if expired
                     "is_expired": is_expired,
                     "message_count": len(session.messages),
-                    "letter_versions": len(session.letter_versions)
+                    "letter_versions": len(session.letter_versions),
+                    "context_preview": session.context[:100] + "..." if len(session.context) > 100 else session.context
                 })
             
+            logger.debug(f"list_sessions: Found {len(sessions_info)} sessions (include_expired={include_expired}, total_in_memory={len(sessions_snapshot)})")
             return sessions_info
     
     def cleanup_expired_sessions(self) -> Dict[str, Any]:
-        """Clean up expired sessions."""
+        """Clean up expired sessions with grace period."""
+        cleanup_start = datetime.now()
         with self.session_lock:
             now = datetime.now()
-            expired_sessions = [
-                session_id for session_id, session in self.sessions.items()
-                if now > session.expires_at
-            ]
+            # Add a 30-second grace period to prevent aggressive cleanup
+            grace_period = timedelta(seconds=30)
             
+            expired_sessions = []
+            for session_id, session in self.sessions.items():
+                if now > (session.expires_at + grace_period):
+                    expired_sessions.append(session_id)
+                    logger.debug(f"Session {session_id} expired at {session.expires_at}, now {now}")
+            
+            # Only remove truly expired sessions (with grace period)
+            removed_sessions = []
             for session_id in expired_sessions:
-                del self.sessions[session_id]
-                self._active_sessions -= 1
+                if session_id in self.sessions:  # Double-check it still exists
+                    del self.sessions[session_id]
+                    self._active_sessions -= 1
+                    removed_sessions.append(session_id)
             
             # Save updated sessions to file if any were cleaned
-            if expired_sessions:
+            if removed_sessions:
                 self._save_sessions_to_file()
             
-            if expired_sessions:
-                logger.info(f"Background cleanup: Removed {len(expired_sessions)} expired sessions: {expired_sessions}")
+            cleanup_time = datetime.now()
+            
+            if removed_sessions:
+                logger.info(f"Background cleanup: Removed {len(removed_sessions)} expired sessions (with 30s grace period): {removed_sessions}")
             else:
-                logger.debug(f"Background cleanup: No expired sessions found ({len(self.sessions)} sessions active)")
+                logger.debug(f"Background cleanup: No expired sessions found ({len(self.sessions)} sessions active, checked at {cleanup_time})")
             
             return {
-                "cleaned_sessions": len(expired_sessions),
+                "cleaned_sessions": len(removed_sessions),
                 "remaining_sessions": len(self.sessions),
                 "cleanup_time": now.isoformat()
             }

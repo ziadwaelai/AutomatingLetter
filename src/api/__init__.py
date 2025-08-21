@@ -19,7 +19,7 @@ def register_api_routes(app):
     """
     # Register blueprints
     app.register_blueprint(letter_bp)
-    app.register_blueprint(chat_bp)
+    app.register_blueprint(chat_bp)  # Updated to use new session manager
     app.register_blueprint(archive_bp)
     
     # Add global API error handlers
