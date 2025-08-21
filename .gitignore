@@ -8,5 +8,5 @@ __pycache__/*
 *.pdf
 logs/
 logs
-venv
+venv/
 data
