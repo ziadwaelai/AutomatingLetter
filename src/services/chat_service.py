@@ -3,15 +3,15 @@ Enhanced Chat Service
 Provides session-based chat functionality with memory management for letter editing.
 """
 
-import logging
-import threading
-import time
-import uuid
 import json
+import logging
 import os
+import shutil
+import threading
+import uuid
 from datetime import datetime, timedelta
-from typing import Dict, Any, List, Optional, Set
-from dataclasses import dataclass, field, asdict
+from typing import Dict, Any, List, Optional
+from dataclasses import dataclass, field
 from threading import Lock
 
 from ..config import get_config
@@ -208,8 +208,7 @@ class ChatService:
             self.sessions = {}
     
     def _save_sessions_to_file(self):
-        """Save sessions to JSON file - thread-safe with file locking."""
-        import fcntl
+        """Save sessions to JSON file - thread-safe with atomic writes."""
         try:
             sessions_data = {}
             for session_id, session in self.sessions.items():
@@ -218,20 +217,16 @@ class ChatService:
             # Use temporary file and atomic rename for thread safety
             temp_file = self.sessions_file + '.tmp'
             with open(temp_file, 'w', encoding='utf-8') as f:
-                # Lock file for atomic write (Unix/Linux only - for Windows we'll use different approach)
-                try:
-                    fcntl.flock(f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-                except:
-                    pass  # Windows doesn't support fcntl, continue anyway
                 json.dump(sessions_data, f, ensure_ascii=False, indent=2)
             
-            # Atomic rename
-            import shutil
+            # Atomic rename (works on both Windows and Unix)
             shutil.move(temp_file, self.sessions_file)
+            logger.debug(f"Successfully saved {len(sessions_data)} sessions to file")
                 
         except Exception as e:
             logger.error(f"Failed to save sessions to file: {e}")
             # Clean up temp file if it exists
+            temp_file = self.sessions_file + '.tmp'
             if os.path.exists(temp_file):
                 try:
                     os.remove(temp_file)
@@ -614,8 +609,13 @@ class ChatService:
                 return False
             
             session = self.sessions[session_id]
-            # Check if session is expired
+            # Check if session is expired and remove it immediately
             if datetime.now() > session.expires_at:
+                # Remove expired session immediately
+                del self.sessions[session_id]
+                self._active_sessions -= 1
+                self._schedule_debounced_save()
+                logger.info(f"Removed expired session on access: {session_id}")
                 return False
             
             return session.is_active
@@ -631,9 +631,13 @@ class ChatService:
             now = datetime.now()
             is_expired = now > session.expires_at
             
-            # Check if expired but don't delete here to prevent race conditions
+            # Remove expired session immediately
             if is_expired:
-                raise ValueError(f"Session {session_id} has expired")
+                del self.sessions[session_id]
+                self._active_sessions -= 1
+                self._schedule_debounced_save()
+                logger.info(f"Removed expired session on info access: {session_id}")
+                raise ValueError(f"Session {session_id} has expired and was removed")
             
             # Session is valid, return info
             return {
@@ -736,7 +740,10 @@ class ChatService:
             if expired_sessions:
                 self._save_sessions_to_file()
             
-            logger.info(f"Cleaned up {len(expired_sessions)} expired sessions")
+            if expired_sessions:
+                logger.info(f"Background cleanup: Removed {len(expired_sessions)} expired sessions: {expired_sessions}")
+            else:
+                logger.debug(f"Background cleanup: No expired sessions found ({len(self.sessions)} sessions active)")
             
             return {
                 "cleaned_sessions": len(expired_sessions),
