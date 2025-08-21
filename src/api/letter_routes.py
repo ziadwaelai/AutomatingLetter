@@ -87,7 +87,8 @@ def generate_letter():
                 recipient_job_title=letter_request.recipient_job_title,
                 organization_name=letter_request.organization_name,
                 previous_letter_content=letter_request.previous_letter_content,
-                previous_letter_id=letter_request.previous_letter_id
+                previous_letter_id=letter_request.previous_letter_id,
+                session_id=letter_request.session_id
             )
             
             # Generate letter

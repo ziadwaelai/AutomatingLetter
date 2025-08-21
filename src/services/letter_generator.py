@@ -85,10 +85,13 @@ class ArabicLetterGenerationService:
         try:
             from .memory_service import get_memory_service
             memory_service = get_memory_service()
-            return memory_service.format_instructions_for_prompt(
+            instructions = memory_service.format_instructions_for_prompt(
                 category=context.category,
                 session_id=context.session_id
             )
+            logger.info(f"Retrieved memory instructions for category='{context.category}', session_id='{context.session_id}': {len(instructions)} chars")
+            logger.debug(f"Memory instructions content: {instructions}")
+            return instructions
         except Exception as e:
             logger.warning(f"Failed to get memory instructions: {e}")
             return ""
@@ -221,6 +224,7 @@ class ArabicLetterGenerationService:
             
             logger.info(f"Generating letter with ID: {context.letter_id}")
             logger.debug(f"Input data prepared for letter generation: {list(input_data.keys())}")
+            logger.debug(f"Memory instructions being used: '{input_data['memory_instructions']}'")
             
             try:
                 # Invoke the chain
