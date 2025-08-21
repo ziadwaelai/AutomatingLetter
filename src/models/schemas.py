@@ -69,15 +69,22 @@ class EditLetterRequest(BaseModel):
 class ChatEditLetterRequest(BaseModel):
     """Request model for chat-based letter editing."""
     message: str = Field(..., min_length=1, max_length=1000, description="User message/editing request")
-    current_letter: str = Field(..., min_length=10, max_length=10000, description="Current letter content")
+    current_letter: str = Field(..., min_length=0, max_length=10000, description="Current letter content (can be empty for new letters)")
     editing_instructions: Optional[str] = Field(None, max_length=500, description="Specific editing instructions")
     preserve_formatting: bool = Field(default=True, description="Whether to preserve letter formatting")
     
-    @validator('message', 'current_letter')
-    def validate_content(cls, v):
-        """Validate content is not empty."""
+    @validator('message')
+    def validate_message(cls, v):
+        """Validate message is not empty."""
         if not v.strip():
-            raise ValueError("Content cannot be empty")
+            raise ValueError("Message cannot be empty")
+        return v
+    
+    @validator('current_letter')
+    def validate_current_letter(cls, v):
+        """Validate current letter - can be empty for new letters."""
+        # Allow empty letters for new letter creation
+        return v
         return v.strip()
 
 class ChatQuestionRequest(BaseModel):

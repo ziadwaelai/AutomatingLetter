@@ -14,7 +14,7 @@ from ..models import (
     ErrorResponse,
     ChatSessionStatus
 )
-from ..services import get_chat_service, get_sheets_service
+from ..services import get_chat_service, get_sheets_service, get_session_manager
 from ..utils import (
     ErrorContext,
     build_error_response,
@@ -48,21 +48,10 @@ def create_chat_session():
             # Check for idempotency key to prevent duplicate creation
             idempotency_key = data.get('idempotency_key') or request.headers.get('X-Idempotency-Key')
             
-            chat_service = get_chat_service()
+            session_manager = get_session_manager()
             
-            # If idempotency key provided, check if session already exists for this key
-            if idempotency_key:
-                existing_session = chat_service.find_session_by_idempotency_key(idempotency_key)
-                if existing_session:
-                    logger.info(f"Returning existing session for idempotency key {idempotency_key}: {existing_session}")
-                    return jsonify({
-                        "status": "success",
-                        "session_id": existing_session,
-                        "message": "Chat session already exists (idempotent)",
-                        "expires_in": chat_service.session_timeout
-                    }), 200  # Return 200 instead of 201 for existing session
-            
-            session_id = chat_service.create_session(
+            # Create session using the new session manager
+            session_id = session_manager.create_session(
                 initial_letter=data.get('initial_letter'),
                 context=data.get('context', ''),
                 idempotency_key=idempotency_key
@@ -74,7 +63,7 @@ def create_chat_session():
                 "status": "success",
                 "session_id": session_id,
                 "message": "Chat session created successfully",
-                "expires_in": chat_service.session_timeout
+                "expires_in": session_manager.session_timeout_minutes
             }), 201
             
         except Exception as e:
@@ -117,9 +106,10 @@ def edit_letter_chat(session_id: str):
             
             # Process chat message
             chat_service = get_chat_service()
+            session_manager = get_session_manager()
             
             # Check if session exists and is active
-            if not chat_service.session_exists(session_id):
+            if not session_manager.session_exists(session_id):
                 return jsonify({
                     "error": "Session not found",
                     "message": "Chat session does not exist or has expired"
@@ -167,17 +157,17 @@ def get_chat_history(session_id: str):
             limit = min(int(request.args.get('limit', 50)), 100)  # Max 100
             offset = max(int(request.args.get('offset', 0)), 0)
             
-            chat_service = get_chat_service()
+            session_manager = get_session_manager()
             
             # Check if session exists
-            if not chat_service.session_exists(session_id):
+            if not session_manager.session_exists(session_id):
                 return jsonify({
                     "error": "Session not found",
                     "message": "Chat session does not exist or has expired"
                 }), 404
             
             # Get chat history
-            history = chat_service.get_chat_history(
+            history = session_manager.get_chat_history(
                 session_id=session_id,
                 limit=limit,
                 offset=offset
@@ -215,13 +205,14 @@ def get_session_status(session_id: str):
         Session status and metadata
     """
     try:
-        chat_service = get_chat_service()
+        session_manager = get_session_manager()
         
-        # Atomic check - get session info directly, handle not found/expired in exception
-        session_info = chat_service.get_session_info(session_id)
+        # Get session info from the new session manager
+        session_info = session_manager.get_session_info(session_id)
         
         return jsonify({
             "status": "success",
+            "session_id": session_id,
             "session_info": session_info
         }), 200
         
@@ -251,24 +242,29 @@ def delete_chat_session(session_id: str):
     """
     with ErrorContext("delete_chat_session", {"session_id": session_id}):
         try:
-            chat_service = get_chat_service()
+            session_manager = get_session_manager()
             
-            if not chat_service.session_exists(session_id):
+            if not session_manager.session_exists(session_id):
                 return jsonify({
                     "error": "Session not found",
                     "message": "Chat session does not exist"
                 }), 404
             
             # Delete session
-            chat_service.delete_session(session_id)
+            success = session_manager.delete_session(session_id)
             
-            logger.info(f"Deleted chat session: {session_id}")
-            
-            return jsonify({
-                "status": "success",
-                "message": "Session deleted successfully",
-                "session_id": session_id
-            }), 200
+            if success:
+                logger.info(f"Deleted chat session: {session_id}")
+                return jsonify({
+                    "status": "success",
+                    "message": "Session deleted successfully",
+                    "session_id": session_id
+                }), 200
+            else:
+                return jsonify({
+                    "error": "Delete failed",
+                    "message": "Failed to delete session"
+                }), 500
             
         except Exception as e:
             logger.error(f"Failed to delete session {session_id}: {e}")
@@ -288,8 +284,8 @@ def list_active_sessions():
     try:
         include_expired = request.args.get('include_expired', 'false').lower() == 'true'
         
-        chat_service = get_chat_service()
-        sessions = chat_service.list_sessions(include_expired=include_expired)
+        session_manager = get_session_manager()
+        sessions = session_manager.list_sessions(include_expired=include_expired)
         
         return jsonify({
             "status": "success",
@@ -320,15 +316,15 @@ def extend_session(session_id: str):
         data = request.get_json() or {}
         extend_minutes = data.get('extend_minutes')
         
-        chat_service = get_chat_service()
+        session_manager = get_session_manager()
         
-        if not chat_service.session_exists(session_id):
+        if not session_manager.session_exists(session_id):
             return jsonify({
                 "error": "Session not found",
                 "message": "Chat session does not exist"
             }), 404
         
-        new_expiration = chat_service.extend_session(session_id, extend_minutes)
+        new_expiration = session_manager.extend_session(session_id, extend_minutes)
         
         return jsonify({
             "status": "success",
@@ -350,8 +346,8 @@ def manual_cleanup():
         Cleanup results
     """
     try:
-        chat_service = get_chat_service()
-        cleanup_results = chat_service.cleanup_expired_sessions()
+        session_manager = get_session_manager()
+        cleanup_results = session_manager.manual_cleanup()
         
         return jsonify({
             "status": "success",
@@ -371,8 +367,8 @@ def health_check():
         Service health status
     """
     try:
-        chat_service = get_chat_service()
-        service_stats = chat_service.get_service_stats()
+        session_manager = get_session_manager()
+        service_stats = session_manager.get_service_stats()
         
         return jsonify({
             "status": "healthy",
