@@ -1,7 +1,9 @@
 flask
+flask-cors
 langchain-community
 langchain-openai
 langchain
+langgraph
 gspread
 oauth2client
 google-api-python-client
@@ -9,3 +11,7 @@ playwright
 pytz
 hijri-converter
 python-dotenv
+pydantic
+wkhtmltopdf
+pdfkit
+jinja2

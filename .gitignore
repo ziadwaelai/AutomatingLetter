@@ -6,3 +6,7 @@ __pycache__/*
 *.pyc
 __pycache__/*
 *.pdf
+logs/
+logs
+venv/
+data
