@@ -7,9 +7,11 @@ import logging
 import threading
 import time
 import uuid
+import json
+import os
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional, Set
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from threading import Lock
 
 from ..config import get_config
@@ -31,6 +33,27 @@ class ChatMessage:
     content: str
     timestamp: datetime
     metadata: Dict[str, Any] = field(default_factory=dict)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
+        return {
+            "id": self.id,
+            "role": self.role,
+            "content": self.content,
+            "timestamp": self.timestamp.isoformat(),
+            "metadata": self.metadata
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'ChatMessage':
+        """Create from dictionary."""
+        return cls(
+            id=data["id"],
+            role=data["role"],
+            content=data["content"],
+            timestamp=datetime.fromisoformat(data["timestamp"]),
+            metadata=data.get("metadata", {})
+        )
 
 @dataclass
 class LetterVersion:
@@ -39,6 +62,25 @@ class LetterVersion:
     content: str
     timestamp: datetime
     change_summary: str = ""
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
+        return {
+            "version_id": self.version_id,
+            "content": self.content,
+            "timestamp": self.timestamp.isoformat(),
+            "change_summary": self.change_summary
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'LetterVersion':
+        """Create from dictionary."""
+        return cls(
+            version_id=data["version_id"],
+            content=data["content"],
+            timestamp=datetime.fromisoformat(data["timestamp"]),
+            change_summary=data.get("change_summary", "")
+        )
 
 @dataclass
 class ChatSession:
@@ -51,6 +93,33 @@ class ChatSession:
     messages: List[ChatMessage] = field(default_factory=list)
     letter_versions: List[LetterVersion] = field(default_factory=list)
     is_active: bool = True
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
+        return {
+            "session_id": self.session_id,
+            "created_at": self.created_at.isoformat(),
+            "last_activity": self.last_activity.isoformat(),
+            "expires_at": self.expires_at.isoformat(),
+            "context": self.context,
+            "messages": [msg.to_dict() for msg in self.messages],
+            "letter_versions": [ver.to_dict() for ver in self.letter_versions],
+            "is_active": self.is_active
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'ChatSession':
+        """Create from dictionary."""
+        return cls(
+            session_id=data["session_id"],
+            created_at=datetime.fromisoformat(data["created_at"]),
+            last_activity=datetime.fromisoformat(data["last_activity"]),
+            expires_at=datetime.fromisoformat(data["expires_at"]),
+            context=data["context"],
+            messages=[ChatMessage.from_dict(msg) for msg in data.get("messages", [])],
+            letter_versions=[LetterVersion.from_dict(ver) for ver in data.get("letter_versions", [])],
+            is_active=data.get("is_active", True)
+        )
 
 class ChatService:
     """Service for managing chat sessions and letter editing."""
@@ -59,11 +128,15 @@ class ChatService:
         """Initialize chat service."""
         self.config = get_config()
         
-        # Session management
+        # Session management with file persistence
         self.sessions: Dict[str, ChatSession] = {}
         self.session_lock = Lock()
         self.session_timeout = self.config.chat_session_timeout_minutes
         self.max_memory_size = self.config.chat_max_memory_size
+        
+        # File storage setup
+        self.sessions_file = os.path.join("data", "chat_sessions.json")
+        os.makedirs(os.path.dirname(self.sessions_file), exist_ok=True)
         
         # Background cleanup
         self.cleanup_thread = None
@@ -78,10 +151,13 @@ class ChatService:
         # Memory service (lazy import to avoid circular dependency)
         self._memory_service = None
         
+        # Load existing sessions from file
+        self._load_sessions_from_file()
+        
         # Start background cleanup
         self._start_cleanup_thread()
         
-        logger.info("Chat service initialized")
+        logger.info("Chat service initialized with file persistence")
     
     def _start_cleanup_thread(self):
         """Start background cleanup thread."""
@@ -105,6 +181,60 @@ class ChatService:
             except Exception as e:
                 logger.warning(f"Failed to load memory service: {e}")
         return self._memory_service
+    
+    def _load_sessions_from_file(self):
+        """Load sessions from JSON file."""
+        try:
+            if os.path.exists(self.sessions_file):
+                with open(self.sessions_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    for session_data in data.values():
+                        session = ChatSession.from_dict(session_data)
+                        self.sessions[session.session_id] = session
+                        
+                logger.info(f"Loaded {len(self.sessions)} sessions from file")
+                self._active_sessions = len(self.sessions)
+            else:
+                logger.info("No existing sessions file found")
+        except Exception as e:
+            logger.error(f"Failed to load sessions from file: {e}")
+            self.sessions = {}
+    
+    def _save_sessions_to_file(self):
+        """Save sessions to JSON file."""
+        try:
+            sessions_data = {}
+            for session_id, session in self.sessions.items():
+                sessions_data[session_id] = session.to_dict()
+            
+            with open(self.sessions_file, 'w', encoding='utf-8') as f:
+                json.dump(sessions_data, f, ensure_ascii=False, indent=2)
+                
+        except Exception as e:
+            logger.error(f"Failed to save sessions to file: {e}")
+    
+    def _save_session(self, session_id: str):
+        """Save a single session to file (called after session changes)."""
+        try:
+            # Load existing data
+            sessions_data = {}
+            if os.path.exists(self.sessions_file):
+                with open(self.sessions_file, 'r', encoding='utf-8') as f:
+                    sessions_data = json.load(f)
+            
+            # Update with current session
+            if session_id in self.sessions:
+                sessions_data[session_id] = self.sessions[session_id].to_dict()
+            elif session_id in sessions_data:
+                # Session deleted, remove from file
+                del sessions_data[session_id]
+            
+            # Save back to file
+            with open(self.sessions_file, 'w', encoding='utf-8') as f:
+                json.dump(sessions_data, f, ensure_ascii=False, indent=2)
+                
+        except Exception as e:
+            logger.error(f"Failed to save session {session_id} to file: {e}")
     
     @service_error_handler
     def create_session(
@@ -149,6 +279,8 @@ class ChatService:
                 self.sessions[session_id] = session
                 self._total_sessions += 1
                 self._active_sessions += 1
+                # Save to file immediately
+                self._save_session(session_id)
             
             logger.info(f"Created chat session: {session_id}")
             return session_id
@@ -194,6 +326,8 @@ class ChatService:
                 
                 # Update last activity
                 session.last_activity = now
+                # Save session after activity update
+                self._save_session(session_id)
             
             # Add user message to session
             user_message = ChatMessage(
@@ -287,6 +421,9 @@ class ChatService:
                 
                 # Update stats
                 self._total_messages += 2  # user + assistant
+                
+                # Save session after processing
+                self._save_session(session_id)
                 
                 # Create response
                 response = ChatEditResponse(
@@ -447,8 +584,7 @@ class ChatService:
                 return False
             
             session = self.sessions[session_id]
-            # Check if session is expired but don't delete here to prevent race conditions
-            # Let the background cleanup thread handle expired session removal
+            # Check if session is expired
             if datetime.now() > session.expires_at:
                 return False
             
@@ -501,6 +637,9 @@ class ChatService:
             session.expires_at = new_expiration
             session.last_activity = datetime.now()
             
+            # Save session after extending
+            self._save_session(session_id)
+            
             logger.info(f"Extended session {session_id} until {new_expiration}")
             
             return new_expiration
@@ -513,6 +652,9 @@ class ChatService:
             
             del self.sessions[session_id]
             self._active_sessions -= 1
+            
+            # Remove from file
+            self._save_session(session_id)
             
             # Clear associated memory
             memory_service = self._get_memory_service()
@@ -560,6 +702,10 @@ class ChatService:
                 del self.sessions[session_id]
                 self._active_sessions -= 1
             
+            # Save updated sessions to file if any were cleaned
+            if expired_sessions:
+                self._save_sessions_to_file()
+            
             logger.info(f"Cleaned up {len(expired_sessions)} expired sessions")
             
             return {
@@ -589,8 +735,9 @@ class ChatService:
             self.shutdown_event.set()
             self.cleanup_thread.join(timeout=5)
         
-        # Clear sessions
+        # Save sessions before clearing
         with self.session_lock:
+            self._save_sessions_to_file()
             self.sessions.clear()
         
         logger.info("Chat service shutdown complete")

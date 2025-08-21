@@ -770,3 +770,285 @@
 2025-08-20 11:32:57,975 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
 2025-08-20 11:37:57,979 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
 2025-08-20 11:42:57,992 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-21 12:25:36,241 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-08-21 12:25:36,241 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-21 12:25:36,246 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:25:39,180 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:25:39,188 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:25:57,371 - __main__ - INFO - GET http://127.0.0.1:5000/ - 127.0.0.1
+2025-08-21 12:25:57,371 - __main__ - INFO - Response: 200 - root
+2025-08-21 12:25:57,374 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:25:57] "GET / HTTP/1.1" 200 -
+2025-08-21 12:26:04,145 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/chat/sessions - 127.0.0.1
+2025-08-21 12:26:04,145 - src.services.chat_service - INFO - Started background cleanup thread
+2025-08-21 12:26:04,145 - src.services.chat_service - INFO - Chat service initialized
+2025-08-21 12:26:04,145 - src.services.chat_service - INFO - Created chat session: a94b9b8e-ad1c-4f6e-8bec-293d28895154
+2025-08-21 12:26:04,145 - src.api.chat_routes - INFO - Created chat session: a94b9b8e-ad1c-4f6e-8bec-293d28895154
+2025-08-21 12:26:04,145 - src.utils.helpers - INFO - create_chat_session executed in 0.000s
+2025-08-21 12:26:04,145 - __main__ - INFO - Response: 201 - chat.create_chat_session
+2025-08-21 12:26:04,145 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:04] "[35m[1mPOST /api/v1/chat/sessions HTTP/1.1[0m" 201 -
+2025-08-21 12:26:13,201 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:13,201 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:13,201 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:13] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:14,192 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:14,192 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:14,192 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:14] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:15,819 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:15,820 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:15,820 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:15] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:16,832 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:16,832 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:16,832 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:16] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:17,845 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:17,984 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:18,001 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:18] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:19,879 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:19,879 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:19,879 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:19] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:21,083 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:21,083 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:21,083 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:21] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:22,185 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:22,185 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:22,185 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:22] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:24,204 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:24,204 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:24,204 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:24] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:25,161 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:25,161 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:25,161 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:25] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:26,301 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:26,301 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:26,301 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:26] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:27,261 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:27,261 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:27,261 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:27] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:28,237 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:28,237 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:28,237 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:28] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:29,785 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:29,785 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:29,786 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:29] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:30,736 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:30,736 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:30,737 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:30] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:33,866 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:33,866 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:33,866 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:33] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:35,082 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:35,082 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:35,082 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:35] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:36,201 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:36,201 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:36,201 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:36] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:37,151 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:37,151 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:37,151 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:37] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:37,881 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:37,881 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:37,881 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:37] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:39,461 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:39,461 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:39,461 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:39] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:40,545 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:40,551 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:40,551 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:40] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:41,435 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:41,435 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:41,436 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:41] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:42,531 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:42,531 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:42,531 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:42] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:44,101 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:26:44,101 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:26:44,101 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:26:44] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:26:50,283 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/edit - 127.0.0.1
+2025-08-21 12:26:52,711 - src.services.memory_service - INFO - Memory service initialized with LangGraph agent
+2025-08-21 12:26:52,711 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
+2025-08-21 12:26:52,745 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
+2025-08-21 12:26:53,211 - src.services.letter_generator - INFO - Generating letter with ID: LET-20250821-35810
+2025-08-21 12:26:54,371 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 12:27:04,156 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-21 12:27:06,261 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 12:27:06,273 - src.services.letter_generator - INFO - Letter generated successfully: LET-20250821-35810
+2025-08-21 12:27:06,273 - src.utils.helpers - INFO - generate_letter executed in 13.528s
+2025-08-21 12:27:06,273 - src.services.chat_service - INFO - Processed edit request for session a94b9b8e-ad1c-4f6e-8bec-293d28895154 in 0.00s
+2025-08-21 12:27:06,277 - src.api.chat_routes - INFO - Processed chat edit for session a94b9b8e-ad1c-4f6e-8bec-293d28895154
+2025-08-21 12:27:06,277 - src.utils.helpers - INFO - edit_letter_chat executed in 15.994s
+2025-08-21 12:27:06,277 - __main__ - INFO - Response: 200 - chat.edit_letter_chat
+2025-08-21 12:27:06,277 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:27:06] "POST /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/edit HTTP/1.1" 200 -
+2025-08-21 12:27:08,721 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:27:08,721 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:27:08,723 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:27:08] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:27:11,981 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:27:11,981 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:27:11,982 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:27:11] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:27:13,976 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/edit - 127.0.0.1
+2025-08-21 12:27:13,993 - src.services.letter_generator - INFO - Generating letter with ID: LET-20250821-37542
+2025-08-21 12:27:14,951 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 12:27:21,001 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 12:27:21,011 - src.services.letter_generator - INFO - Letter generated successfully: LET-20250821-37542
+2025-08-21 12:27:21,011 - src.utils.helpers - INFO - generate_letter executed in 7.030s
+2025-08-21 12:27:21,011 - src.services.chat_service - INFO - Processed edit request for session a94b9b8e-ad1c-4f6e-8bec-293d28895154 in 0.00s
+2025-08-21 12:27:21,011 - src.api.chat_routes - INFO - Processed chat edit for session a94b9b8e-ad1c-4f6e-8bec-293d28895154
+2025-08-21 12:27:21,011 - src.utils.helpers - INFO - edit_letter_chat executed in 7.035s
+2025-08-21 12:27:21,011 - __main__ - INFO - Response: 200 - chat.edit_letter_chat
+2025-08-21 12:27:21,011 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:27:21] "POST /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/edit HTTP/1.1" 200 -
+2025-08-21 12:27:24,285 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:27:24,285 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:27:24,285 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:27:24] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:27:25,881 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:27:25,881 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:27:25,881 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:27:25] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:27:26,881 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:27:26,886 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:27:26,886 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:27:26] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:27:27,815 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:27:27,815 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:27:27,815 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:27:27] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:27:28,740 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:27:28,741 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:27:28,741 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:27:28] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:27:34,426 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/chat/sessions - 127.0.0.1
+2025-08-21 12:27:34,426 - src.services.chat_service - INFO - Created chat session: dc2e5acb-17e6-463f-b48b-68546cab4998
+2025-08-21 12:27:34,426 - src.api.chat_routes - INFO - Created chat session: dc2e5acb-17e6-463f-b48b-68546cab4998
+2025-08-21 12:27:34,426 - src.utils.helpers - INFO - create_chat_session executed in 0.000s
+2025-08-21 12:27:34,426 - __main__ - INFO - Response: 201 - chat.create_chat_session
+2025-08-21 12:27:34,426 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:27:34] "[35m[1mPOST /api/v1/chat/sessions HTTP/1.1[0m" 201 -
+2025-08-21 12:28:01,021 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions - 127.0.0.1
+2025-08-21 12:28:01,021 - __main__ - INFO - Response: 200 - chat.list_active_sessions
+2025-08-21 12:28:01,021 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:28:01] "GET /api/v1/chat/sessions HTTP/1.1" 200 -
+2025-08-21 12:28:04,162 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-21 12:28:05,674 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions - 127.0.0.1
+2025-08-21 12:28:05,674 - __main__ - INFO - Response: 200 - chat.list_active_sessions
+2025-08-21 12:28:05,674 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:28:05] "GET /api/v1/chat/sessions HTTP/1.1" 200 -
+2025-08-21 12:28:06,819 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions - 127.0.0.1
+2025-08-21 12:28:06,819 - __main__ - INFO - Response: 200 - chat.list_active_sessions
+2025-08-21 12:28:06,819 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:28:06] "GET /api/v1/chat/sessions HTTP/1.1" 200 -
+2025-08-21 12:28:13,622 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:28:13,623 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:28:13,623 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:28:13] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:28:14,831 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:28:14,831 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:28:14,831 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:28:14] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:29:04,166 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-21 12:29:18,747 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status - 127.0.0.1
+2025-08-21 12:29:18,747 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:29:18,748 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:29:18] "GET /api/v1/chat/sessions/a94b9b8e-ad1c-4f6e-8bec-293d28895154/status HTTP/1.1" 200 -
+2025-08-21 12:30:04,181 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-21 12:31:04,189 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-21 12:32:04,196 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-21 12:33:04,198 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-21 12:34:04,209 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-21 12:35:04,223 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-21 12:36:04,237 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-21 12:37:04,239 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-21 12:37:33,751 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\chat_service.py', reloading
+2025-08-21 12:37:34,058 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:37:37,037 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:37:37,042 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:37:51,704 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\chat_service.py', reloading
+2025-08-21 12:37:51,943 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:37:54,944 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:37:54,949 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:37:58,460 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\chat_service.py', reloading
+2025-08-21 12:37:58,654 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:38:01,665 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:38:01,672 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:38:07,539 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\chat_service.py', reloading
+2025-08-21 12:38:07,735 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:38:10,473 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:38:10,477 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:38:17,376 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\chat_service.py', reloading
+2025-08-21 12:38:17,548 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:38:20,398 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:38:20,405 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:38:27,266 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\chat_service.py', reloading
+2025-08-21 12:38:27,482 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:38:30,657 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:38:30,663 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:38:33,069 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\chat_service.py', reloading
+2025-08-21 12:38:33,293 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:38:36,398 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:38:36,404 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:38:37,761 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\chat_service.py', reloading
+2025-08-21 12:38:37,976 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:38:40,866 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:38:40,872 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:38:42,160 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\chat_service.py', reloading
+2025-08-21 12:38:42,352 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:38:45,071 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:38:45,077 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:38:48,608 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\chat_service.py', reloading
+2025-08-21 12:38:48,782 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:38:51,588 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:38:51,593 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:38:54,001 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\chat_service.py', reloading
+2025-08-21 12:38:54,206 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:38:57,437 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:38:57,439 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:38:59,853 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\chat_service.py', reloading
+2025-08-21 12:39:00,079 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:39:03,338 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:39:03,343 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:39:05,780 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\chat_service.py', reloading
+2025-08-21 12:39:06,057 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:39:09,388 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:39:09,392 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:39:10,670 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\chat_service.py', reloading
+2025-08-21 12:39:10,878 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:39:13,933 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:39:13,943 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:50:37,243 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-08-21 12:50:37,244 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-21 12:50:37,245 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:50:40,091 - werkzeug - WARNING -  * Debugger is active!
+2025-08-21 12:50:40,097 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-08-21 12:50:53,265 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-08-21 12:50:53,265 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-08-21 12:50:53,267 - werkzeug - INFO -  * Restarting with stat
+2025-08-21 12:51:14,870 - __main__ - INFO - POST http://localhost:5000/api/v1/chat/sessions - 127.0.0.1
+2025-08-21 12:51:14,873 - src.services.chat_service - INFO - Loaded 2 sessions from file
+2025-08-21 12:51:14,875 - src.services.chat_service - INFO - Started background cleanup thread
+2025-08-21 12:51:14,875 - src.services.chat_service - INFO - Chat service initialized with file persistence
+2025-08-21 12:51:14,878 - src.services.chat_service - INFO - Created chat session: 4d8e1feb-2536-4dc3-a98e-8a3decd20856
+2025-08-21 12:51:14,878 - src.api.chat_routes - INFO - Created chat session: 4d8e1feb-2536-4dc3-a98e-8a3decd20856
+2025-08-21 12:51:14,878 - src.utils.helpers - INFO - create_chat_session executed in 0.008s
+2025-08-21 12:51:14,878 - __main__ - INFO - Response: 201 - chat.create_chat_session
+2025-08-21 12:51:14,878 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:51:14] "[35m[1mPOST /api/v1/chat/sessions HTTP/1.1[0m" 201 -
+2025-08-21 12:51:29,665 - __main__ - INFO - GET http://localhost:5000/api/v1/chat/sessions/4d8e1feb-2536-4dc3-a98e-8a3decd20856/status - 127.0.0.1
+2025-08-21 12:51:29,665 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:51:29,665 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:51:29] "GET /api/v1/chat/sessions/4d8e1feb-2536-4dc3-a98e-8a3decd20856/status HTTP/1.1" 200 -
+2025-08-21 12:51:52,300 - __main__ - INFO - POST http://localhost:5000/api/v1/chat/sessions/4d8e1feb-2536-4dc3-a98e-8a3decd20856/edit - 127.0.0.1
+2025-08-21 12:51:52,770 - src.services.memory_service - INFO - Memory service initialized with LangGraph agent
+2025-08-21 12:51:52,770 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
+2025-08-21 12:51:52,792 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
+2025-08-21 12:51:53,110 - src.services.letter_generator - INFO - Generating letter with ID: LET-20250821-49405
+2025-08-21 12:51:54,089 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 12:51:57,779 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-21 12:51:57,805 - src.services.letter_generator - INFO - Letter generated successfully: LET-20250821-49405
+2025-08-21 12:51:57,805 - src.utils.helpers - INFO - generate_letter executed in 5.011s
+2025-08-21 12:51:57,813 - src.services.chat_service - INFO - Processed edit request for session 4d8e1feb-2536-4dc3-a98e-8a3decd20856 in 0.00s
+2025-08-21 12:51:57,813 - src.api.chat_routes - INFO - Processed chat edit for session 4d8e1feb-2536-4dc3-a98e-8a3decd20856
+2025-08-21 12:51:57,813 - src.utils.helpers - INFO - edit_letter_chat executed in 5.513s
+2025-08-21 12:51:57,813 - __main__ - INFO - Response: 200 - chat.edit_letter_chat
+2025-08-21 12:51:57,815 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:51:57] "POST /api/v1/chat/sessions/4d8e1feb-2536-4dc3-a98e-8a3decd20856/edit HTTP/1.1" 200 -
+2025-08-21 12:52:14,207 - __main__ - INFO - GET http://localhost:5000/api/v1/chat/sessions/4d8e1feb-2536-4dc3-a98e-8a3decd20856/status - 127.0.0.1
+2025-08-21 12:52:14,208 - __main__ - INFO - Response: 200 - chat.get_session_status
+2025-08-21 12:52:14,208 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:52:14] "GET /api/v1/chat/sessions/4d8e1feb-2536-4dc3-a98e-8a3decd20856/status HTTP/1.1" 200 -
+2025-08-21 12:52:14,877 - src.services.chat_service - INFO - Cleaned up 0 expired sessions
+2025-08-21 12:52:28,606 - __main__ - INFO - GET http://localhost:5000/api/v1/chat/sessions/4d8e1feb-2536-4dc3-a98e-8a3decd20856/history - 127.0.0.1
+2025-08-21 12:52:28,607 - src.utils.helpers - INFO - get_chat_history executed in 0.000s
+2025-08-21 12:52:28,607 - __main__ - INFO - Response: 200 - chat.get_chat_history
+2025-08-21 12:52:28,607 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:52:28] "GET /api/v1/chat/sessions/4d8e1feb-2536-4dc3-a98e-8a3decd20856/history HTTP/1.1" 200 -
+2025-08-21 12:52:50,344 - __main__ - INFO - GET http://localhost:5000/api/v1/chat/sessions/invalid-session-id/status - 127.0.0.1
+2025-08-21 12:52:50,344 - __main__ - INFO - Response: 404 - chat.get_session_status
+2025-08-21 12:52:50,344 - werkzeug - INFO - 127.0.0.1 - - [21/Aug/2025 12:52:50] "[33mGET /api/v1/chat/sessions/invalid-session-id/status HTTP/1.1[0m" 404 -
