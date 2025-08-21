@@ -93,6 +93,7 @@ class ChatSession:
     messages: List[ChatMessage] = field(default_factory=list)
     letter_versions: List[LetterVersion] = field(default_factory=list)
     is_active: bool = True
+    idempotency_key: Optional[str] = None
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
@@ -104,7 +105,8 @@ class ChatSession:
             "context": self.context,
             "messages": [msg.to_dict() for msg in self.messages],
             "letter_versions": [ver.to_dict() for ver in self.letter_versions],
-            "is_active": self.is_active
+            "is_active": self.is_active,
+            "idempotency_key": self.idempotency_key
         }
     
     @classmethod
@@ -118,7 +120,8 @@ class ChatSession:
             context=data["context"],
             messages=[ChatMessage.from_dict(msg) for msg in data.get("messages", [])],
             letter_versions=[LetterVersion.from_dict(ver) for ver in data.get("letter_versions", [])],
-            is_active=data.get("is_active", True)
+            is_active=data.get("is_active", True),
+            idempotency_key=data.get("idempotency_key")
         )
 
 class ChatService:
@@ -137,6 +140,10 @@ class ChatService:
         # File storage setup
         self.sessions_file = os.path.join("data", "chat_sessions.json")
         os.makedirs(os.path.dirname(self.sessions_file), exist_ok=True)
+        
+        # Debounced save mechanism to reduce I/O
+        self._save_pending = False
+        self._save_timer = None
         
         # Background cleanup
         self.cleanup_thread = None
@@ -201,46 +208,57 @@ class ChatService:
             self.sessions = {}
     
     def _save_sessions_to_file(self):
-        """Save sessions to JSON file."""
+        """Save sessions to JSON file - thread-safe with file locking."""
+        import fcntl
         try:
             sessions_data = {}
             for session_id, session in self.sessions.items():
                 sessions_data[session_id] = session.to_dict()
             
-            with open(self.sessions_file, 'w', encoding='utf-8') as f:
+            # Use temporary file and atomic rename for thread safety
+            temp_file = self.sessions_file + '.tmp'
+            with open(temp_file, 'w', encoding='utf-8') as f:
+                # Lock file for atomic write (Unix/Linux only - for Windows we'll use different approach)
+                try:
+                    fcntl.flock(f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except:
+                    pass  # Windows doesn't support fcntl, continue anyway
                 json.dump(sessions_data, f, ensure_ascii=False, indent=2)
+            
+            # Atomic rename
+            import shutil
+            shutil.move(temp_file, self.sessions_file)
                 
         except Exception as e:
             logger.error(f"Failed to save sessions to file: {e}")
+            # Clean up temp file if it exists
+            if os.path.exists(temp_file):
+                try:
+                    os.remove(temp_file)
+                except:
+                    pass
     
     def _save_session(self, session_id: str):
-        """Save a single session to file (called after session changes)."""
-        try:
-            # Load existing data
-            sessions_data = {}
-            if os.path.exists(self.sessions_file):
-                with open(self.sessions_file, 'r', encoding='utf-8') as f:
-                    sessions_data = json.load(f)
-            
-            # Update with current session
-            if session_id in self.sessions:
-                sessions_data[session_id] = self.sessions[session_id].to_dict()
-            elif session_id in sessions_data:
-                # Session deleted, remove from file
-                del sessions_data[session_id]
-            
-            # Save back to file
-            with open(self.sessions_file, 'w', encoding='utf-8') as f:
-                json.dump(sessions_data, f, ensure_ascii=False, indent=2)
-                
-        except Exception as e:
-            logger.error(f"Failed to save session {session_id} to file: {e}")
+        """Save a single session to file (called after session changes) - optimized for concurrency."""
+        # Use debounced saving to reduce I/O operations
+        self._schedule_debounced_save()
+    
+    def _schedule_debounced_save(self):
+        """Schedule a debounced save to reduce frequent file writes."""
+        # Cancel existing timer
+        if self._save_timer:
+            self._save_timer.cancel()
+        
+        # Schedule new save after 1 second delay
+        self._save_timer = threading.Timer(1.0, self._save_sessions_to_file)
+        self._save_timer.start()
     
     @service_error_handler
     def create_session(
         self,
         initial_letter: Optional[str] = None,
-        context: str = ""
+        context: str = "",
+        idempotency_key: Optional[str] = None
     ) -> str:
         """
         Create a new chat session.
@@ -248,6 +266,7 @@ class ChatService:
         Args:
             initial_letter: Initial letter content
             context: Additional context for the session
+            idempotency_key: Optional key to prevent duplicate creation
             
         Returns:
             Session ID
@@ -262,7 +281,8 @@ class ChatService:
                 created_at=now,
                 last_activity=now,
                 expires_at=expires_at,
-                context=context
+                context=context,
+                idempotency_key=idempotency_key
             )
             
             # Add initial letter version if provided
@@ -284,6 +304,16 @@ class ChatService:
             
             logger.info(f"Created chat session: {session_id}")
             return session_id
+    
+    def find_session_by_idempotency_key(self, idempotency_key: str) -> Optional[str]:
+        """Find existing session by idempotency key."""
+        with self.session_lock:
+            for session_id, session in self.sessions.items():
+                if session.idempotency_key == idempotency_key and session.is_active:
+                    # Check if session is not expired
+                    if datetime.now() <= session.expires_at:
+                        return session_id
+            return None
     
     @service_error_handler
     def process_edit_request(
@@ -734,6 +764,10 @@ class ChatService:
         if self.cleanup_thread and self.cleanup_thread.is_alive():
             self.shutdown_event.set()
             self.cleanup_thread.join(timeout=5)
+        
+        # Cancel any pending saves and save immediately
+        if self._save_timer:
+            self._save_timer.cancel()
         
         # Save sessions before clearing
         with self.session_lock:

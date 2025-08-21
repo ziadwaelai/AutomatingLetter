@@ -36,6 +36,7 @@ def create_chat_session():
     Request Body (optional):
         initial_letter: str - Initial letter content
         context: str - Additional context for the session
+        idempotency_key: str - Optional key to prevent duplicate creation
         
     Returns:
         Session ID and initial status
@@ -44,10 +45,27 @@ def create_chat_session():
         try:
             data = request.get_json() or {}
             
+            # Check for idempotency key to prevent duplicate creation
+            idempotency_key = data.get('idempotency_key') or request.headers.get('X-Idempotency-Key')
+            
             chat_service = get_chat_service()
+            
+            # If idempotency key provided, check if session already exists for this key
+            if idempotency_key:
+                existing_session = chat_service.find_session_by_idempotency_key(idempotency_key)
+                if existing_session:
+                    logger.info(f"Returning existing session for idempotency key {idempotency_key}: {existing_session}")
+                    return jsonify({
+                        "status": "success",
+                        "session_id": existing_session,
+                        "message": "Chat session already exists (idempotent)",
+                        "expires_in": chat_service.session_timeout
+                    }), 200  # Return 200 instead of 201 for existing session
+            
             session_id = chat_service.create_session(
                 initial_letter=data.get('initial_letter'),
-                context=data.get('context', '')
+                context=data.get('context', ''),
+                idempotency_key=idempotency_key
             )
             
             logger.info(f"Created chat session: {session_id}")
