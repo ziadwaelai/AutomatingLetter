@@ -199,19 +199,21 @@ def get_session_status(session_id: str):
     try:
         chat_service = get_chat_service()
         
-        if not chat_service.session_exists(session_id):
-            return jsonify({
-                "status": "not_found",
-                "session_id": session_id,
-                "message": "Session does not exist"
-            }), 404
-        
+        # Atomic check - get session info directly, handle not found/expired in exception
         session_info = chat_service.get_session_info(session_id)
         
         return jsonify({
             "status": "success",
             "session_info": session_info
         }), 200
+        
+    except ValueError as e:
+        # Session not found or expired
+        return jsonify({
+            "status": "not_found",
+            "session_id": session_id,
+            "message": str(e)
+        }), 404
         
     except Exception as e:
         logger.error(f"Failed to get session status for {session_id}: {e}")

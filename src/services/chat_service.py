@@ -457,6 +457,7 @@ class ChatService:
     def get_session_info(self, session_id: str) -> Dict[str, Any]:
         """Get detailed session information."""
         with self.session_lock:
+            # Double-check session existence within the lock to prevent race conditions
             if session_id not in self.sessions:
                 raise ValueError(f"Session {session_id} not found")
             
@@ -464,11 +465,11 @@ class ChatService:
             now = datetime.now()
             is_expired = now > session.expires_at
             
-            # Don't delete here to prevent race conditions
-            # Let the background cleanup thread handle expired session removal
+            # Check if expired but don't delete here to prevent race conditions
             if is_expired:
                 raise ValueError(f"Session {session_id} has expired")
             
+            # Session is valid, return info
             return {
                 "session_id": session_id,
                 "created_at": session.created_at.isoformat(),
