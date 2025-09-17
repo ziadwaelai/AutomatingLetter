@@ -9,38 +9,40 @@
 
 <body>
   <div class="invitation-container">
+    <div class="content-wrapper">
+      <header class="site-header">
+        <div class="company-info">
+          <p class="english-name">AL-HAYYAD AL-SAFRI FOR ENVIRONMENTAL SERVICES COMPANY</p>
+          <p class="arabic-name">شركة الحياد الصفري للخدمات البيئية</p>
+        </div>
+        <div class="header-logos">
+          <img src="../assets/sedra.png" alt="Sedrah Logo" class="logo-sedrah">
+          <img src="../assets/Netzero_Logo.png" alt="NetZero Logo" class="logo-netzero">
+        </div>
+      </header>
 
-    <header class="site-header">
-      <div class="company-info">
-        <p class="english-name">AL-HAYYAD AL-SAFRI FOR ENVIRONMENTAL SERVICES COMPANY</p>
-        <p class="arabic-name">شركة الحياد الصفري للخدمات البيئية</p>
+      <div class="document-info">
+        <div class="doc-date">التاريخ: {{gregorian_arabic}}</div>
+        <div class="doc-date">الموافق: {{hijri_arabic}}</div>
+        <div class="doc-id">الرقم : {{document_id}}</div>
       </div>
-      <div class="header-logos">
-        <img src="../assets/sedra.png" alt="Sedrah Logo" class="logo-sedrah">
-        <img src="../assets/Netzero_Logo.png" alt="NetZero Logo" class="logo-netzero">
+
+      <div class="header-text">
+        <h2>{{bismillah}}</h2>
+        <h3>{{title}}</h3>
       </div>
-    </header>
 
-    <div class="document-info">
-      <div class="doc-date">التاريخ: {{gregorian_arabic}}</div>
-      <div class="doc-date">الموافق: {{hijri_arabic}}</div>
-      <div class="doc-id">الرقم : {{document_id}}</div>
-    </div>
-
-    <div class="header-text">
-      <h2>{{bismillah}}</h2>
-      <h3>{{title}}</h3>
+      <div class="section">
+        <p><strong>{{recipient}}</strong></p>
+        <p>{{greeting}}</p>
+        {{body}}
+      </div>
+      <div class="header-text">
+        <p>{{closing line}}</p>
+      </div>
     </div>
 
-    <div class="section">
-      <p><strong>{{recipient}}</strong></p>
-      <p>{{greeting}}</p>
-      {{body}}
-    </div>
-    <div class="header-text">
-      <p>{{closing line}}</p>
-    </div>
-<footer class="site-footer">
+    <footer class="site-footer">
     <div class="footer-column footer-arabic">
         <p>المملكة العربية السعودية، الخبر 34412</p>
         <p>س.ت: 2052101838 | البريد الالكتروني: <bdi>inquiry@netzero.sa</bdi></p>

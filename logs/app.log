@@ -6209,3 +6209,26 @@ current_letter
 2025-09-17 14:22:39,410 - werkzeug - INFO -  * Debugger PIN: 129-536-069
 2025-09-17 14:24:43,116 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\services\\enhanced_pdf_service.py', reloading
 2025-09-17 14:24:43,411 - werkzeug - INFO -  * Restarting with stat
+2025-09-17 14:24:45,508 - werkzeug - WARNING -  * Debugger is active!
+2025-09-17 14:24:45,511 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-09-17 14:25:20,959 - __main__ - INFO - POST http://localhost:5000/api/v1/archive/letter - 127.0.0.1
+2025-09-17 14:25:20,959 - src.api.archive_routes - INFO - Starting background archiving for letter ID: UNIQUE-ID
+2025-09-17 14:25:20,959 - src.api.archive_routes - INFO - Letter archiving initiated for ID: UNIQUE-ID
+2025-09-17 14:25:20,959 - src.utils.helpers - INFO - archive_letter executed in 0.000s
+2025-09-17 14:25:20,959 - __main__ - INFO - Response: 200 - archive.archive_letter
+2025-09-17 14:25:20,959 - werkzeug - INFO - 127.0.0.1 - - [17/Sep/2025 14:25:20] "POST /api/v1/archive/letter HTTP/1.1" 200 -
+2025-09-17 14:25:21,123 - src.services.enhanced_pdf_service - INFO - Enhanced PDF service initialized
+2025-09-17 14:25:21,123 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-09-17 14:25:21,123 - src.api.archive_routes - INFO - Generating PDF for letter ID: UNIQUE-ID
+2025-09-17 14:25:29,060 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-09-17 14:25:29,134 - src.services.enhanced_pdf_service - INFO - Debug HTML file created: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\letter_pdfs\debug_output_LET-20250917-38778.html
+2025-09-17 14:25:30,626 - src.services.enhanced_pdf_service - INFO - PDF generated successfully: Invitation_Letter_LET-20250917-38778.pdf (314386 bytes) in 0.00s
+2025-09-17 14:25:30,627 - src.api.archive_routes - INFO - PDF generated successfully: Invitation_Letter_LET-20250917-38778.pdf
+2025-09-17 14:25:30,627 - src.api.archive_routes - INFO - Uploading to Drive and logging for letter ID: UNIQUE-ID
+2025-09-17 14:25:30,631 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-09-17 14:25:34,753 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_UNIQUE-ID.pdf (ID: 1HwM7002SwzMFgMSgYWQwdRVWLggle0rk)
+2025-09-17 14:25:37,788 - src.services.google_services - INFO - Successfully logged 1 entries to AI Letter Generating/Submissions
+2025-09-17 14:25:37,791 - src.utils.helpers - INFO - log_to_sheet executed in 3.039s
+2025-09-17 14:25:37,791 - src.services.drive_logger - INFO - Successfully archived letter UNIQUE-ID to Drive and logged to sheets
+2025-09-17 14:25:37,792 - src.api.archive_routes - INFO - Background archiving completed successfully for letter ID: UNIQUE-ID
+2025-09-17 14:25:37,792 - src.api.archive_routes - INFO - Drive URL: https://drive.google.com/file/d/1HwM7002SwzMFgMSgYWQwdRVWLggle0rk/view?usp=drivesdk
