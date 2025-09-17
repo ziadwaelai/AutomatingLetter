@@ -14,7 +14,7 @@ class LetterCategory(str, Enum):
     CONGRATULATION = "تهنئة"
     SUPPLEMENTARY = "خطاب إلحاقي"
     CONFRANCE = "جدولة اجتماع"
-    REPLAY = "خطاب رد"
+    REPLAY = "خطاب رد على خطاب من الجهة"
     INVITATION = "دعوة حضور"
     REQUEST = "طلب"
 
