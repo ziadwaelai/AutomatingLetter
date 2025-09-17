@@ -111,12 +111,115 @@ class EnhancedPDFService:
             template_path = self.templates_dir / template_filename
             if not template_path.exists():
                 raise FileNotFoundError(f"Template not found: {template_filename}")
-                
+
             with open(template_path, "r", encoding="utf-8") as file:
                 return file.read()
         except Exception as e:
             logger.error(f"Error loading template {template_filename}: {e}")
             raise
+
+    def load_css(self, css_filename: str = "default_template.css") -> str:
+        """Load CSS content from file."""
+        try:
+            css_path = self.templates_dir / css_filename
+            if not css_path.exists():
+                raise FileNotFoundError(f"CSS file not found: {css_filename}")
+
+            with open(css_path, "r", encoding="utf-8") as file:
+                return file.read()
+        except Exception as e:
+            logger.error(f"Error loading CSS {css_filename}: {e}")
+            raise
+
+    def embed_css_in_html(self, html_content: str, css_content: str) -> str:
+        """Embed CSS styles into HTML by replacing the external link with inline styles."""
+        # Replace the external CSS link with embedded styles
+        css_link_pattern = '<link rel="stylesheet" href="default_template.css">'
+        embedded_css = f'  <style>\n{css_content}\n  </style>'
+
+        # First try exact match
+        if css_link_pattern in html_content:
+            return html_content.replace(css_link_pattern, embedded_css)
+
+        # Try with different spacing/formatting
+        import re
+        link_pattern = r'<link\s+rel=["\']stylesheet["\']\s+href=["\']default_template\.css["\']>'
+        if re.search(link_pattern, html_content):
+            return re.sub(link_pattern, embedded_css, html_content)
+
+        # If no link found, add styles in the head section
+        head_end = '</head>'
+        if head_end in html_content:
+            return html_content.replace(head_end, f'{embedded_css}\n{head_end}')
+
+        # Last resort: add after <head> tag
+        head_start = '<head>'
+        if head_start in html_content:
+            return html_content.replace(head_start, f'{head_start}\n{embedded_css}')
+
+        return html_content
+
+    def embed_images_in_html(self, html_content: str) -> str:
+        """Convert image src paths to base64 data URLs."""
+        import re
+        import base64
+        from mimetypes import guess_type
+
+        # Find all img tags with src attributes
+        img_pattern = r'<img\s+[^>]*src=["\']([^"\']+)["\'][^>]*>'
+
+        def replace_image(match):
+            full_tag = match.group(0)
+            src_path = match.group(1)
+
+            try:
+                # Handle relative paths
+                if src_path.startswith('../assets/'):
+                    # Convert relative path to absolute
+                    asset_path = self.templates_dir.parent / 'assets' / src_path.replace('../assets/', '')
+                elif src_path.startswith('assets/'):
+                    asset_path = self.templates_dir.parent / src_path
+                else:
+                    # Skip if not a relative asset path
+                    return full_tag
+
+                if not asset_path.exists():
+                    logger.warning(f"Image file not found: {asset_path}")
+                    return full_tag
+
+                # Read and encode image
+                with open(asset_path, 'rb') as img_file:
+                    img_data = img_file.read()
+
+                # Get MIME type
+                mime_type, _ = guess_type(str(asset_path))
+                if not mime_type:
+                    # Fallback based on extension
+                    ext = asset_path.suffix.lower()
+                    if ext == '.png':
+                        mime_type = 'image/png'
+                    elif ext in ['.jpg', '.jpeg']:
+                        mime_type = 'image/jpeg'
+                    elif ext == '.svg':
+                        mime_type = 'image/svg+xml'
+                    else:
+                        mime_type = 'image/png'  # Default fallback
+
+                # Create base64 data URL
+                base64_data = base64.b64encode(img_data).decode('utf-8')
+                data_url = f'data:{mime_type};base64,{base64_data}'
+
+                # Replace src in the original tag
+                new_tag = re.sub(r'src=["\'][^"\']+["\']', f'src="{data_url}"', full_tag)
+                logger.debug(f"Embedded image: {src_path} -> data URL")
+                return new_tag
+
+            except Exception as e:
+                logger.warning(f"Could not embed image {src_path}: {e}")
+                return full_tag
+
+        # Replace all image tags
+        return re.sub(img_pattern, replace_image, html_content)
     
     def fill_template_with_ai(self, html_template: str, letter_text: str = "", letter_id: str = "") -> str:
         """Fill HTML template with letter content using AI."""
@@ -137,13 +240,16 @@ You are a document automation expert. Your task is to fill an HTML template with
 8. If a placeholder cannot be filled from the letter content, leave it empty or use a dash (-)
 9. For date placeholders, use the provided current dates below
 10. PRESERVE ALL CONTENT - this is a formatter only, not a content editor
+11. **IMPORTANT**: Format the {{body}} content by splitting it into separate paragraphs using <p> tags. Each logical paragraph or idea should be in its own <p> tag for proper Arabic formatting and indentation.
 
 **AVAILABLE DATES:**
 - Current Gregorian Date (KSA): {dates['gregorian_arabic']}
 - Current Hijri Date: {dates['hijri_arabic']}
 
 **DATE USAGE INSTRUCTIONS:**
-- For document_date placeholder: Use BOTH dates in this format: "التاريخ الميلادي: {dates['gregorian_arabic']} - التاريخ الهجري: {dates['hijri_arabic']}"
+- For document_date placeholder: Use BOTH dates in this format: 
+التاريخ: {dates['gregorian_arabic']} 
+الموافق: {dates['hijri_arabic']}"
 - This will display both Gregorian and Hijri dates in the document header
 
 **HTML Template:**
@@ -236,12 +342,30 @@ Return only the filled HTML template with ALL letter content preserved:"""
                 # Load template
                 template_filename = f"{template_name}.html" if not template_name.endswith('.html') else template_name
                 html_template = self.load_template(template_filename)
-                
+
                 # Fill template with AI
                 html_content = self.fill_template_with_ai(html_template, content, pdf_id)
-                
+
+                # Load CSS and embed it into the generated HTML
+                try:
+                    css_content = self.load_css("default_template.css")
+                    html_with_styles = self.embed_css_in_html(html_content, css_content)
+
+                    # Embed images as base64
+                    html_with_styles = self.embed_images_in_html(html_with_styles)
+
+                    # Save debug HTML file
+                    debug_path = self.output_dir / f"debug_output_{pdf_id}.html"
+                    with open(debug_path, "w", encoding="utf-8") as f:
+                        f.write(html_with_styles)
+                    logger.info(f"Debug HTML file created: {debug_path}")
+
+                except Exception as e:
+                    logger.warning(f"Could not embed CSS/images, using original HTML: {e}")
+                    html_with_styles = html_content
+
                 # Generate PDF
-                self.html_to_pdf(html_content, str(output_path))
+                self.html_to_pdf(html_with_styles, str(output_path))
                 
                 # Get file size
                 file_size = output_path.stat().st_size

@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+body {
+  background: #fff;
+  font-family: 'Cairo', Tahoma, Arial, sans-serif;
+  margin: 0;
+  padding: 40px;
+  direction: rtl;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.invitation-container {
+  background: #fff;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* --- Integrated Header Styles --- */
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 4px solid #6cbf4d;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.header-logos {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+/* This rule is now more specific and will work correctly */
+.header-logos .logo-netzero {
+    height: 20px;
+}
+
+.header-logos .logo-sedrah {
+    height: 40px;
+}
+.company-info {
+  text-align: right;
+  color: #555;
+}
+
+.company-info p {
+  margin: 0;
+}
+
+.company-info .english-name {
+  font-size: 0.9em;
+  direction: ltr;
+  /* Ensure English text reads left-to-right */
+  text-align: right;
+  /* Keep alignment within its block */
+}
+
+.company-info .arabic-name {
+  font-size: 0.9em;
+}
+
+/* --- Existing Styles --- */
+.document-info {
+  margin-top: 0px;
+  margin-bottom: 25px;
+  font-size: 0.6rem;
+  color: #444;
+  line-height: 1.6;
+  /* Adds a bit of space between the lines */
+}
+
+.header-text {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.header-text h2 {
+  color: #283046;
+  font-size: 1.7rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.header-text h3 {
+  margin: 0;
+  color: #283046;
+  font-size: 1.17rem;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.section {
+  margin-bottom: 24px;
+  font-size: 1.08rem;
+  color: #283046;
+  line-height: 2;
+}
+
+.section p {
+  text-indent: 1.5cm;
+  margin-bottom: 1em;
+  text-align: justify;
+  line-height: 2;
+}
+/* --- Footer Styles --- */
+.site-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    margin-top: 40px;
+    border-top: 1px solid #eeeeee;
+    font-size: 10px;
+    color: #555;
+    width: 100%;
+    line-height: 2.5;
+}
+
+.footer-column {
+flex: 1; /* Allows columns to share space */
+}
+
+.footer-column p {
+margin: -10px 0px; /* Adds a little space between lines */
+}
+
+/* Left column (English) */
+.footer-english {
+text-align: left;
+direction: ltr;
+}
+
+/* Middle column (Logo) */
+.footer-logo {
+text-align: center;
+flex: 0 0 auto; /* Prevents logo column from stretching */
+padding: 0 20px;
+
+}
+
+.footer-logo img {
+height: 30px; /* Adjust FSC logo size */
+}
+
+/* Right column (Arabic) */
+.footer-arabic {
+text-align: right;
+}
+
+.socials {
+display: flex;
+align-items: center;
+gap: 8px; /* Space between handle and icons */
+}
+
+.social-icon {
+height: 14px; /* Adjust social icon size */
+width: 14px;
+}
