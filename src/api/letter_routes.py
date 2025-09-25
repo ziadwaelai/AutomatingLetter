@@ -43,11 +43,11 @@ def generate_letter():
         try:
             # Validate request data
             if not request.is_json:
-                return jsonify({"error": "Request must be JSON"}), 400
+                return jsonify({"error": "يجب أن يكون الطلب بصيغة JSON"}), 400
             
             data = request.get_json()
             if not data:
-                return jsonify({"error": "No JSON data provided"}), 400
+                return jsonify({"error": "لم يتم تقديم بيانات JSON"}), 400
             
             # Parse and validate request
             try:
@@ -55,7 +55,7 @@ def generate_letter():
             except ValidationError as e:
                 logger.warning(f"Validation error in letter generation: {e}")
                 return jsonify({
-                    "error": "Invalid request data",
+                    "error": "بيانات الطلب غير صحيحة",
                     "details": e.errors()
                 }), 400
             
@@ -122,11 +122,11 @@ def validate_letter():
         try:
             data = request.get_json()
             if not data or 'letter' not in data:
-                return jsonify({"error": "Letter content is required"}), 400
+                return jsonify({"error": "محتوى الخطاب مطلوب"}), 400
             
             letter_content = data['letter']
             if not letter_content or not letter_content.strip():
-                return jsonify({"error": "Letter content cannot be empty"}), 400
+                return jsonify({"error": "محتوى الخطاب لا يمكن أن يكون فارغاً"}), 400
             
             # Create a mock LetterOutput for validation
             mock_letter = LetterOutput(

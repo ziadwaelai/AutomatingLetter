@@ -41,13 +41,15 @@ def archive_letter():
         # Validate request
         data = request.get_json()
         if not data:
-            return build_error_response("No JSON data provided", 400)
+            return build_error_response("لم يتم تقديم بيانات JSON", 400)
         
         # Validate required fields
         required_fields = ['letter_content', 'ID']
         missing_fields = [field for field in required_fields if not data.get(field)]
         if missing_fields:
-            return build_error_response(f"Missing required fields: {', '.join(missing_fields)}", 400)
+            field_names_ar = {'letter_content': 'محتوى الخطاب', 'ID': 'رقم الخطاب'}
+            missing_ar = [field_names_ar.get(field, field) for field in missing_fields]
+            return build_error_response(f"الحقول المطلوبة مفقودة: {', '.join(missing_ar)}", 400)
         
         # Extract data with defaults
         letter_content = data.get('letter_content', '')
@@ -62,7 +64,7 @@ def archive_letter():
         # Get Google Drive folder ID from environment variables
         folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
         if not folder_id:
-            return build_error_response("Google Drive folder ID not configured", 500)
+            return build_error_response("لم يتم تكوين معرف مجلد Google Drive", 500)
         
         # Start background processing
         background_thread = threading.Thread(
@@ -85,10 +87,10 @@ def archive_letter():
         
     except ValidationError as e:
         logger.warning(f"Validation error in letter archiving: {e}")
-        return build_error_response(f"Validation error: {e}", 400)
+        return build_error_response(f"خطأ في التحقق من البيانات: {e}", 400)
     except Exception as e:
         logger.error(f"Letter archiving failed: {e}")
-        return build_error_response(f"Archiving error: {str(e)}", 500)
+        return build_error_response(f"خطأ في الأرشفة: {str(e)}", 500)
 
 def process_letter_archive_in_background(
     template: str,
@@ -242,11 +244,11 @@ def update_letter():
         try:
             # Validate request data
             if not request.is_json:
-                return jsonify({"error": "Request must be JSON"}), 400
+                return jsonify({"error": "يجب أن يكون الطلب بصيغة JSON"}), 400
             
             data = request.get_json()
             if not data:
-                return jsonify({"error": "No JSON data provided"}), 400
+                return jsonify({"error": "لم يتم تقديم بيانات JSON"}), 400
             
             # Parse and validate request
             try:
@@ -254,14 +256,14 @@ def update_letter():
             except ValidationError as e:
                 logger.warning(f"Validation error in letter update: {e}")
                 return jsonify({
-                    "error": "Invalid request data",
+                    "error": "بيانات الطلب غير صحيحة",
                     "details": e.errors()
                 }), 400
             
             # Get Google Drive folder ID from environment variables
             folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
             if not folder_id:
-                return build_error_response("Google Drive folder ID not configured", 500)
+                return build_error_response("لم يتم تكوين معرف مجلد Google Drive", 500)
             
             # Start background processing
             background_thread = threading.Thread(

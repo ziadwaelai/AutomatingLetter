@@ -52,7 +52,7 @@ class GenerateLetterRequest(BaseModel):
     def validate_prompt(cls, v):
         """Validate prompt content."""
         if not v.strip():
-            raise ValueError("Prompt cannot be empty")
+            raise ValueError("الطلب مطلوب ولا يمكن أن يكون فارغاً")
         return v.strip()
 
 class EditLetterRequest(BaseModel):
@@ -64,7 +64,7 @@ class EditLetterRequest(BaseModel):
     def validate_content(cls, v):
         """Validate content is not empty."""
         if not v.strip():
-            raise ValueError("Content cannot be empty")
+            raise ValueError("المحتوى مطلوب ولا يمكن أن يكون فارغاً")
         return v.strip()
 
 class ChatEditLetterRequest(BaseModel):
@@ -78,7 +78,7 @@ class ChatEditLetterRequest(BaseModel):
     def validate_message(cls, v):
         """Validate message is not empty."""
         if not v.strip():
-            raise ValueError("Message cannot be empty")
+            raise ValueError("الرسالة مطلوبة ولا يمكن أن تكون فارغة")
         return v
     
     @validator('current_letter')
@@ -119,14 +119,22 @@ class UpdateLetterRequest(BaseModel):
     def validate_letter_id(cls, v):
         """Validate letter ID format."""
         if not v or not v.strip():
-            raise ValueError('Letter ID cannot be empty')
+            raise ValueError('رقم الخطاب مطلوب ولا يمكن أن يكون فارغاً')
+        if len(v.strip()) < 1:
+            raise ValueError('رقم الخطاب قصير جداً')
+        if len(v.strip()) > 50:
+            raise ValueError('رقم الخطاب طويل جداً')
         return v.strip()
     
     @validator('content')
     def validate_content(cls, v):
         """Validate letter content."""
         if not v or not v.strip():
-            raise ValueError('Content cannot be empty')
+            raise ValueError('محتوى الخطاب مطلوب ولا يمكن أن يكون فارغاً')
+        if len(v.strip()) < 10:
+            raise ValueError('محتوى الخطاب قصير جداً، يجب أن يحتوي على 10 أحرف على الأقل')
+        if len(v.strip()) > 5000:
+            raise ValueError('محتوى الخطاب طويل جداً، يجب أن يكون أقل من 5000 حرف')
         return v.strip()
 
 # Response Models
@@ -243,7 +251,7 @@ class PDFGenerationRequest(BaseModel):
     def validate_content(cls, v):
         """Validate content is not empty."""
         if not v.strip():
-            raise ValueError("Content cannot be empty")
+            raise ValueError("المحتوى مطلوب ولا يمكن أن يكون فارغاً")
         return v.strip()
 
 class PDFResponse(BaseModel):

@@ -88,11 +88,11 @@ def edit_letter_chat(session_id: str):
     with ErrorContext("edit_letter_chat", {"session_id": session_id}):
         try:
             if not request.is_json:
-                return jsonify({"error": "Request must be JSON"}), 400
+                return jsonify({"error": "يجب أن يكون الطلب بصيغة JSON"}), 400
             
             data = request.get_json()
             if not data:
-                return jsonify({"error": "No JSON data provided"}), 400
+                return jsonify({"error": "لم يتم تقديم بيانات JSON"}), 400
             
             # Validate request
             try:
@@ -100,7 +100,7 @@ def edit_letter_chat(session_id: str):
             except ValidationError as e:
                 logger.warning(f"Validation error in chat edit: {e}")
                 return jsonify({
-                    "error": "Invalid request data",
+                    "error": "بيانات الطلب غير صحيحة",
                     "details": e.errors()
                 }), 400
             
@@ -111,8 +111,8 @@ def edit_letter_chat(session_id: str):
             # Check if session exists and is active
             if not session_manager.session_exists(session_id):
                 return jsonify({
-                    "error": "Session not found",
-                    "message": "Chat session does not exist or has expired"
+                    "error": "الجلسة غير موجودة",
+                    "message": "جلسة المحادثة غير موجودة أو انتهت صلاحيتها"
                 }), 404
             
             # Process the editing request
@@ -162,8 +162,8 @@ def get_chat_history(session_id: str):
             # Check if session exists
             if not session_manager.session_exists(session_id):
                 return jsonify({
-                    "error": "Session not found",
-                    "message": "Chat session does not exist or has expired"
+                    "error": "الجلسة غير موجودة",
+                    "message": "جلسة المحادثة غير موجودة أو انتهت صلاحيتها"
                 }), 404
             
             # Get chat history
@@ -246,8 +246,8 @@ def delete_chat_session(session_id: str):
             
             if not session_manager.session_exists(session_id):
                 return jsonify({
-                    "error": "Session not found",
-                    "message": "Chat session does not exist"
+                    "error": "الجلسة غير موجودة",
+                    "message": "جلسة المحادثة غير موجودة"
                 }), 404
             
             # Delete session
@@ -320,8 +320,8 @@ def extend_session(session_id: str):
         
         if not session_manager.session_exists(session_id):
             return jsonify({
-                "error": "Session not found",
-                "message": "Chat session does not exist"
+                "error": "الجلسة غير موجودة",
+                "message": "جلسة المحادثة غير موجودة"
             }), 404
         
         new_expiration = session_manager.extend_session(session_id, extend_minutes)
