@@ -6253,3 +6253,149 @@ current_letter
 2025-09-17 14:31:47,483 - src.api.archive_routes - INFO - Drive URL: https://drive.google.com/file/d/1YJG7pCDiTbbK9mPrBSZIJI5MQfn04c_F/view?usp=drivesdk
 2025-09-17 14:41:00,674 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\models\\schemas.py', reloading
 2025-09-17 14:41:01,108 - werkzeug - INFO -  * Restarting with stat
+2025-09-25 14:59:56,466 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-09-25 14:59:56,468 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-09-25 14:59:56,470 - werkzeug - INFO -  * Restarting with stat
+2025-09-25 14:59:58,387 - werkzeug - WARNING -  * Debugger is active!
+2025-09-25 14:59:58,392 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-09-25 15:00:16,017 - __main__ - INFO - PUT http://localhost:5000/api/v1/archive/update - 127.0.0.1
+2025-09-25 15:00:16,017 - src.api.archive_routes - INFO - Starting background update for letter ID: LETTER_ID_HERE
+2025-09-25 15:00:16,017 - src.api.archive_routes - INFO - Letter update initiated for ID: LETTER_ID_HERE
+2025-09-25 15:00:16,018 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-09-25 15:00:16,018 - src.utils.helpers - INFO - update_letter executed in 0.001s
+2025-09-25 15:00:16,018 - __main__ - INFO - Response: 200 - archive.update_letter
+2025-09-25 15:00:16,018 - werkzeug - INFO - 127.0.0.1 - - [25/Sep/2025 15:00:16] "PUT /api/v1/archive/update HTTP/1.1" 200 -
+2025-09-25 15:00:16,171 - src.services.enhanced_pdf_service - INFO - Enhanced PDF service initialized
+2025-09-25 15:00:30,397 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-09-25 15:00:30,528 - src.services.enhanced_pdf_service - INFO - Debug HTML file created: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\letter_pdfs\debug_output_LET-20250925-20547.html
+2025-09-25 15:00:48,949 - src.services.enhanced_pdf_service - INFO - PDF generated successfully: Updated_Letter_LETTER_ID_HERE_LET-20250925-20547.pdf (270943 bytes) in 0.00s
+2025-09-25 15:00:48,949 - src.services.drive_logger - INFO - New PDF generated for letter ID LETTER_ID_HERE: Updated_Letter_LETTER_ID_HERE_LET-20250925-20547.pdf
+2025-09-25 15:00:48,964 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-09-25 15:00:53,528 - src.services.drive_logger - INFO - File uploaded to Drive: Updated_Letter_LETTER_ID_HERE.pdf (ID: 1gaiaAJPq15jeRu-Pd8LvecnSSjoAVWs0)
+2025-09-25 15:00:57,936 - src.utils.exceptions - ERROR - Operation failed: update_row_by_id
+2025-09-25 15:00:57,936 - src.utils.helpers - ERROR - update_row_by_id failed after 4.408s: Error updating row in Google Sheets: Letter with ID 'LETTER_ID_HERE' not found in worksheet
+2025-09-25 15:00:57,937 - src.services.drive_logger - ERROR - Error updating letter PDF and log for ID LETTER_ID_HERE: Storage resource not found
+2025-09-25 15:00:57,937 - src.api.archive_routes - ERROR - Background update failed for letter ID: LETTER_ID_HERE: Error updating letter PDF and log for ID LETTER_ID_HERE: Storage resource not found
+2025-09-25 15:02:13,439 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\api\\archive_routes.py', reloading
+2025-09-25 15:02:13,795 - werkzeug - INFO -  * Restarting with stat
+2025-09-25 15:02:16,234 - werkzeug - WARNING -  * Debugger is active!
+2025-09-25 15:02:16,238 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-09-25 15:02:26,247 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\api\\archive_routes.py', reloading
+2025-09-25 15:02:26,500 - werkzeug - INFO -  * Restarting with stat
+2025-09-25 15:02:28,359 - werkzeug - WARNING -  * Debugger is active!
+2025-09-25 15:02:28,364 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-09-25 15:02:37,730 - __main__ - INFO - PUT http://localhost:5000/api/v1/archive/update - 127.0.0.1
+2025-09-25 15:02:37,730 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-09-25 15:02:37,731 - src.api.archive_routes - INFO - Validating letter ID exists: LETTER_ID_HERE
+2025-09-25 15:02:41,341 - src.utils.helpers - INFO - update_letter executed in 3.611s
+2025-09-25 15:02:41,342 - __main__ - INFO - Response: 200 - archive.update_letter
+2025-09-25 15:02:41,344 - werkzeug - INFO - 127.0.0.1 - - [25/Sep/2025 15:02:41] "PUT /api/v1/archive/update HTTP/1.1" 200 -
+2025-09-25 15:03:52,625 - __main__ - INFO - PUT http://localhost:5000/api/v1/archive/update - 127.0.0.1
+2025-09-25 15:03:52,625 - src.api.archive_routes - INFO - Validating letter ID exists: AIZ-20250629-78721
+2025-09-25 15:03:55,620 - src.api.archive_routes - INFO - Letter ID validation successful: AIZ-20250629-78721
+2025-09-25 15:03:55,620 - src.api.archive_routes - INFO - Starting background update for letter ID: AIZ-20250629-78721
+2025-09-25 15:03:55,620 - src.api.archive_routes - INFO - Letter update initiated for ID: AIZ-20250629-78721
+2025-09-25 15:03:55,621 - src.utils.helpers - INFO - update_letter executed in 2.996s
+2025-09-25 15:03:55,621 - __main__ - INFO - Response: 200 - archive.update_letter
+2025-09-25 15:03:55,622 - werkzeug - INFO - 127.0.0.1 - - [25/Sep/2025 15:03:55] "PUT /api/v1/archive/update HTTP/1.1" 200 -
+2025-09-25 15:03:55,763 - src.services.enhanced_pdf_service - INFO - Enhanced PDF service initialized
+2025-09-25 15:04:02,333 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-09-25 15:04:02,384 - src.services.enhanced_pdf_service - INFO - Debug HTML file created: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\letter_pdfs\debug_output_LET-20250925-09220.html
+2025-09-25 15:04:04,655 - src.services.enhanced_pdf_service - INFO - PDF generated successfully: Updated_Letter_AIZ-20250629-78721_LET-20250925-09220.pdf (306902 bytes) in 0.00s
+2025-09-25 15:04:04,656 - src.services.drive_logger - INFO - New PDF generated for letter ID AIZ-20250629-78721: Updated_Letter_AIZ-20250629-78721_LET-20250925-09220.pdf
+2025-09-25 15:04:04,661 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-09-25 15:04:08,701 - src.services.drive_logger - INFO - File uploaded to Drive: Updated_Letter_AIZ-20250629-78721.pdf (ID: 1n7HYoG-hjfuYFS_2PTs4ryZZCeXJ96an)
+2025-09-25 15:04:13,781 - src.utils.exceptions - ERROR - Operation failed: update_row_by_id
+2025-09-25 15:04:13,782 - src.utils.helpers - ERROR - update_row_by_id failed after 5.082s: Error updating row in Google Sheets: APIError: [400]: Invalid value at 'data.values' (type.googleapis.com/google.protobuf.ListValue), "G2"
+2025-09-25 15:04:13,782 - src.services.drive_logger - ERROR - Error updating letter PDF and log for ID AIZ-20250629-78721: Storage service error: Error updating row in Google Sheets: APIError: [400]: Invalid value at 'data.values' (type.googleapis.com/google.protobuf.ListValue), "G2"
+2025-09-25 15:04:13,782 - src.api.archive_routes - ERROR - Background update failed for letter ID: AIZ-20250629-78721: Error updating letter PDF and log for ID AIZ-20250629-78721: Storage service error: Error updating row in Google Sheets: APIError: [400]: Invalid value at 'data.values' (type.googleapis.com/google.protobuf.ListValue), "G2"
+2025-09-25 15:04:13,783 - src.api.archive_routes - ERROR - Storage service error occurred while updating letter ID 'AIZ-20250629-78721'
+2025-09-25 15:05:25,314 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\api\\archive_routes.py', reloading
+2025-09-25 15:05:25,748 - werkzeug - INFO -  * Restarting with stat
+2025-09-25 15:05:28,271 - werkzeug - WARNING -  * Debugger is active!
+2025-09-25 15:05:28,275 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-09-25 15:05:37,219 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\services\\google_services.py', reloading
+2025-09-25 15:05:37,572 - werkzeug - INFO -  * Restarting with stat
+2025-09-25 15:05:39,806 - werkzeug - WARNING -  * Debugger is active!
+2025-09-25 15:05:39,810 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-09-25 15:05:47,798 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\api\\archive_routes.py', reloading
+2025-09-25 15:05:48,168 - werkzeug - INFO -  * Restarting with stat
+2025-09-25 15:05:50,118 - werkzeug - WARNING -  * Debugger is active!
+2025-09-25 15:05:50,123 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-09-25 15:06:09,704 - __main__ - INFO - PUT http://localhost:5000/api/v1/archive/update - 127.0.0.1
+2025-09-25 15:06:09,706 - src.api.archive_routes - INFO - Starting background update for letter ID: AIZ-20250629-78721
+2025-09-25 15:06:09,706 - src.api.archive_routes - INFO - Letter update initiated for ID: AIZ-20250629-78721
+2025-09-25 15:06:09,707 - src.utils.helpers - INFO - update_letter executed in 0.003s
+2025-09-25 15:06:09,707 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-09-25 15:06:09,707 - __main__ - INFO - Response: 200 - archive.update_letter
+2025-09-25 15:06:09,709 - werkzeug - INFO - 127.0.0.1 - - [25/Sep/2025 15:06:09] "PUT /api/v1/archive/update HTTP/1.1" 200 -
+2025-09-25 15:06:09,802 - src.services.enhanced_pdf_service - INFO - Enhanced PDF service initialized
+2025-09-25 15:06:15,763 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-09-25 15:06:15,817 - src.services.enhanced_pdf_service - INFO - Debug HTML file created: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\letter_pdfs\debug_output_LET-20250925-66421.html
+2025-09-25 15:06:17,206 - src.services.enhanced_pdf_service - INFO - PDF generated successfully: Updated_Letter_AIZ-20250629-78721_LET-20250925-66421.pdf (271178 bytes) in 0.00s
+2025-09-25 15:06:17,207 - src.services.drive_logger - INFO - New PDF generated for letter ID AIZ-20250629-78721: Updated_Letter_AIZ-20250629-78721_LET-20250925-66421.pdf
+2025-09-25 15:06:17,211 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-09-25 15:06:21,210 - src.services.drive_logger - INFO - File uploaded to Drive: Updated_Letter_AIZ-20250629-78721.pdf (ID: 1H0sqssMeqC_v4JK41S2XwYxtBd0iP54O)
+2025-09-25 15:06:29,474 - src.services.google_services - INFO - Successfully updated row 2 for ID 'AIZ-20250629-78721' in AI Letter Generating/Submissions
+2025-09-25 15:06:29,479 - src.utils.helpers - INFO - update_row_by_id executed in 8.269s
+2025-09-25 15:06:29,480 - src.services.drive_logger - INFO - Successfully updated letter AIZ-20250629-78721 with new PDF and sheet entry
+2025-09-25 15:06:29,481 - src.api.archive_routes - INFO - Background update completed successfully for letter ID: AIZ-20250629-78721
+2025-09-25 15:06:29,482 - src.api.archive_routes - INFO - New Drive URL: https://drive.google.com/file/d/1H0sqssMeqC_v4JK41S2XwYxtBd0iP54O/view?usp=drivesdk
+2025-09-25 15:08:27,233 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
+2025-09-25 15:08:27,567 - werkzeug - INFO -  * Restarting with stat
+2025-09-25 15:08:29,283 - werkzeug - WARNING -  * Debugger is active!
+2025-09-25 15:08:29,286 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-09-25 15:10:18,773 - __main__ - INFO - PUT http://localhost:5000/api/v1/archive/update - 127.0.0.1
+2025-09-25 15:10:18,774 - src.api.archive_routes - INFO - Starting background update for letter ID: AIZ-20250629-56780
+2025-09-25 15:10:18,774 - src.api.archive_routes - INFO - Letter update initiated for ID: AIZ-20250629-56780
+2025-09-25 15:10:18,775 - src.utils.helpers - INFO - update_letter executed in 0.001s
+2025-09-25 15:10:18,776 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-09-25 15:10:18,776 - __main__ - INFO - Response: 200 - archive.update_letter
+2025-09-25 15:10:18,776 - werkzeug - INFO - 127.0.0.1 - - [25/Sep/2025 15:10:18] "PUT /api/v1/archive/update HTTP/1.1" 200 -
+2025-09-25 15:10:18,872 - src.services.enhanced_pdf_service - INFO - Enhanced PDF service initialized
+2025-09-25 15:10:29,636 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-09-25 15:10:29,692 - src.services.enhanced_pdf_service - INFO - Debug HTML file created: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\letter_pdfs\debug_output_LET-20250925-20273.html
+2025-09-25 15:10:31,321 - src.services.enhanced_pdf_service - INFO - PDF generated successfully: Updated_Letter_AIZ-20250629-56780_LET-20250925-20273.pdf (291741 bytes) in 0.00s
+2025-09-25 15:10:31,323 - src.services.drive_logger - INFO - New PDF generated for letter ID AIZ-20250629-56780: Updated_Letter_AIZ-20250629-56780_LET-20250925-20273.pdf
+2025-09-25 15:10:31,327 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-09-25 15:10:35,532 - src.services.drive_logger - INFO - File uploaded to Drive: Updated_Letter_AIZ-20250629-56780.pdf (ID: 1C3MAtu3DBOeYg_Jo1zw6RKPsaFJuRYHN)
+2025-09-25 15:10:41,393 - src.services.google_services - INFO - Successfully updated row 4 for ID 'AIZ-20250629-56780' in AI Letter Generating/Submissions
+2025-09-25 15:10:41,394 - src.utils.helpers - INFO - update_row_by_id executed in 5.861s
+2025-09-25 15:10:41,395 - src.services.drive_logger - INFO - Successfully updated letter AIZ-20250629-56780 with new PDF and sheet entry
+2025-09-25 15:10:41,396 - src.api.archive_routes - INFO - Background update completed successfully for letter ID: AIZ-20250629-56780
+2025-09-25 15:10:41,396 - src.api.archive_routes - INFO - New Drive URL: https://drive.google.com/file/d/1C3MAtu3DBOeYg_Jo1zw6RKPsaFJuRYHN/view?usp=drivesdk
+2025-09-25 15:13:31,700 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
+2025-09-25 15:13:32,020 - werkzeug - INFO -  * Restarting with stat
+2025-09-25 15:13:34,111 - werkzeug - WARNING -  * Debugger is active!
+2025-09-25 15:13:34,114 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-09-25 15:13:44,233 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
+2025-09-25 15:13:44,513 - werkzeug - INFO -  * Restarting with stat
+2025-09-25 15:13:46,387 - werkzeug - WARNING -  * Debugger is active!
+2025-09-25 15:13:46,390 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-09-25 15:14:26,218 - __main__ - INFO - PUT http://localhost:5000/api/v1/archive/update - 127.0.0.1
+2025-09-25 15:14:26,219 - src.api.archive_routes - INFO - Starting background update for letter ID: AIZ-20250629-56780
+2025-09-25 15:14:26,219 - src.api.archive_routes - INFO - Letter update initiated for ID: AIZ-20250629-56780
+2025-09-25 15:14:26,219 - src.utils.helpers - INFO - update_letter executed in 0.001s
+2025-09-25 15:14:26,219 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-09-25 15:14:26,219 - __main__ - INFO - Response: 200 - archive.update_letter
+2025-09-25 15:14:26,220 - werkzeug - INFO - 127.0.0.1 - - [25/Sep/2025 15:14:26] "PUT /api/v1/archive/update HTTP/1.1" 200 -
+2025-09-25 15:14:35,734 - src.services.drive_logger - INFO - Found old file ID: 1C3MAtu3DBOeYg_Jo1zw6RKPsaFJuRYHN
+2025-09-25 15:14:35,739 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-09-25 15:14:36,571 - src.services.drive_logger - INFO - Original filename: Updated_Letter_AIZ-20250629-56780.pdf
+2025-09-25 15:14:36,663 - src.services.enhanced_pdf_service - INFO - Enhanced PDF service initialized
+2025-09-25 15:14:44,379 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-09-25 15:14:44,427 - src.services.enhanced_pdf_service - INFO - Debug HTML file created: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\letter_pdfs\debug_output_LET-20250925-66770.html
+2025-09-25 15:14:46,713 - src.services.enhanced_pdf_service - INFO - PDF generated successfully: AIZ-20250629-56780_LET-20250925-66770.pdf (293640 bytes) in 0.00s
+2025-09-25 15:14:46,713 - src.services.drive_logger - INFO - New PDF generated for letter ID AIZ-20250629-56780: AIZ-20250629-56780_LET-20250925-66770.pdf
+2025-09-25 15:14:46,715 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-09-25 15:14:48,083 - src.services.drive_logger - INFO - Deleted old file from Drive: 1C3MAtu3DBOeYg_Jo1zw6RKPsaFJuRYHN
+2025-09-25 15:14:48,088 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-09-25 15:14:52,745 - src.services.drive_logger - INFO - File uploaded to Drive: Updated_Letter_AIZ-20250629-56780.pdf (ID: 1RRItsXvu_QbOdT8NVAhpgQZxlzxqs7Ik)
+2025-09-25 15:14:57,766 - src.services.google_services - INFO - Successfully updated row 4 for ID 'AIZ-20250629-56780' in AI Letter Generating/Submissions
+2025-09-25 15:14:57,767 - src.utils.helpers - INFO - update_row_by_id executed in 5.022s
+2025-09-25 15:14:57,768 - src.services.drive_logger - INFO - Successfully updated letter AIZ-20250629-56780 - replaced PDF in Drive and updated sheet entry
+2025-09-25 15:14:57,769 - src.api.archive_routes - INFO - Background update completed successfully for letter ID: AIZ-20250629-56780
+2025-09-25 15:14:57,769 - src.api.archive_routes - INFO - New Drive URL: https://drive.google.com/file/d/1RRItsXvu_QbOdT8NVAhpgQZxlzxqs7Ik/view?usp=drivesdk

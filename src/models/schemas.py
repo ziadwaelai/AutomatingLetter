@@ -109,6 +109,26 @@ class ArchiveLetterRequest(BaseModel):
     template: str = Field(default="default_template.html")
     username: str = Field(default="unknown")
 
+class UpdateLetterRequest(BaseModel):
+    """Request model for updating existing letters."""
+    letter_id: str = Field(..., min_length=1, max_length=50, description="ID of the letter to update")
+    content: str = Field(..., min_length=10, max_length=5000, description="New letter content")
+    template: str = Field(default="default_template", max_length=100, description="Template to use for PDF generation")
+    
+    @validator('letter_id')
+    def validate_letter_id(cls, v):
+        """Validate letter ID format."""
+        if not v or not v.strip():
+            raise ValueError('Letter ID cannot be empty')
+        return v.strip()
+    
+    @validator('content')
+    def validate_content(cls, v):
+        """Validate letter content."""
+        if not v or not v.strip():
+            raise ValueError('Content cannot be empty')
+        return v.strip()
+
 # Response Models
 class LetterOutput(BaseModel):
     """Response model for generated letters."""

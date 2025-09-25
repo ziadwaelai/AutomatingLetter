@@ -269,7 +269,6 @@ Return only the filled HTML template with ALL letter content preserved:"""
                     {"role": "system", "content": "You are a precise document template filler. Use only the exact information provided in the letter content. Do not add, modify, or invent any information."},
                     {"role": "user", "content": prompt}
                 ],
-                max_tokens=3000,
                 temperature=0.1,
             )
             
