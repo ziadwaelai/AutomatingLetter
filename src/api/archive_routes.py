@@ -12,6 +12,7 @@ from pydantic import ValidationError
 
 from ..models import (
     ArchiveLetterRequest,
+    UpdateLetterRequest,
     ArchiveResponse,
     ErrorResponse,
     SuccessResponse
@@ -179,6 +180,27 @@ def get_archive_status(letter_id: str):
         logger.error(f"Error getting archive status for {letter_id}: {e}")
         return build_error_response(f"Error getting status: {str(e)}", 500)
 
+@archive_bp.route('/update/status/<letter_id>', methods=['GET'])
+def get_update_status(letter_id: str):
+    """
+    Get update status for a letter.
+    Note: This is a placeholder - in a production system, you would track status in a database.
+    """
+    try:
+        # For now, return a simple response
+        # In production, check database for actual status
+        return jsonify({
+            "letter_id": letter_id,
+            "operation": "update",
+            "status": "processing",
+            "message": "Update status tracking not implemented yet",
+            "endpoint": f"/api/v1/archive/update/status/{letter_id}"
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error getting update status for {letter_id}: {e}")
+        return build_error_response(f"Error getting update status: {str(e)}", 500)
+
 @archive_bp.route('/health', methods=['GET'])
 def health_check():
     """Archive service health check."""
@@ -203,6 +225,108 @@ def health_check():
             "status": "unhealthy",
             "error": str(e)
         }), 503
+
+@archive_bp.route('/update', methods=['PUT'])
+@measure_performance
+def update_letter():
+    """
+    Update existing letter: regenerate PDF and update Google Sheets row.
+    
+    Request Body:
+        UpdateLetterRequest: Contains letter_id, content, and optional template
+        
+    Returns:
+        Success response with processing status
+    """
+    with ErrorContext("update_letter_api"):
+        try:
+            # Validate request data
+            if not request.is_json:
+                return jsonify({"error": "Request must be JSON"}), 400
+            
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "No JSON data provided"}), 400
+            
+            # Parse and validate request
+            try:
+                update_request = UpdateLetterRequest(**data)
+            except ValidationError as e:
+                logger.warning(f"Validation error in letter update: {e}")
+                return jsonify({
+                    "error": "Invalid request data",
+                    "details": e.errors()
+                }), 400
+            
+            # Get Google Drive folder ID from environment variables
+            folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
+            if not folder_id:
+                return build_error_response("Google Drive folder ID not configured", 500)
+            
+            # Start background processing
+            background_thread = threading.Thread(
+                target=process_letter_update_in_background,
+                args=(update_request.letter_id, update_request.content, update_request.template, folder_id)
+            )
+            background_thread.daemon = True
+            background_thread.start()
+            
+            # Return immediate success response
+            response = {
+                "status": "success",
+                "message": f"Letter update started for ID: {update_request.letter_id}",
+                "processing": "background",
+                "letter_id": update_request.letter_id,
+                "template": update_request.template
+            }
+            
+            logger.info(f"Letter update initiated for ID: {update_request.letter_id}")
+            return jsonify(response), 200
+            
+        except ValidationError as e:
+            logger.error(f"Validation error: {e}")
+            return jsonify(build_error_response(e)), 400
+        except Exception as e:
+            logger.error(f"Letter update failed: {e}")
+            return jsonify(build_error_response(e)), 500
+
+def process_letter_update_in_background(
+    letter_id: str,
+    new_content: str, 
+    template: str,
+    folder_id: str
+) -> None:
+    """
+    Process letter update in background thread.
+    
+    Args:
+        letter_id: ID of the letter to update
+        new_content: New letter content
+        template: Template name for PDF generation
+        folder_id: Google Drive folder ID
+    """
+    try:
+        logger.info(f"Starting background update for letter ID: {letter_id}")
+        
+        # Get drive logger service
+        drive_logger = get_drive_logger_service()
+        
+        # Update letter: generate new PDF, upload to Drive, and update sheet
+        result = drive_logger.update_letter_pdf_and_log(
+            letter_id=letter_id,
+            new_content=new_content,
+            folder_id=folder_id,
+            template=template
+        )
+        
+        if result["status"] == "success":
+            logger.info(f"Background update completed successfully for letter ID: {letter_id}")
+            logger.info(f"New Drive URL: {result.get('file_url', 'N/A')}")
+        else:
+            logger.error(f"Background update failed for letter ID: {letter_id}: {result.get('message', 'Unknown error')}")
+            
+    except Exception as e:
+        logger.error(f"Error in background update for letter ID {letter_id}: {str(e)}", exc_info=True)
 
 # Legacy endpoint for backward compatibility
 @archive_bp.route('/upload-pdf', methods=['POST'])

@@ -8,6 +8,7 @@ from .schemas import (
     ChatQuestionRequest,
     CreateSessionRequest,
     ArchiveLetterRequest,
+    UpdateLetterRequest,
     PDFGenerationRequest,
     
     # Response Models

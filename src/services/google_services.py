@@ -270,6 +270,86 @@ class GoogleSheetsService:
             Result dictionary with status information
         """
         return self.log_to_sheet(spreadsheet_name, worksheet_name, entries)
+    
+    @handle_storage_errors
+    @measure_performance
+    def update_row_by_id(
+        self, 
+        spreadsheet_name: str,
+        worksheet_name: str,
+        letter_id: str,
+        updates: Dict[str, Any],
+        id_column: str = "ID"
+    ) -> Dict[str, Any]:
+        """
+        Update a specific row in Google Sheets by finding it with the given ID.
+        
+        Args:
+            spreadsheet_name: Target spreadsheet name
+            worksheet_name: Target worksheet name
+            letter_id: The ID to search for
+            updates: Dictionary with column names and new values
+            id_column: Name of the column containing IDs (default: "ID")
+            
+        Returns:
+            Result dictionary with status information
+        """
+        with ErrorContext("update_row_by_id", {"spreadsheet": spreadsheet_name, "worksheet": worksheet_name, "id": letter_id}):
+            try:
+                worksheet = self.client.open(spreadsheet_name).worksheet(worksheet_name)
+                
+                # Get all values and headers
+                all_values = worksheet.get_all_values()
+                if not all_values:
+                    raise StorageServiceError("Worksheet is empty")
+                
+                headers = all_values[0]
+                header_map = {h.strip(): idx for idx, h in enumerate(headers)}
+                
+                # Find ID column
+                if id_column not in header_map:
+                    raise StorageServiceError(f"Column '{id_column}' not found in worksheet")
+                
+                id_col_index = header_map[id_column]
+                
+                # Find the row with matching ID (starting from row 2, since row 1 is headers)
+                target_row = None
+                for row_index, row in enumerate(all_values[1:], start=2):  # start=2 because spreadsheet rows are 1-indexed and we skip header
+                    if row_index <= len(all_values) and id_col_index < len(row):
+                        if row[id_col_index].strip() == letter_id.strip():
+                            target_row = row_index
+                            break
+                
+                if target_row is None:
+                    raise StorageServiceError(f"Letter with ID '{letter_id}' not found in worksheet")
+                
+                # Update the specific cells
+                updated_columns = []
+                for column_name, new_value in updates.items():
+                    if column_name.strip() in header_map:
+                        col_index = header_map[column_name.strip()]
+                        # Use update_cell instead of update with A1 notation
+                        worksheet.update_cell(target_row, col_index + 1, str(new_value) if new_value is not None else '')
+                        updated_columns.append(column_name)
+                        logger.debug(f"Updated cell at row {target_row}, col {col_index + 1} with value: {new_value}")
+                
+                logger.info(f"Successfully updated row {target_row} for ID '{letter_id}' in {spreadsheet_name}/{worksheet_name}")
+                
+                return {
+                    "status": "success",
+                    "spreadsheet": spreadsheet_name,
+                    "worksheet": worksheet_name,
+                    "updated_row": target_row,
+                    "updated_columns": updated_columns,
+                    "letter_id": letter_id
+                }
+                
+            except gspread.SpreadsheetNotFound:
+                raise StorageServiceError(f"Spreadsheet '{spreadsheet_name}' not found")
+            except gspread.WorksheetNotFound:
+                raise StorageServiceError(f"Worksheet '{worksheet_name}' not found")
+            except Exception as e:
+                raise StorageServiceError(f"Error updating row in Google Sheets: {e}")
 
 class GoogleDriveService:
     """Enhanced Google Drive service with better error handling and performance."""

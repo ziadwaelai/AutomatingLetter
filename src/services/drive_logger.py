@@ -174,6 +174,153 @@ class DriveLoggerService:
                 "message": error_message
             }
     
+    def update_letter_pdf_and_log(self,
+                                  letter_id: str,
+                                  new_content: str,
+                                  folder_id: str,
+                                  template: str = "default_template",
+                                  spreadsheet_name: str = "AI Letter Generating",
+                                  worksheet_name: str = "Submissions") -> Dict[str, Any]:
+        """
+        Update an existing letter: regenerate PDF, replace old file in Drive, and update Google Sheets.
+        
+        Args:
+            letter_id: ID of the letter to update
+            new_content: New letter content
+            folder_id: Google Drive folder ID
+            template: Template name for PDF generation
+            spreadsheet_name: Name of the spreadsheet
+            worksheet_name: Name of the worksheet
+            
+        Returns:
+            Result dictionary with file info and update result
+        """
+        try:
+            from .enhanced_pdf_service import get_enhanced_pdf_service
+            from google.oauth2 import service_account
+            from googleapiclient.discovery import build
+            
+            # First, get the current file URL from Google Sheets to extract the old file ID
+            try:
+                worksheet = self.sheets_service.client.open(spreadsheet_name).worksheet(worksheet_name)
+                all_values = worksheet.get_all_values()
+                headers = all_values[0]
+                header_map = {h.strip(): idx for idx, h in enumerate(headers)}
+                
+                old_file_url = None
+                old_file_id = None
+                original_filename = None
+                
+                # Find the current row and get the old file URL
+                if "ID" in header_map and "URL" in header_map:
+                    id_col_index = header_map["ID"]
+                    url_col_index = header_map["URL"]
+                    
+                    for row in all_values[1:]:
+                        if id_col_index < len(row) and row[id_col_index].strip() == letter_id.strip():
+                            if url_col_index < len(row):
+                                old_file_url = row[url_col_index].strip()
+                                # Extract file ID from Google Drive URL
+                                if "/d/" in old_file_url:
+                                    old_file_id = old_file_url.split("/d/")[1].split("/")[0]
+                                    logger.info(f"Found old file ID: {old_file_id}")
+                                break
+                
+                # Get original filename from Drive if we have the file ID
+                if old_file_id:
+                    try:
+                        creds = service_account.Credentials.from_service_account_file(
+                            self.service_account_file, scopes=self.scopes
+                        )
+                        drive_service = build('drive', 'v3', credentials=creds)
+                        
+                        # Get the original filename
+                        file_metadata = drive_service.files().get(fileId=old_file_id, fields='name').execute()
+                        original_filename = file_metadata.get('name')
+                        logger.info(f"Original filename: {original_filename}")
+                        
+                    except Exception as e:
+                        logger.warning(f"Could not get original filename: {e}")
+                        original_filename = f"letter_{letter_id}.pdf"
+                
+            except Exception as e:
+                logger.warning(f"Could not retrieve old file info: {e}")
+                original_filename = f"letter_{letter_id}.pdf"
+            
+            # Generate new PDF
+            pdf_service = get_enhanced_pdf_service()
+            pdf_result = pdf_service.generate_pdf(
+                title=letter_id,  # Use just the ID for cleaner filename
+                content=new_content,
+                template_name=template
+            )
+            
+            logger.info(f"New PDF generated for letter ID {letter_id}: {pdf_result.filename}")
+            
+            # Delete old file from Drive if we found it
+            if old_file_id:
+                try:
+                    creds = service_account.Credentials.from_service_account_file(
+                        self.service_account_file, scopes=self.scopes
+                    )
+                    drive_service = build('drive', 'v3', credentials=creds)
+                    drive_service.files().delete(fileId=old_file_id).execute()
+                    logger.info(f"Deleted old file from Drive: {old_file_id}")
+                except Exception as e:
+                    logger.warning(f"Could not delete old file {old_file_id}: {e}")
+            
+            # Upload new PDF with original filename (or generate one if not found)
+            filename = original_filename if original_filename else f"letter_{letter_id}.pdf"
+            file_id, file_url = self.upload_file_to_drive(pdf_result.file_path, folder_id, filename)
+            
+            # Update the row in Google Sheets with new content and URL
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            updates = {
+                "Content": new_content,
+                "URL": file_url,
+                "Timestamp": timestamp  # Update timestamp to reflect when it was updated
+            }
+            
+            update_result = self.sheets_service.update_row_by_id(
+                spreadsheet_name=spreadsheet_name,
+                worksheet_name=worksheet_name,
+                letter_id=letter_id,
+                updates=updates
+            )
+            
+            # Clean up temporary PDF file
+            try:
+                self.cleanup_temp_file(pdf_result.file_path)
+            except Exception as cleanup_error:
+                logger.warning(f"Error cleaning up temporary file for {letter_id}: {cleanup_error}")
+            
+            logger.info(f"Successfully updated letter {letter_id} - replaced PDF in Drive and updated sheet entry")
+            
+            return {
+                "status": "success",
+                "letter_id": letter_id,
+                "file_id": file_id,
+                "file_url": file_url,
+                "filename": filename,
+                "old_file_deleted": old_file_id is not None,
+                "old_file_id": old_file_id,
+                "update_result": update_result,
+                "pdf_info": {
+                    "pdf_id": pdf_result.pdf_id,
+                    "file_size": pdf_result.file_size,
+                    "generated_at": pdf_result.generated_at.isoformat()
+                }
+            }
+            
+        except Exception as e:
+            error_message = f"Error updating letter PDF and log for ID {letter_id}: {str(e)}"
+            logger.error(error_message)
+            return {
+                "status": "error",
+                "letter_id": letter_id,
+                "message": error_message
+            }
+
     def cleanup_temp_file(self, file_path: str, max_retries: int = 3) -> None:
         """
         Clean up temporary file with retry logic.
