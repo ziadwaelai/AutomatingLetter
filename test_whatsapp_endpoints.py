@@ -81,6 +81,29 @@ def test_get_letter_by_id():
         print(f"Error testing get letter endpoint: {e}")
         return False
 
+def test_get_assigned_letter():
+    """Test the get assigned letter ID endpoint"""
+    
+    # Test phone number
+    phone_number = "201123808495"
+    
+    try:
+        response = requests.get(
+            f"{BASE_URL}/assigned-letter/{phone_number}",
+            headers={'Accept': 'application/json'},
+            verify=False,
+            timeout=30
+        )
+        
+        print(f"Get Assigned Letter - Status: {response.status_code}")
+        print(f"Response: {response.json()}")
+        
+        return response.status_code == 200
+        
+    except Exception as e:
+        print(f"Error testing get assigned letter endpoint: {e}")
+        return False
+
 if __name__ == "__main__":
     print("Testing WhatsApp API Endpoints")
     print("=" * 50)
@@ -91,7 +114,10 @@ if __name__ == "__main__":
     # print("\n2. Testing send WhatsApp letter endpoint:")
     # test_send_whatsapp_letter()
     
-    print("\n3. Testing update WhatsApp status endpoint:")
+    print("\n3. Testing get assigned letter endpoint:")
+    test_get_assigned_letter()
+    
+    print("\n4. Testing update WhatsApp status endpoint:")
     test_update_whatsapp_status()
     
     print("\n" + "=" * 50)
