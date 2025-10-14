@@ -7,8 +7,9 @@ from flask import request, jsonify
 from .letter_routes import letter_bp
 from .chat_routes import chat_bp
 from .archive_routes import archive_bp
+from .whatsapp_routes import whatsapp_bp
 
-__all__ = ['letter_bp', 'chat_bp', 'archive_bp', 'register_api_routes']
+__all__ = ['letter_bp', 'chat_bp', 'archive_bp', 'whatsapp_bp', 'register_api_routes']
 
 def register_api_routes(app):
     """
@@ -21,6 +22,7 @@ def register_api_routes(app):
     app.register_blueprint(letter_bp)
     app.register_blueprint(chat_bp)  # Updated to use new session manager
     app.register_blueprint(archive_bp)
+    app.register_blueprint(whatsapp_bp)  # WhatsApp integration routes
     
     # Add global API error handlers
     @app.errorhandler(404)
