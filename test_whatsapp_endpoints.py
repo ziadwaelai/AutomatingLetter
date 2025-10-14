@@ -39,8 +39,7 @@ def test_update_whatsapp_status():
     
     # Test data
     data = {
-        "phone_number": "1234567890",
-        "letter_id": "LTR_20241014_001",
+        "phone_number": "201123808495",
         "status": "delivered"
     }
     
@@ -48,7 +47,8 @@ def test_update_whatsapp_status():
         response = requests.post(
             f"{BASE_URL}/update-status",
             json=data,
-            headers={'Content-Type': 'application/json'}
+            headers={'Content-Type': 'application/json'},
+            verify=False  # Uncomment if using self-signed certificates
         )
         
         print(f"Update WhatsApp Status - Status: {response.status_code}")
@@ -85,14 +85,14 @@ if __name__ == "__main__":
     print("Testing WhatsApp API Endpoints")
     print("=" * 50)
     
-    print("\n1. Testing get letter by ID endpoint:")
-    test_get_letter_by_id()
+    # print("\n1. Testing get letter by ID endpoint:")
+    # test_get_letter_by_id()
     
     # print("\n2. Testing send WhatsApp letter endpoint:")
     # test_send_whatsapp_letter()
     
-    # print("\n3. Testing update WhatsApp status endpoint:")
-    # test_update_whatsapp_status()
+    print("\n3. Testing update WhatsApp status endpoint:")
+    test_update_whatsapp_status()
     
     print("\n" + "=" * 50)
     print("Testing complete!")
