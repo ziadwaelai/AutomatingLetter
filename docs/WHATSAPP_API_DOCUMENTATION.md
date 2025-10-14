@@ -10,7 +10,34 @@ The WhatsApp integration provides two endpoints for sending letters via WhatsApp
 
 ## Endpoints
 
-### 1. Send WhatsApp Letter
+### 1. Get Letter by ID
+**GET** `/api/v1/whatsapp/letter/{letter_id}`
+
+Retrieves letter data by ID from the Submissions sheet.
+
+#### URL Parameters
+- `letter_id`: The unique identifier of the letter to retrieve
+
+#### Success Response (200)
+```json
+{
+    "message": "Letter data retrieved successfully",
+    "letter_id": "LTR_20241014_001",
+    "letter_data": {
+        "ID": "LTR_20241014_001",
+        "Status": "completed",
+        "Content": "Letter content here...",
+        "... (other letter fields)"
+    }
+}
+```
+
+#### Error Responses
+- **400**: Invalid or missing letter ID
+- **404**: Letter not found in Submissions sheet
+- **500**: Database error
+
+### 2. Send WhatsApp Letter
 **POST** `/api/v1/whatsapp/send`
 
 Sends a letter to a phone number via WhatsApp webhook.
@@ -46,7 +73,7 @@ Sends a letter to a phone number via WhatsApp webhook.
 - **404**: Letter not found in Submissions sheet
 - **500**: Webhook delivery failed or database error
 
-### 2. Update WhatsApp Status
+### 3. Update WhatsApp Status
 **POST** `/api/v1/whatsapp/update-status`
 
 Updates letter status and clears the WhatsApp assignment.
@@ -142,6 +169,12 @@ All endpoints return proper HTTP status codes and detailed error messages:
 
 ### Using curl
 
+#### Get Letter by ID
+```bash
+curl -X GET http://localhost:5000/api/v1/whatsapp/letter/LTR_20241014_001 \
+  -H "Accept: application/json"
+```
+
 #### Send Letter
 ```bash
 curl -X POST http://localhost:5000/api/v1/whatsapp/send \
@@ -166,6 +199,11 @@ curl -X POST http://localhost:5000/api/v1/whatsapp/update-status \
 ### Using Python requests
 ```python
 import requests
+
+# Get letter by ID
+response = requests.get(
+    "http://localhost:5000/api/v1/whatsapp/letter/LTR_20241014_001"
+)
 
 # Send letter
 response = requests.post(

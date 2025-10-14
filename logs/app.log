@@ -6672,3 +6672,55 @@ current_letter
 2025-10-14 15:29:41,955 - werkzeug - INFO -  * Debugger PIN: 129-536-069
 2025-10-14 15:30:13,651 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\api\\whatsapp_routes.py', reloading
 2025-10-14 15:30:13,869 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:30:16,436 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:30:16,441 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:30:30,410 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp/update-status - 127.0.0.1
+2025-10-14 15:30:32,958 - src.services.google_services - INFO - Successfully updated row 12 for ID 'AIZ-20250731-97516' in AI Letter Generating/Submissions
+2025-10-14 15:30:32,958 - src.utils.helpers - INFO - update_row_by_id executed in 2.538s
+2025-10-14 15:30:32,959 - src.api.whatsapp_routes - INFO - Successfully updated status in Submissions sheet: {'status': 'success', 'spreadsheet': 'AI Letter Generating', 'worksheet': 'Submissions', 'updated_row': 12, 'updated_columns': ['Status'], 'letter_id': 'AIZ-20250731-97516'}
+2025-10-14 15:30:32,959 - src.api.whatsapp_routes - INFO - Clearing letter_id for phone number 201123808495
+2025-10-14 15:30:34,562 - src.api.whatsapp_routes - INFO - Successfully cleared letter_id for phone number 201123808495
+2025-10-14 15:30:34,563 - src.utils.helpers - INFO - update_whatsapp_status executed in 4.152s
+2025-10-14 15:30:34,563 - __main__ - INFO - Response: 200 - whatsapp.update_whatsapp_status
+2025-10-14 15:30:34,563 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:30:34] "POST /api/v1/whatsapp/update-status HTTP/1.1" 200 -
+2025-10-14 15:31:13,576 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp/update-status - 127.0.0.1
+2025-10-14 15:31:18,824 - src.services.google_services - INFO - Successfully updated row 2 for ID 'AIZ-20250720-02989' in AI Letter Generating/Submissions
+2025-10-14 15:31:18,824 - src.utils.helpers - INFO - update_row_by_id executed in 5.244s
+2025-10-14 15:31:18,824 - src.api.whatsapp_routes - INFO - Successfully updated status in Submissions sheet: {'status': 'success', 'spreadsheet': 'AI Letter Generating', 'worksheet': 'Submissions', 'updated_row': 2, 'updated_columns': ['Status'], 'letter_id': 'AIZ-20250720-02989'}
+2025-10-14 15:31:18,824 - src.api.whatsapp_routes - INFO - Clearing letter_id for phone number 201123808495
+2025-10-14 15:31:20,447 - src.api.whatsapp_routes - INFO - Successfully cleared letter_id for phone number 201123808495
+2025-10-14 15:31:20,447 - src.utils.helpers - INFO - update_whatsapp_status executed in 6.870s
+2025-10-14 15:31:20,447 - __main__ - INFO - Response: 200 - whatsapp.update_whatsapp_status
+2025-10-14 15:31:20,448 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:31:20] "POST /api/v1/whatsapp/update-status HTTP/1.1" 200 -
+2025-10-14 15:59:29,195 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\api\\whatsapp_routes.py', reloading
+2025-10-14 15:59:29,838 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:59:33,999 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:59:34,004 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:59:48,191 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\api\\whatsapp_routes.py', reloading
+2025-10-14 15:59:48,550 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:59:51,109 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:59:51,115 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 16:00:42,357 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\test_whatsapp_endpoints.py', reloading
+2025-10-14 16:00:42,572 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 16:00:44,970 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 16:00:44,970 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 16:00:57,023 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\test_whatsapp_endpoints.py', reloading
+2025-10-14 16:00:57,274 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 16:00:59,569 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 16:00:59,571 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 16:01:15,947 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\test_whatsapp_endpoints.py', reloading
+2025-10-14 16:01:16,187 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 16:01:18,369 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 16:01:18,369 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 16:01:34,316 - __main__ - INFO - GET http://localhost:5000/api/v1/whatsapp/letter/AIZ-20250720-02989 - 127.0.0.1
+2025-10-14 16:01:34,316 - src.api.whatsapp_routes - INFO - Fetching letter data for ID: AIZ-20250720-02989
+2025-10-14 16:01:36,467 - src.api.whatsapp_routes - INFO - Successfully retrieved letter data for ID: AIZ-20250720-02989
+2025-10-14 16:01:36,468 - src.utils.helpers - INFO - get_letter_by_id executed in 2.152s
+2025-10-14 16:01:36,468 - __main__ - INFO - Response: 200 - whatsapp.get_letter_by_id
+2025-10-14 16:01:36,468 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 16:01:36] "GET /api/v1/whatsapp/letter/AIZ-20250720-02989 HTTP/1.1" 200 -
+2025-10-14 16:01:48,805 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\test_whatsapp_endpoints.py', reloading
+2025-10-14 16:01:48,991 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 16:01:51,227 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 16:01:51,230 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 16:01:52,494 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\test_whatsapp_endpoints.py', reloading
+2025-10-14 16:01:52,694 - werkzeug - INFO -  * Restarting with stat
