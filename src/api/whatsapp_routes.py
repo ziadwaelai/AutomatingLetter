@@ -34,6 +34,10 @@ class WhatsAppStatusUpdateRequest(BaseModel):
     letter_id: str = Field(..., min_length=1, max_length=50, description="Letter ID")
     status: str = Field(..., min_length=1, max_length=50, description="New status")
 
+class GetLetterRequest(BaseModel):
+    """Request model for getting letter data."""
+    letter_id: str = Field(..., min_length=1, max_length=50, description="Letter ID to retrieve")
+
 @whatsapp_bp.route('/send', methods=['POST'])
 @measure_performance
 def send_whatsapp_letter():
@@ -282,3 +286,66 @@ def update_whatsapp_status():
         except Exception as e:
             logger.error(f"Unexpected error in update_whatsapp_status: {e}")
             return build_error_response("update_whatsapp_status", str(e)), 500
+
+@whatsapp_bp.route('/letter/<letter_id>', methods=['GET'])
+@measure_performance
+def get_letter_by_id(letter_id: str):
+    """
+    Get letter data by ID from Submissions sheet.
+    
+    Args:
+        letter_id: Letter ID to retrieve
+        
+    Returns:
+        Letter data or error message
+    """
+    with ErrorContext("get_letter_by_id"):
+        try:
+            # Validate letter_id
+            if not letter_id or not letter_id.strip():
+                return jsonify({
+                    "error": "Invalid letter ID",
+                    "message": "Letter ID is required and cannot be empty"
+                }), 400
+            
+            letter_id = letter_id.strip()
+            
+            sheets_service = get_sheets_service()
+            
+            # Get letter data from Submissions sheet
+            logger.info(f"Fetching letter data for ID: {letter_id}")
+            
+            try:
+                submissions_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("Submissions")
+                submissions_records = submissions_worksheet.get_all_records()
+                
+                letter_data = None
+                for record in submissions_records:
+                    if str(record.get('ID', '')).strip() == letter_id:
+                        letter_data = record
+                        break
+                
+                if not letter_data:
+                    return jsonify({
+                        "error": "Letter not found",
+                        "message": f"Letter with ID {letter_id} not found in submissions"
+                    }), 404
+                
+                logger.info(f"Successfully retrieved letter data for ID: {letter_id}")
+                
+                return jsonify({
+                    "message": "Letter data retrieved successfully",
+                    "letter_id": letter_id,
+                    "letter_data": letter_data
+                }), 200
+                
+            except Exception as e:
+                logger.error(f"Error accessing Google Sheets: {e}")
+                return jsonify({
+                    "error": "Database error",
+                    "message": f"Failed to access Google Sheets: {str(e)}"
+                }), 500
+                
+        except Exception as e:
+            logger.error(f"Unexpected error in get_letter_by_id: {e}")
+            return build_error_response("get_letter_by_id", str(e)), 500
