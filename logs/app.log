@@ -6499,3 +6499,176 @@ current_letter
 2025-09-25 15:51:24,339 - werkzeug - INFO -  * Restarting with stat
 2025-09-25 15:51:26,905 - werkzeug - WARNING -  * Debugger is active!
 2025-09-25 15:51:26,909 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:09:29,843 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-10-14 15:09:29,845 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-14 15:09:29,847 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:09:32,005 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:09:32,011 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:09:54,633 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-10-14 15:09:54,634 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-14 15:09:54,639 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:09:57,710 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:09:57,715 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:10:20,793 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\api\\whatsapp_routes.py', reloading
+2025-10-14 15:10:20,984 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:10:23,431 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:10:23,435 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:10:34,528 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\test_whatsapp_endpoints.py', reloading
+2025-10-14 15:10:34,766 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:10:37,099 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:10:37,103 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:11:03,929 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp/send - 127.0.0.1
+2025-10-14 15:11:03,930 - src.api.whatsapp_routes - INFO - Checking WhatsApp sheet for phone number: 1234567890
+2025-10-14 15:11:06,005 - src.utils.helpers - INFO - send_whatsapp_letter executed in 2.075s
+2025-10-14 15:11:06,005 - __main__ - INFO - Response: 404 - whatsapp.send_whatsapp_letter
+2025-10-14 15:11:06,006 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:11:06] "[33mPOST /api/v1/whatsapp/send HTTP/1.1[0m" 404 -
+2025-10-14 15:11:08,046 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp/update-status - 127.0.0.1
+2025-10-14 15:11:08,046 - src.api.whatsapp_routes - INFO - Updating status for letter_id LTR_20241014_001 to delivered
+2025-10-14 15:11:09,521 - src.utils.exceptions - ERROR - Operation failed: update_row_by_id
+2025-10-14 15:11:09,522 - src.utils.helpers - ERROR - update_row_by_id failed after 1.475s: Error updating row in Google Sheets: Letter with ID 'LTR_20241014_001' not found in worksheet
+2025-10-14 15:11:09,522 - src.api.whatsapp_routes - ERROR - Failed to update status in Submissions sheet: Storage resource not found
+2025-10-14 15:11:09,523 - src.utils.helpers - INFO - update_whatsapp_status executed in 1.477s
+2025-10-14 15:11:09,523 - __main__ - INFO - Response: 500 - whatsapp.update_whatsapp_status
+2025-10-14 15:11:09,524 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:11:09] "[35m[1mPOST /api/v1/whatsapp/update-status HTTP/1.1[0m" 500 -
+2025-10-14 15:12:04,941 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\test_whatsapp_endpoints.py', reloading
+2025-10-14 15:12:05,170 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:12:07,484 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:12:07,488 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:12:07,663 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\test_whatsapp_endpoints.py', reloading
+2025-10-14 15:12:07,940 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:12:10,046 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:12:10,050 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:12:11,295 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\test_whatsapp_endpoints.py', reloading
+2025-10-14 15:12:11,475 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:12:13,838 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:12:13,842 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:12:19,654 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp/send - 127.0.0.1
+2025-10-14 15:12:19,655 - src.api.whatsapp_routes - INFO - Checking WhatsApp sheet for phone number: 201123808495
+2025-10-14 15:12:21,708 - src.api.whatsapp_routes - INFO - Assigning letter_id LTR_20241014_001 to phone number 201123808495 at row 2
+2025-10-14 15:12:22,101 - src.api.whatsapp_routes - INFO - Fetching letter data for ID: LTR_20241014_001
+2025-10-14 15:12:24,552 - src.utils.helpers - INFO - send_whatsapp_letter executed in 4.898s
+2025-10-14 15:12:24,552 - __main__ - INFO - Response: 404 - whatsapp.send_whatsapp_letter
+2025-10-14 15:12:24,553 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:12:24] "[33mPOST /api/v1/whatsapp/send HTTP/1.1[0m" 404 -
+2025-10-14 15:12:26,603 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp/update-status - 127.0.0.1
+2025-10-14 15:12:26,604 - src.api.whatsapp_routes - INFO - Updating status for letter_id LTR_20241014_001 to delivered
+2025-10-14 15:12:28,018 - src.utils.exceptions - ERROR - Operation failed: update_row_by_id
+2025-10-14 15:12:28,018 - src.utils.helpers - ERROR - update_row_by_id failed after 1.414s: Error updating row in Google Sheets: Letter with ID 'LTR_20241014_001' not found in worksheet
+2025-10-14 15:12:28,018 - src.api.whatsapp_routes - ERROR - Failed to update status in Submissions sheet: Storage resource not found
+2025-10-14 15:12:28,018 - src.utils.helpers - INFO - update_whatsapp_status executed in 1.415s
+2025-10-14 15:12:28,019 - __main__ - INFO - Response: 500 - whatsapp.update_whatsapp_status
+2025-10-14 15:12:28,020 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:12:28] "[35m[1mPOST /api/v1/whatsapp/update-status HTTP/1.1[0m" 500 -
+2025-10-14 15:12:44,706 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\test_whatsapp_endpoints.py', reloading
+2025-10-14 15:12:44,913 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:12:47,102 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:12:47,106 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:12:48,641 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp/send - 127.0.0.1
+2025-10-14 15:12:48,642 - src.api.whatsapp_routes - INFO - Checking WhatsApp sheet for phone number: 201123808495
+2025-10-14 15:12:50,568 - src.api.whatsapp_routes - INFO - Assigning letter_id AIZ-20250731-97516 to phone number 201123808495 at row 2
+2025-10-14 15:12:50,858 - src.api.whatsapp_routes - INFO - Fetching letter data for ID: AIZ-20250731-97516
+2025-10-14 15:12:52,328 - src.api.whatsapp_routes - INFO - Sending letter data to webhook: https://superpowerss.app.n8n.cloud/webhook/send
+2025-10-14 15:12:52,997 - src.api.whatsapp_routes - ERROR - Webhook request failed: 404 Client Error: Not Found for url: https://superpowerss.app.n8n.cloud/webhook/send
+2025-10-14 15:12:52,998 - src.utils.helpers - INFO - send_whatsapp_letter executed in 4.356s
+2025-10-14 15:12:52,998 - __main__ - INFO - Response: 500 - whatsapp.send_whatsapp_letter
+2025-10-14 15:12:52,998 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:12:52] "[35m[1mPOST /api/v1/whatsapp/send HTTP/1.1[0m" 500 -
+2025-10-14 15:12:55,036 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp/update-status - 127.0.0.1
+2025-10-14 15:12:55,037 - src.api.whatsapp_routes - INFO - Updating status for letter_id LTR_20241014_001 to delivered
+2025-10-14 15:12:56,524 - src.utils.exceptions - ERROR - Operation failed: update_row_by_id
+2025-10-14 15:12:56,524 - src.utils.helpers - ERROR - update_row_by_id failed after 1.487s: Error updating row in Google Sheets: Letter with ID 'LTR_20241014_001' not found in worksheet
+2025-10-14 15:12:56,524 - src.api.whatsapp_routes - ERROR - Failed to update status in Submissions sheet: Storage resource not found
+2025-10-14 15:12:56,524 - src.utils.helpers - INFO - update_whatsapp_status executed in 1.487s
+2025-10-14 15:12:56,524 - __main__ - INFO - Response: 500 - whatsapp.update_whatsapp_status
+2025-10-14 15:12:56,525 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:12:56] "[35m[1mPOST /api/v1/whatsapp/update-status HTTP/1.1[0m" 500 -
+2025-10-14 15:14:05,863 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\api\\whatsapp_routes.py', reloading
+2025-10-14 15:14:06,059 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:14:08,756 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:14:08,761 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:14:18,709 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\api\\whatsapp_routes.py', reloading
+2025-10-14 15:14:18,896 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:14:21,085 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:14:21,088 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:14:55,978 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\api\\whatsapp_routes.py', reloading
+2025-10-14 15:14:56,155 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:14:58,298 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:14:58,302 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:15:07,150 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\api\\whatsapp_routes.py', reloading
+2025-10-14 15:15:07,324 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:16:39,241 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-10-14 15:16:39,241 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-14 15:16:39,243 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:16:41,609 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:16:41,615 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:17:15,715 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp - 127.0.0.1
+2025-10-14 15:17:15,717 - __main__ - INFO - Response: 404 - None
+2025-10-14 15:17:15,718 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:17:15] "[33mPOST /api/v1/whatsapp HTTP/1.1[0m" 404 -
+2025-10-14 15:17:34,760 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp - 127.0.0.1
+2025-10-14 15:17:34,761 - __main__ - INFO - Response: 404 - None
+2025-10-14 15:17:34,761 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:17:34] "[33mPOST /api/v1/whatsapp HTTP/1.1[0m" 404 -
+2025-10-14 15:17:50,079 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp/send - 127.0.0.1
+2025-10-14 15:17:50,080 - src.api.whatsapp_routes - INFO - Checking WhatsApp sheet for phone number: 201123808495
+2025-10-14 15:17:52,119 - src.api.whatsapp_routes - INFO - Assigning letter_id AIZ-20250731-97516 to phone number 201123808495 at row 2
+2025-10-14 15:17:52,443 - src.api.whatsapp_routes - INFO - Fetching letter data for ID: AIZ-20250731-97516
+2025-10-14 15:17:53,881 - src.api.whatsapp_routes - INFO - Sending letter data to webhook: https://superpowerss.app.n8n.cloud/webhook/send
+2025-10-14 15:17:54,569 - src.api.whatsapp_routes - ERROR - Webhook request failed: 404 Client Error: Not Found for url: https://superpowerss.app.n8n.cloud/webhook/send
+2025-10-14 15:17:54,576 - src.utils.helpers - INFO - send_whatsapp_letter executed in 4.496s
+2025-10-14 15:17:54,586 - __main__ - INFO - Response: 500 - whatsapp.send_whatsapp_letter
+2025-10-14 15:17:54,587 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:17:54] "[35m[1mPOST /api/v1/whatsapp/send HTTP/1.1[0m" 500 -
+2025-10-14 15:17:56,639 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp/update-status - 127.0.0.1
+2025-10-14 15:17:56,639 - src.api.whatsapp_routes - INFO - Updating status for letter_id LTR_20241014_001 to delivered
+2025-10-14 15:17:58,077 - src.utils.exceptions - ERROR - Operation failed: update_row_by_id
+2025-10-14 15:17:58,077 - src.utils.helpers - ERROR - update_row_by_id failed after 1.437s: Error updating row in Google Sheets: Letter with ID 'LTR_20241014_001' not found in worksheet
+2025-10-14 15:17:58,077 - src.api.whatsapp_routes - ERROR - Failed to update status in Submissions sheet: Storage resource not found
+2025-10-14 15:17:58,077 - src.utils.helpers - INFO - update_whatsapp_status executed in 1.438s
+2025-10-14 15:17:58,078 - __main__ - INFO - Response: 500 - whatsapp.update_whatsapp_status
+2025-10-14 15:17:58,078 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:17:58] "[35m[1mPOST /api/v1/whatsapp/update-status HTTP/1.1[0m" 500 -
+2025-10-14 15:18:25,996 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp - 127.0.0.1
+2025-10-14 15:18:25,996 - __main__ - INFO - Response: 404 - None
+2025-10-14 15:18:25,996 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:18:25] "[33mPOST /api/v1/whatsapp HTTP/1.1[0m" 404 -
+2025-10-14 15:18:34,037 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp/send - 127.0.0.1
+2025-10-14 15:18:34,037 - src.api.whatsapp_routes - INFO - Checking WhatsApp sheet for phone number: 201123808495
+2025-10-14 15:18:35,367 - src.api.whatsapp_routes - INFO - Assigning letter_id AIZ-20250731-97516 to phone number 201123808495 at row 2
+2025-10-14 15:18:35,665 - src.api.whatsapp_routes - INFO - Fetching letter data for ID: AIZ-20250731-97516
+2025-10-14 15:18:37,025 - src.api.whatsapp_routes - INFO - Sending letter data to webhook: https://superpowerss.app.n8n.cloud/webhook/send
+2025-10-14 15:18:37,333 - src.api.whatsapp_routes - INFO - Successfully sent letter AIZ-20250731-97516 to phone 201123808495
+2025-10-14 15:18:37,334 - src.utils.helpers - INFO - send_whatsapp_letter executed in 3.298s
+2025-10-14 15:18:37,334 - __main__ - INFO - Response: 200 - whatsapp.send_whatsapp_letter
+2025-10-14 15:18:37,334 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:18:37] "POST /api/v1/whatsapp/send HTTP/1.1" 200 -
+2025-10-14 15:18:39,381 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp/update-status - 127.0.0.1
+2025-10-14 15:18:39,381 - src.api.whatsapp_routes - INFO - Updating status for letter_id LTR_20241014_001 to delivered
+2025-10-14 15:18:40,855 - src.utils.exceptions - ERROR - Operation failed: update_row_by_id
+2025-10-14 15:18:40,862 - src.utils.helpers - ERROR - update_row_by_id failed after 1.481s: Error updating row in Google Sheets: Letter with ID 'LTR_20241014_001' not found in worksheet
+2025-10-14 15:18:40,863 - src.api.whatsapp_routes - ERROR - Failed to update status in Submissions sheet: Storage resource not found
+2025-10-14 15:18:40,863 - src.utils.helpers - INFO - update_whatsapp_status executed in 1.482s
+2025-10-14 15:18:40,863 - __main__ - INFO - Response: 500 - whatsapp.update_whatsapp_status
+2025-10-14 15:18:40,863 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:18:40] "[35m[1mPOST /api/v1/whatsapp/update-status HTTP/1.1[0m" 500 -
+2025-10-14 15:26:04,167 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp/send - 127.0.0.1
+2025-10-14 15:26:04,174 - src.api.whatsapp_routes - INFO - Checking WhatsApp sheet for phone number: 201123808495
+2025-10-14 15:26:05,841 - src.utils.helpers - INFO - send_whatsapp_letter executed in 1.671s
+2025-10-14 15:26:05,841 - __main__ - INFO - Response: 409 - whatsapp.send_whatsapp_letter
+2025-10-14 15:26:05,843 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:26:05] "[31m[1mPOST /api/v1/whatsapp/send HTTP/1.1[0m" 409 -
+2025-10-14 15:28:43,734 - __main__ - INFO - GET http://localhost:5000/api/v1/whatsapp/update-status - 127.0.0.1
+2025-10-14 15:28:43,735 - __main__ - INFO - Response: 405 - None
+2025-10-14 15:28:43,735 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:28:43] "[31m[1mGET /api/v1/whatsapp/update-status HTTP/1.1[0m" 405 -
+2025-10-14 15:28:48,107 - __main__ - INFO - POST http://localhost:5000/api/v1/whatsapp/update-status - 127.0.0.1
+2025-10-14 15:28:50,076 - src.services.google_services - INFO - Successfully updated row 12 for ID 'AIZ-20250731-97516' in AI Letter Generating/Submissions
+2025-10-14 15:28:50,077 - src.utils.helpers - INFO - update_row_by_id executed in 1.766s
+2025-10-14 15:28:50,077 - src.api.whatsapp_routes - INFO - Successfully updated status in Submissions sheet: {'status': 'success', 'spreadsheet': 'AI Letter Generating', 'worksheet': 'Submissions', 'updated_row': 12, 'updated_columns': ['Status'], 'letter_id': 'AIZ-20250731-97516'}
+2025-10-14 15:28:50,077 - src.api.whatsapp_routes - INFO - Clearing letter_id for phone number 201123808495
+2025-10-14 15:28:52,351 - src.api.whatsapp_routes - INFO - Successfully cleared letter_id for phone number 201123808495
+2025-10-14 15:28:52,352 - src.utils.helpers - INFO - update_whatsapp_status executed in 4.245s
+2025-10-14 15:28:52,352 - __main__ - INFO - Response: 200 - whatsapp.update_whatsapp_status
+2025-10-14 15:28:52,353 - werkzeug - INFO - 127.0.0.1 - - [14/Oct/2025 15:28:52] "POST /api/v1/whatsapp/update-status HTTP/1.1" 200 -
+2025-10-14 15:29:38,331 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\api\\whatsapp_routes.py', reloading
+2025-10-14 15:29:38,816 - werkzeug - INFO -  * Restarting with stat
+2025-10-14 15:29:41,947 - werkzeug - WARNING -  * Debugger is active!
+2025-10-14 15:29:41,955 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-14 15:30:13,651 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\src\\api\\whatsapp_routes.py', reloading
+2025-10-14 15:30:13,869 - werkzeug - INFO -  * Restarting with stat

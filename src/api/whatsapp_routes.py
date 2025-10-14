@@ -1,0 +1,284 @@
+"""
+API Routes for WhatsApp Integration
+Handles WhatsApp letter sending and status updates.
+"""
+
+import logging
+import requests
+from typing import Dict, Any
+from flask import Blueprint, request, jsonify
+from pydantic import ValidationError, BaseModel, Field
+
+from ..models import ErrorResponse, SuccessResponse
+from ..services import get_sheets_service
+from ..utils import (
+    ErrorContext,
+    build_error_response,
+    validate_and_raise,
+    measure_performance
+)
+
+logger = logging.getLogger(__name__)
+
+# Create blueprint
+whatsapp_bp = Blueprint('whatsapp', __name__, url_prefix='/api/v1/whatsapp')
+
+class WhatsAppSendRequest(BaseModel):
+    """Request model for WhatsApp sending."""
+    phone_number: str = Field(..., min_length=10, max_length=20, description="Phone number to send letter to")
+    letter_id: str = Field(..., min_length=1, max_length=50, description="Letter ID to send")
+
+class WhatsAppStatusUpdateRequest(BaseModel):
+    """Request model for WhatsApp status update."""
+    phone_number: str = Field(..., min_length=10, max_length=20, description="Phone number used")
+    letter_id: str = Field(..., min_length=1, max_length=50, description="Letter ID")
+    status: str = Field(..., min_length=1, max_length=50, description="New status")
+
+@whatsapp_bp.route('/send', methods=['POST'])
+@measure_performance
+def send_whatsapp_letter():
+    """
+    Send a letter via WhatsApp.
+    
+    Flow:
+    1. Check if phone number already has a letter assigned (letter_id not empty)
+    2. If assigned, return error
+    3. If not assigned, assign the letter_id to the phone number
+    4. Get letter data from Google Sheets
+    5. Send to webhook
+    
+    Request Body:
+        phone_number: str - Phone number to send to
+        letter_id: str - Letter ID to send
+        
+    Returns:
+        Success or error message
+    """
+    with ErrorContext("send_whatsapp_letter"):
+        try:
+            # Validate request data
+            if not request.is_json:
+                return jsonify({"error": "Request must be JSON"}), 400
+            
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "No JSON data provided"}), 400
+            
+            # Validate using Pydantic
+            try:
+                send_request = WhatsAppSendRequest(**data)
+            except ValidationError as e:
+                return jsonify({"error": "Validation error", "details": e.errors()}), 400
+            
+            sheets_service = get_sheets_service()
+            
+            # Step 1: Check WhatsApp sheet for existing assignment
+            logger.info(f"Checking WhatsApp sheet for phone number: {send_request.phone_number}")
+            
+            try:
+                # Get all records from WhatsApp sheet
+                whatsapp_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("WhatApp")
+                whatsapp_records = whatsapp_worksheet.get_all_records()
+                
+                # Find the record with matching phone number
+                target_row = None
+                existing_letter_id = None
+                Name=None
+                
+                for idx, record in enumerate(whatsapp_records):
+                    if str(record.get('Number', '')).strip() == str(send_request.phone_number).strip():
+                        target_row = idx + 2  # +2 because records start from row 2 (row 1 is header)
+                        existing_letter_id = str(record.get('Letter_Id', '')).strip()
+                        Name=str(record.get('Name', '')).strip()
+                        break
+                
+                if target_row is None:
+                    return jsonify({
+                        "error": "Phone number not found in WhatsApp sheet",
+                        "message": "The provided phone number is not registered"
+                    }), 404
+                
+                # Step 2: Check if already assigned
+                if existing_letter_id and existing_letter_id != "":
+                    return jsonify({
+                        "error": "Phone number already assigned",
+                        "message": f"This phone number is already assigned to letter {existing_letter_id}. The signer is busy now."
+                    }), 409
+                
+                # Step 3: Assign letter_id to the phone number
+                logger.info(f"Assigning letter_id {send_request.letter_id} to phone number {send_request.phone_number} at row {target_row}")
+                whatsapp_worksheet.update_cell(target_row, 3, send_request.letter_id)  # Column C (Letter_id)
+                
+                # Step 4: Get letter data from Submissions sheet
+                logger.info(f"Fetching letter data for ID: {send_request.letter_id}")
+                
+                submissions_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("Submissions")
+                submissions_records = submissions_worksheet.get_all_records()
+                
+                letter_data = None
+                for record in submissions_records:
+                    if str(record.get('ID', '')).strip() == str(send_request.letter_id).strip():
+                        letter_data = record
+                        break
+                
+                if not letter_data:
+                    # Rollback: Clear the letter_id we just assigned
+                    whatsapp_worksheet.update_cell(target_row, 3, "")
+                    return jsonify({
+                        "error": "Letter not found",
+                        "message": f"Letter with ID {send_request.letter_id} not found in submissions"
+                    }), 404
+                
+                # Step 5: Send to webhook
+                webhook_url = "https://superpowerss.app.n8n.cloud/webhook/send"
+                webhook_payload = {
+                    "phone_number": send_request.phone_number,
+                    "name": Name,
+                    "letter_id": send_request.letter_id,
+                    "letter_data": letter_data
+                }
+                
+                logger.info(f"Sending letter data to webhook: {webhook_url}")
+                
+                try:
+                    webhook_response = requests.post(
+                        webhook_url,
+                        json=webhook_payload,
+                        timeout=30,
+                        headers={'Content-Type': 'application/json'}
+                    )
+                    webhook_response.raise_for_status()
+                    
+                    logger.info(f"Successfully sent letter {send_request.letter_id} to phone {send_request.phone_number}")
+                    
+                    return jsonify({
+                        "message": "Letter sent successfully via WhatsApp",
+                        "letter_id": send_request.letter_id,
+                        "phone_number": send_request.phone_number,
+                        "webhook_status": webhook_response.status_code
+                    }), 200
+                    
+                except requests.RequestException as e:
+                    # Rollback: Clear the letter_id we assigned
+                    whatsapp_worksheet.update_cell(target_row, 3, "")
+                    logger.error(f"Webhook request failed: {e}")
+                    
+                    return jsonify({
+                        "error": "Webhook delivery failed",
+                        "message": f"Failed to send to webhook: {str(e)}"
+                    }), 500
+                
+            except Exception as e:
+                logger.error(f"Error accessing Google Sheets: {e}")
+                return jsonify({
+                    "error": "Database error",
+                    "message": f"Failed to access Google Sheets: {str(e)}"
+                }), 500
+                
+        except Exception as e:
+            logger.error(f"Unexpected error in send_whatsapp_letter: {e}")
+            return build_error_response("send_whatsapp_letter", str(e)), 500
+
+@whatsapp_bp.route('/update-status', methods=['POST'])
+@measure_performance
+def update_whatsapp_status():
+    """
+    Update letter status and clear WhatsApp assignment.
+    
+    Flow:
+    1. Update status in Submissions sheet by letter_id
+    2. Clear letter_id from WhatsApp sheet by phone number
+    
+    Request Body:
+        phone_number: str - Phone number to clear assignment
+        letter_id: str - Letter ID to update status for
+        status: str - New status value
+        
+    Returns:
+        Success or error message
+    """
+    with ErrorContext("update_whatsapp_status"):
+        try:
+            # Validate request data
+            if not request.is_json:
+                return jsonify({"error": "Request must be JSON"}), 400
+            
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "No JSON data provided"}), 400
+            
+            # Validate using Pydantic
+            try:
+                status_request = WhatsAppStatusUpdateRequest(**data)
+            except ValidationError as e:
+                return jsonify({"error": "Validation error", "details": e.errors()}), 400
+            
+            sheets_service = get_sheets_service()
+            
+            # Step 1: Update status in Submissions sheet
+            logger.info(f"Updating status for letter_id {status_request.letter_id} to {status_request.status}")
+            
+            try:
+                update_result = sheets_service.update_row_by_id(
+                    spreadsheet_name=sheets_service.config.database.spreadsheet_name,
+                    worksheet_name="Submissions",
+                    letter_id=status_request.letter_id,
+                    updates={"Status": status_request.status},
+                    id_column="ID"
+                )
+                
+                logger.info(f"Successfully updated status in Submissions sheet: {update_result}")
+                
+            except Exception as e:
+                logger.error(f"Failed to update status in Submissions sheet: {e}")
+                return jsonify({
+                    "error": "Failed to update letter status",
+                    "message": str(e)
+                }), 500
+            
+            # Step 2: Clear letter_id from WhatsApp sheet
+            logger.info(f"Clearing letter_id for phone number {status_request.phone_number}")
+            
+            try:
+                whatsapp_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("WhatApp")
+                whatsapp_records = whatsapp_worksheet.get_all_records()
+                
+                target_row = None
+                for idx, record in enumerate(whatsapp_records):
+                    if str(record.get('Number', '')).strip() == str(status_request.phone_number).strip():
+                        target_row = idx + 2  # +2 because records start from row 2
+                        break
+                
+                if target_row is None:
+                    logger.warning(f"Phone number {status_request.phone_number} not found in WhatsApp sheet")
+                    # Don't return error, as the main update was successful
+                else:
+                    # Clear the letter_id (column C)
+                    whatsapp_worksheet.update_cell(target_row, 3, "")
+                    logger.info(f"Successfully cleared letter_id for phone number {status_request.phone_number}")
+                
+                return jsonify({
+                    "message": "Status updated and WhatsApp assignment cleared successfully",
+                    "letter_id": status_request.letter_id,
+                    "phone_number": status_request.phone_number,
+                    "new_status": status_request.status,
+                    "submissions_updated": True,
+                    "whatsapp_cleared": target_row is not None
+                }), 200
+                
+            except Exception as e:
+                logger.error(f"Failed to clear WhatsApp assignment: {e}")
+                # Main update was successful, so return partial success
+                return jsonify({
+                    "message": "Status updated but failed to clear WhatsApp assignment",
+                    "letter_id": status_request.letter_id,
+                    "phone_number": status_request.phone_number,
+                    "new_status": status_request.status,
+                    "submissions_updated": True,
+                    "whatsapp_cleared": False,
+                    "warning": str(e)
+                }), 200
+                
+        except Exception as e:
+            logger.error(f"Unexpected error in update_whatsapp_status: {e}")
+            return build_error_response("update_whatsapp_status", str(e)), 500
