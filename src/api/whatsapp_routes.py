@@ -31,7 +31,6 @@ class WhatsAppSendRequest(BaseModel):
 class WhatsAppStatusUpdateRequest(BaseModel):
     """Request model for WhatsApp status update."""
     phone_number: str = Field(..., min_length=10, max_length=20, description="Phone number used")
-    letter_id: str = Field(..., min_length=1, max_length=50, description="Letter ID")
     status: str = Field(..., min_length=1, max_length=50, description="New status")
 
 class GetLetterRequest(BaseModel):
@@ -190,12 +189,12 @@ def update_whatsapp_status():
     Update letter status and clear WhatsApp assignment.
     
     Flow:
-    1. Update status in Submissions sheet by letter_id
-    2. Clear letter_id from WhatsApp sheet by phone number
+    1. Get letter_id from WhatsApp sheet by phone number
+    2. Update status in Submissions sheet by letter_id
+    3. Clear letter_id from WhatsApp sheet by phone number
     
     Request Body:
         phone_number: str - Phone number to clear assignment
-        letter_id: str - Letter ID to update status for
         status: str - New status value
         
     Returns:
@@ -219,14 +218,51 @@ def update_whatsapp_status():
             
             sheets_service = get_sheets_service()
             
-            # Step 1: Update status in Submissions sheet
-            logger.info(f"Updating status for letter_id {status_request.letter_id} to {status_request.status}")
+            # Step 1: Get letter_id from WhatsApp sheet
+            logger.info(f"Getting letter_id for phone number {status_request.phone_number}")
+            
+            try:
+                whatsapp_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("WhatApp")
+                whatsapp_records = whatsapp_worksheet.get_all_records()
+                
+                target_row = None
+                letter_id = None
+                
+                for idx, record in enumerate(whatsapp_records):
+                    if str(record.get('Number', '')).strip() == str(status_request.phone_number).strip():
+                        target_row = idx + 2  # +2 because records start from row 2
+                        letter_id = str(record.get('Letter_Id', '')).strip()
+                        break
+                
+                if target_row is None:
+                    return jsonify({
+                        "error": "Phone number not found",
+                        "message": f"Phone number {status_request.phone_number} not found in WhatsApp sheet"
+                    }), 404
+                
+                if not letter_id or letter_id == "":
+                    return jsonify({
+                        "error": "No letter assigned",
+                        "message": f"Phone number {status_request.phone_number} has no letter assigned"
+                    }), 400
+                
+                logger.info(f"Found letter_id {letter_id} for phone number {status_request.phone_number}")
+                
+            except Exception as e:
+                logger.error(f"Error accessing WhatsApp sheet: {e}")
+                return jsonify({
+                    "error": "Database error",
+                    "message": f"Failed to access WhatsApp sheet: {str(e)}"
+                }), 500
+            
+            # Step 2: Update status in Submissions sheet
+            logger.info(f"Updating status for letter_id {letter_id} to {status_request.status}")
             
             try:
                 update_result = sheets_service.update_row_by_id(
                     spreadsheet_name=sheets_service.config.database.spreadsheet_name,
                     worksheet_name="Submissions",
-                    letter_id=status_request.letter_id,
+                    letter_id=letter_id,
                     updates={"Status": status_request.status},
                     id_column="ID"
                 )
@@ -240,34 +276,21 @@ def update_whatsapp_status():
                     "message": str(e)
                 }), 500
             
-            # Step 2: Clear letter_id from WhatsApp sheet
+            # Step 3: Clear letter_id from WhatsApp sheet
             logger.info(f"Clearing letter_id for phone number {status_request.phone_number}")
             
             try:
-                whatsapp_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("WhatApp")
-                whatsapp_records = whatsapp_worksheet.get_all_records()
-                
-                target_row = None
-                for idx, record in enumerate(whatsapp_records):
-                    if str(record.get('Number', '')).strip() == str(status_request.phone_number).strip():
-                        target_row = idx + 2  # +2 because records start from row 2
-                        break
-                
-                if target_row is None:
-                    logger.warning(f"Phone number {status_request.phone_number} not found in WhatsApp sheet")
-                    # Don't return error, as the main update was successful
-                else:
-                    # Clear the letter_id (column C)
-                    whatsapp_worksheet.update_cell(target_row, 3, "")
-                    logger.info(f"Successfully cleared letter_id for phone number {status_request.phone_number}")
+                # Clear the letter_id (column C)
+                whatsapp_worksheet.update_cell(target_row, 3, "")
+                logger.info(f"Successfully cleared letter_id for phone number {status_request.phone_number}")
                 
                 return jsonify({
                     "message": "Status updated and WhatsApp assignment cleared successfully",
-                    "letter_id": status_request.letter_id,
+                    "letter_id": letter_id,
                     "phone_number": status_request.phone_number,
                     "new_status": status_request.status,
                     "submissions_updated": True,
-                    "whatsapp_cleared": target_row is not None
+                    "whatsapp_cleared": True
                 }), 200
                 
             except Exception as e:
@@ -275,7 +298,7 @@ def update_whatsapp_status():
                 # Main update was successful, so return partial success
                 return jsonify({
                     "message": "Status updated but failed to clear WhatsApp assignment",
-                    "letter_id": status_request.letter_id,
+                    "letter_id": letter_id,
                     "phone_number": status_request.phone_number,
                     "new_status": status_request.status,
                     "submissions_updated": True,
