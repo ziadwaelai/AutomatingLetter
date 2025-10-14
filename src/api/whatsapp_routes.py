@@ -372,3 +372,82 @@ def get_letter_by_id(letter_id: str):
         except Exception as e:
             logger.error(f"Unexpected error in get_letter_by_id: {e}")
             return build_error_response("get_letter_by_id", str(e)), 500
+
+@whatsapp_bp.route('/assigned-letter/<phone_number>', methods=['GET'])
+@measure_performance
+def get_assigned_letter_id(phone_number: str):
+    """
+    Get assigned letter ID by phone number from WhatsApp sheet.
+    
+    Args:
+        phone_number: Phone number to check
+        
+    Returns:
+        Assigned letter ID or error message
+    """
+    with ErrorContext("get_assigned_letter_id"):
+        try:
+            # Validate phone number
+            if not phone_number or not phone_number.strip():
+                return jsonify({
+                    "error": "Invalid phone number",
+                    "message": "Phone number is required and cannot be empty"
+                }), 400
+            
+            phone_number = phone_number.strip()
+            
+            sheets_service = get_sheets_service()
+            
+            # Get assigned letter_id from WhatsApp sheet
+            logger.info(f"Getting assigned letter_id for phone number: {phone_number}")
+            
+            try:
+                whatsapp_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("WhatApp")
+                whatsapp_records = whatsapp_worksheet.get_all_records()
+                
+                # Find the record with matching phone number
+                assigned_letter_id = None
+                name = None
+                
+                for record in whatsapp_records:
+                    if str(record.get('Number', '')).strip() == str(phone_number).strip():
+                        assigned_letter_id = str(record.get('Letter_Id', '')).strip()
+                        name = str(record.get('Name', '')).strip()
+                        break
+                
+                if assigned_letter_id is None:
+                    return jsonify({
+                        "error": "Phone number not found",
+                        "message": f"Phone number {phone_number} not found in WhatsApp sheet"
+                    }), 404
+                
+                # Check if letter is assigned
+                if not assigned_letter_id or assigned_letter_id == "":
+                    return jsonify({
+                        "message": "No letter assigned",
+                        "phone_number": phone_number,
+                        "name": name,
+                        "assigned_letter_id": None,
+                        "is_assigned": False
+                    }), 200
+                
+                logger.info(f"Found assigned letter_id {assigned_letter_id} for phone number {phone_number}")
+                
+                return jsonify({
+                    "message": "Letter assignment found",
+                    "phone_number": phone_number,
+                    "name": name,
+                    "assigned_letter_id": assigned_letter_id,
+                    "is_assigned": True
+                }), 200
+                
+            except Exception as e:
+                logger.error(f"Error accessing WhatsApp sheet: {e}")
+                return jsonify({
+                    "error": "Database error",
+                    "message": f"Failed to access WhatsApp sheet: {str(e)}"
+                }), 500
+                
+        except Exception as e:
+            logger.error(f"Unexpected error in get_assigned_letter_id: {e}")
+            return build_error_response("get_assigned_letter_id", str(e)), 500
