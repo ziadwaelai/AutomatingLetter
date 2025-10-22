@@ -24,13 +24,14 @@ user_bp = Blueprint('user', __name__, url_prefix='/api/v1/user')
 @measure_performance
 def validate_user():
     """
-    Validate user access based on email.
+    Validate user credentials and return JWT token.
 
     Request Body:
         email: str - User email address
+        password: str - User password
 
     Returns:
-        Validation result with client information
+        JWT token if validation successful
     """
     with ErrorContext("validate_user_api"):
         try:
@@ -42,40 +43,150 @@ def validate_user():
             if not data:
                 return jsonify({"error": "لم يتم تقديم بيانات JSON"}), 400
 
-            # Get email from request
+            # Get required fields
             email = data.get('email')
+            password = data.get('password')
+
             if not email:
                 return jsonify({"error": "البريد الإلكتروني مطلوب"}), 400
+            if not password:
+                return jsonify({"error": "كلمة المرور مطلوبة"}), 400
 
             # Validate email format
             email = email.strip()
             if '@' not in email:
                 return jsonify({"error": "صيغة البريد الإلكتروني غير صحيحة"}), 400
 
-            # Validate user access
+            # Validate user credentials
             user_service = get_user_management_service()
-            has_access, client_info = user_service.validate_user_access(email)
+            success, client_info, user_info = user_service.login_user(email, password)
 
-            if has_access and client_info:
+            if success and client_info and user_info:
                 logger.info(f"User validated successfully: {email}")
                 # Generate JWT token
-                token = user_service._create_access_token(client_info, has_access)
+                token = user_service._create_access_token(client_info, user_info, success)
                 return jsonify({
                     "status": "success",
                     "token": token,
                     "message": "تم التحقق من المستخدم بنجاح"
                 }), 200
-            else:
-                logger.warning(f"User validation failed: {email}")
+            elif client_info and user_info and not success:
+                # Check if user is inactive
+                if user_info.status.lower() != "active":
+                    logger.warning(f"User validation failed - user inactive: {email} (status: {user_info.status})")
+                    return jsonify({
+                        "status": "error",
+                        "message": "الحساب غير مفعل",
+                        "error": f"حالة الحساب: {user_info.status}"
+                    }), 403
+                # Invalid password
+                logger.warning(f"User validation failed - invalid password: {email}")
                 return jsonify({
                     "status": "error",
-                    "has_access": False,
-                    "message": "المستخدم غير مصرح له بالوصول",
+                    "message": "كلمة المرور غير صحيحة",
+                    "error": "كلمة المرور غير صحيحة"
+                }), 401
+            elif client_info and not user_info:
+                # User not found
+                logger.warning(f"User validation failed - user not found: {email}")
+                return jsonify({
+                    "status": "error",
+                    "message": "المستخدم غير موجود",
+                    "error": "البريد الإلكتروني غير مسجل"
+                }), 404
+            else:
+                # No matching client
+                logger.warning(f"User validation failed - no matching client: {email}")
+                return jsonify({
+                    "status": "error",
+                    "message": "لا يمكن التحقق من المستخدم",
                     "error": "لا يوجد عميل مطابق لهذا البريد الإلكتروني"
-                }), 403
+                }), 400
 
         except Exception as e:
             logger.error(f"User validation failed: {e}")
+            return jsonify(build_error_response(e)), 500
+
+
+@user_bp.route('/create-user', methods=['POST'])
+@measure_performance
+def create_user():
+    """
+    Create a new user account.
+
+    Request Body:
+        email: str - User email address
+        password: str - User password
+        full_name: str - User's full name
+
+    Returns:
+        User creation result
+    """
+    with ErrorContext("create_user_api"):
+        try:
+            # Validate request data
+            if not request.is_json:
+                return jsonify({"error": "يجب أن يكون الطلب بصيغة JSON"}), 400
+
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "لم يتم تقديم بيانات JSON"}), 400
+
+            # Get required fields
+            email = data.get('email')
+            password = data.get('password')
+            full_name = data.get('full_name')
+
+            if not email:
+                return jsonify({"error": "البريد الإلكتروني مطلوب"}), 400
+            if not password:
+                return jsonify({"error": "كلمة المرور مطلوبة"}), 400
+            if not full_name:
+                return jsonify({"error": "الاسم الكامل مطلوب"}), 400
+
+            # Validate email format
+            email = email.strip()
+            if '@' not in email:
+                return jsonify({"error": "صيغة البريد الإلكتروني غير صحيحة"}), 400
+
+            # Validate password strength (basic)
+            if len(password) < 6:
+                return jsonify({"error": "كلمة المرور يجب أن تكون 6 أحرف على الأقل"}), 400
+
+            # Create user
+            user_service = get_user_management_service()
+            success, client_info, user_info = user_service.create_user(email, password, full_name)
+
+            if success and client_info and user_info:
+                logger.info(f"User created successfully: {email} for client {client_info.display_name}")
+                return jsonify({
+                    "status": "success",
+                    "message": "تم إنشاء المستخدم بنجاح",
+                    "user": user_info.to_dict(),
+                    "client": {
+                        "client_id": client_info.client_id,
+                        "display_name": client_info.display_name
+                    }
+                }), 201
+            elif client_info and user_info:
+                # User already exists
+                logger.warning(f"User creation failed - user already exists: {email}")
+                return jsonify({
+                    "status": "error",
+                    "message": "المستخدم موجود بالفعل",
+                    "error": "البريد الإلكتروني مسجل مسبقاً"
+                }), 409
+            else:
+                # No matching client
+                logger.warning(f"User creation failed - no matching client: {email}")
+                return jsonify({
+                    "status": "error",
+                    "message": "لا يمكن إنشاء المستخدم",
+                    "error": "لا يوجد عميل مطابق لهذا البريد الإلكتروني"
+                }), 400
+
+        except Exception as e:
+            logger.error(f"User creation failed: {e}")
             return jsonify(build_error_response(e)), 500
 
 

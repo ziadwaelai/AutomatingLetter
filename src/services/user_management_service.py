@@ -9,6 +9,7 @@ from typing import Optional, Dict, Any, List
 from dataclasses import dataclass
 from functools import lru_cache
 import jwt
+from werkzeug.security import generate_password_hash, check_password_hash
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -28,6 +29,28 @@ MASTER_SHEET_ID = "11eCtNuW4cl03TX0G20alx3_6B5DI7IbpQPnPDeRGKlI"
 
 # Cache TTL in seconds (5 minutes)
 CACHE_TTL = 300
+
+
+@dataclass
+@dataclass
+class UserInfo:
+    """User information from client sheet."""
+    email: str
+    full_name: str
+    role: str
+    status: str
+    created_at: str
+    password: str = ""  # Hashed password
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        return {
+            "email": self.email,
+            "full_name": self.full_name,
+            "role": self.role,
+            "status": self.status,
+            "created_at": self.created_at
+        }
 
 
 @dataclass
@@ -319,31 +342,115 @@ class UserManagementService:
 
     @handle_storage_errors
     @measure_performance
-    def validate_user_access(self, email: str) -> tuple[bool, Optional[ClientInfo]]:
+    def validate_user_access(self, email: str) -> tuple[bool, Optional[ClientInfo], Optional[UserInfo]]:
         """
         Validate if user has access based on email.
+        First finds the client by email domain, then checks user details in client's Users sheet.
 
         Args:
             email: User email address
 
         Returns:
-            Tuple of (has_access, client_info)
+            Tuple of (has_access, client_info, user_info)
         """
         with ErrorContext("validate_user_access", {"email": email}):
             try:
+                # First, get client info by email domain
                 client_info = self.get_client_by_email(email)
-                has_access = client_info is not None
-
-                if has_access:
-                    logger.info(f"User access granted for {email}: {client_info.display_name}")
-                else:
+                if not client_info:
                     logger.warning(f"User access denied for {email}: No matching client found")
+                    return False, None, None
 
-                return has_access, client_info
+                # Then, check user details in client's Users sheet
+                user_info = self.get_user_details_from_client_sheet(client_info.sheet_id, email)
+                if not user_info:
+                    logger.warning(f"User access denied for {email}: User not found in client sheet")
+                    return False, client_info, None
+
+                # Check if user status allows access
+                if user_info.status.lower() != "active":
+                    logger.warning(f"User access denied for {email}: User status is {user_info.status}")
+                    return False, client_info, user_info
+
+                logger.info(f"User access granted for {email}: {client_info.display_name} - {user_info.full_name}")
+                return True, client_info, user_info
 
             except Exception as e:
                 logger.error(f"Error validating user access for {email}: {e}")
-                return False, None
+                return False, None, None
+
+    @handle_storage_errors
+    @measure_performance
+    def get_user_details_from_client_sheet(self, sheet_id: str, email: str) -> Optional[UserInfo]:
+        """
+        Get user details from client's Users worksheet.
+
+        Args:
+            sheet_id: Google Sheet ID of the client
+            email: User email to search for
+
+        Returns:
+            UserInfo if found, None otherwise
+        """
+        with ErrorContext("get_user_details_from_client_sheet", {"sheet_id": sheet_id, "email": email}):
+            try:
+                # Open the client's spreadsheet
+                spreadsheet = self.client.open_by_key(sheet_id)
+
+                # Try to get the "Users" worksheet
+                try:
+                    worksheet = spreadsheet.worksheet("Users")
+                except gspread.WorksheetNotFound:
+                    logger.warning(f"Users worksheet not found in sheet {sheet_id}")
+                    return None
+
+                # Get all values
+                all_values = worksheet.get_all_values()
+                if not all_values or len(all_values) < 2:
+                    logger.warning(f"Users worksheet is empty in sheet {sheet_id}")
+                    return None
+
+                # Parse headers
+                headers = [h.strip().lower() for h in all_values[0]]
+
+                # Find column indices
+                try:
+                    email_idx = headers.index("email")
+                    full_name_idx = headers.index("full_name")
+                    role_idx = headers.index("role")
+                    status_idx = headers.index("status")
+                    created_at_idx = headers.index("created_at")
+                    password_idx = headers.index("password")
+                except ValueError as e:
+                    logger.error(f"Users sheet missing required column in {sheet_id}: {e}")
+                    return None
+
+                # Search for the user email
+                email = email.strip().lower()
+                for row in all_values[1:]:  # Skip header row
+                    if len(row) <= email_idx:
+                        continue
+
+                    row_email = row[email_idx].strip().lower() if email_idx < len(row) else ""
+                    if row_email == email:
+                        # Found the user
+                        user_info = UserInfo(
+                            email=row[email_idx].strip() if email_idx < len(row) else "",
+                            full_name=row[full_name_idx].strip() if full_name_idx < len(row) else "",
+                            role=row[role_idx].strip() if role_idx < len(row) else "",
+                            status=row[status_idx].strip() if status_idx < len(row) else "",
+                            created_at=row[created_at_idx].strip() if created_at_idx < len(row) else "",
+                            password=row[password_idx].strip() if password_idx < len(row) else ""
+                        )
+                        logger.info(f"User details found for {email} in sheet {sheet_id}")
+                        return user_info
+
+                logger.warning(f"User {email} not found in Users worksheet of sheet {sheet_id}")
+                return None
+
+            except Exception as e:
+                logger.error(f"Error getting user details from client sheet {sheet_id} for {email}: {e}")
+                return None
 
     @handle_storage_errors
     @measure_performance
@@ -404,7 +511,153 @@ class UserManagementService:
             "connection_lifetime": self._connection_lifetime
         }
 
-    def _create_access_token(self, client_info: ClientInfo, has_access: bool) -> str:
+    @handle_storage_errors
+    @measure_performance
+    def get_user_info(self, client_sheet_id: str, email: str) -> Optional[UserInfo]:
+        """
+        Get user information from client's Users sheet.
+
+        Args:
+            client_sheet_id: The client's Google Sheet ID
+            email: User email to look up
+
+        Returns:
+            UserInfo if found, None otherwise
+        """
+        with ErrorContext("get_user_info", {"client_sheet_id": client_sheet_id, "email": email}):
+            try:
+                # Open the client's spreadsheet
+                spreadsheet = self.client.open_by_key(client_sheet_id)
+                
+                # Try to get the "Users" worksheet
+                try:
+                    worksheet = spreadsheet.worksheet("Users")
+                except gspread.WorksheetNotFound:
+                    logger.warning(f"Users worksheet not found in client sheet {client_sheet_id}")
+                    return None
+                
+                all_values = worksheet.get_all_values()
+                
+                if not all_values or len(all_values) < 2:
+                    logger.warning(f"Users sheet is empty for client {client_sheet_id}")
+                    return None
+                
+                # Parse headers
+                headers = [h.strip().lower() for h in all_values[0]]
+                
+                # Find column indices
+                try:
+                    email_idx = headers.index("email")
+                    full_name_idx = headers.index("full_name")
+                    role_idx = headers.index("role")
+                    status_idx = headers.index("status")
+                    created_at_idx = headers.index("created_at")
+                    password_idx = headers.index("password")
+                except ValueError as e:
+                    logger.error(f"Users sheet missing required column: {e}")
+                    return None
+                
+                # Search for the user
+                for row in all_values[1:]:  # Skip header
+                    if len(row) <= email_idx:
+                        continue
+                    
+                    row_email = row[email_idx].strip().lower()
+                    if row_email == email.lower():
+                        user_info = UserInfo(
+                            email=row[email_idx].strip(),
+                            full_name=row[full_name_idx].strip() if full_name_idx < len(row) and row[full_name_idx] else "",
+                            role=row[role_idx].strip() if role_idx < len(row) and row[role_idx] else "user",
+                            status=row[status_idx].strip() if status_idx < len(row) and row[status_idx] else "inactive",
+                            created_at=row[created_at_idx].strip() if created_at_idx < len(row) and row[created_at_idx] else "",
+                            password=row[password_idx].strip() if password_idx < len(row) and row[password_idx] else ""
+                        )
+                        logger.info(f"User found: {email} in client sheet {client_sheet_id}")
+                        return user_info
+                
+                logger.info(f"User not found: {email} in client sheet {client_sheet_id}")
+                return None
+                
+            except Exception as e:
+                logger.error(f"Error getting user info for {email}: {e}")
+                return None
+
+    @handle_storage_errors
+    @measure_performance
+    def create_user(self, email: str, password: str, full_name: str) -> tuple[bool, Optional[ClientInfo], Optional[UserInfo]]:
+        """
+        Create a new user in the appropriate client sheet.
+
+        Args:
+            email: User email
+            password: User password
+            full_name: User's full name
+
+        Returns:
+            Tuple of (success, client_info, user_info)
+        """
+        with ErrorContext("create_user", {"email": email}):
+            try:
+                # First, find which client this email belongs to
+                client_info = self.get_client_by_email(email)
+                if not client_info:
+                    logger.warning(f"Cannot create user {email}: no matching client found")
+                    return False, None, None
+                
+                # Check if user already exists
+                existing_user = self.get_user_info(client_info.sheet_id, email)
+                if existing_user:
+                    logger.warning(f"User {email} already exists in client {client_info.display_name}")
+                    return False, client_info, existing_user
+                
+                # Open the client's spreadsheet
+                spreadsheet = self.client.open_by_key(client_info.sheet_id)
+                
+                # Get or create the "Users" worksheet
+                try:
+                    worksheet = spreadsheet.worksheet("Users")
+                except gspread.WorksheetNotFound:
+                    # Create the Users worksheet with headers
+                    worksheet = spreadsheet.add_worksheet(title="Users", rows=1000, cols=6)
+                    worksheet.append_row(["email", "full_name", "role", "status", "created_at", "password"])
+                    logger.info(f"Created Users worksheet for client {client_info.display_name}")
+                
+                # Add the new user
+                from datetime import datetime
+                created_at = datetime.now().isoformat()
+                
+                # Hash the password
+                hashed_password = generate_password_hash(password)
+                
+                new_row = [
+                    email,
+                    full_name,
+                    "user",  # Default role
+                    "active",  # Initial status - changed from inactive
+                    created_at,
+                    hashed_password
+                ]
+                
+                worksheet.append_row(new_row)
+                
+                # Create UserInfo object
+                user_info = UserInfo(
+                    email=email,
+                    full_name=full_name,
+                    role="user",
+                    status="active",  # Changed from inactive
+                    created_at=created_at,
+                    password=hashed_password
+                )
+                
+                logger.info(f"User created successfully: {email} in client {client_info.display_name}")
+                return True, client_info, user_info
+                
+            except Exception as e:
+                logger.error(f"Error creating user {email}: {e}")
+                return False, None, None
+
+    def _create_access_token(self, client_info: ClientInfo, user_info: UserInfo, has_access: bool) -> str:
         import time
         token = jwt.encode(
             {
@@ -414,12 +667,133 @@ class UserManagementService:
                 "sheet_id" : client_info.sheet_id,
                 "letter_template": client_info.letter_template,
                 "has_access": has_access,
-                "letter_type": client_info.letter_type
+                "letter_type": client_info.letter_type,
+                "user": user_info.to_dict()
             },
             self.config.auth.jwt_secret,
             algorithm=self.config.auth.jwt_algorithm
         )
         return token
+
+    @handle_storage_errors
+    @measure_performance
+    def validate_user_credentials(self, email: str, password: str) -> tuple[bool, Optional[ClientInfo], Optional[UserInfo]]:
+        """
+        Validate user credentials (email and password).
+
+        Args:
+            email: User email
+            password: User password
+
+        Returns:
+            Tuple of (success, client_info, user_info)
+        """
+        with ErrorContext("validate_user_credentials", {"email": email}):
+            try:
+                # First, find which client this email belongs to
+                client_info = self.get_client_by_email(email)
+                if not client_info:
+                    logger.warning(f"Validation failed {email}: no matching client found")
+                    return False, None, None
+                
+                # Get user info from the client's Users sheet
+                user_info = self.get_user_info(client_info.sheet_id, email)
+                if not user_info:
+                    logger.warning(f"Validation failed {email}: user not found in client {client_info.display_name}")
+                    return False, client_info, None
+                
+                # Check if user is active
+                if user_info.status.lower() != "active":
+                    logger.warning(f"Validation failed {email}: user account is {user_info.status}")
+                    return False, client_info, user_info
+                
+                # Verify password
+                password_valid = False
+                needs_rehash = False
+                
+                # Debug logging
+                print(f"\n[DEBUG] Password verification for {email}:")
+                print(f"[DEBUG]   Stored password length: {len(user_info.password) if user_info.password else 0}")
+                print(f"[DEBUG]   Stored password first 30 chars: {user_info.password[:30] if user_info.password else 'EMPTY'}...")
+                print(f"[DEBUG]   Provided password: {password}")
+                
+                # Check if it's a werkzeug hash (supports pbkdf2, scrypt, bcrypt, etc.)
+                is_hashed = user_info.password and (':' in user_info.password and '$' in user_info.password)
+                print(f"[DEBUG]   Is hashed password: {is_hashed}")
+                
+                logger.debug(f"Password verification for {email}:")
+                logger.debug(f"  Stored password starts with: {user_info.password[:20] if user_info.password else 'EMPTY'}...")
+                logger.debug(f"  Provided password: {password}")
+                logger.debug(f"  Is hashed: {is_hashed}")
+                
+                if is_hashed:  # It's a werkzeug hash (pbkdf2, scrypt, bcrypt, etc.)
+                    password_valid = check_password_hash(user_info.password, password)
+                    print(f"[DEBUG]   Hash verification result: {password_valid}")
+                    logger.debug(f"  Hash verification result: {password_valid}")
+                elif user_info.password:  # Plain text password (backward compatibility)
+                    password_valid = user_info.password == password
+                    if password_valid:
+                        needs_rehash = True
+                        logger.info(f"Plain text password detected for {email}, will re-hash")
+                    print(f"[DEBUG]   Plain text comparison result: {password_valid}")
+                    logger.debug(f"  Plain text comparison result: {password_valid}")
+                else:
+                    logger.warning(f"Empty password for user {email}")
+                
+                if not password_valid:
+                    print(f"[DEBUG]   ❌ VALIDATION FAILED\n")
+                    logger.warning(f"Validation failed {email}: invalid password")
+                    return False, client_info, user_info
+                else:
+                    print(f"[DEBUG]   ✅ VALIDATION SUCCESS\n")
+                
+                # Re-hash plain text password for security
+                if needs_rehash:
+                    self._update_user_password(client_info.sheet_id, email, password)
+                
+                logger.info(f"User credentials validated successfully: {email} for client {client_info.display_name}")
+                return True, client_info, user_info
+                
+            except Exception as e:
+                logger.error(f"Error validating user credentials {email}: {e}")
+                return False, None, None
+
+    # Alias for backward compatibility with the validate endpoint
+    def login_user(self, email: str, password: str) -> tuple[bool, Optional[ClientInfo], Optional[UserInfo]]:
+        """Alias for validate_user_credentials for backward compatibility."""
+        return self.validate_user_credentials(email, password)
+    
+    def _update_user_password(self, sheet_id: str, email: str, new_password: str):
+        """
+        Update user password in the sheet (used for re-hashing plain text passwords).
+        
+        Args:
+            sheet_id: Google Sheet ID
+            email: User email
+            new_password: New password to hash and store
+        """
+        try:
+            spreadsheet = self.client.open_by_key(sheet_id)
+            worksheet = spreadsheet.worksheet("Users")
+            all_values = worksheet.get_all_values()
+            
+            if not all_values or len(all_values) < 2:
+                return
+            
+            headers = [h.strip().lower() for h in all_values[0]]
+            email_idx = headers.index("email")
+            password_idx = headers.index("password")
+            
+            # Find and update the user
+            for i, row in enumerate(all_values[1:], 1):  # Skip header, i starts from 1
+                if len(row) > email_idx and row[email_idx].strip().lower() == email.lower():
+                    hashed_password = generate_password_hash(new_password)
+                    worksheet.update_cell(i + 1, password_idx + 1, hashed_password)  # +1 because worksheet is 1-indexed
+                    logger.info(f"Password re-hashed for user {email}")
+                    break
+                    
+        except Exception as e:
+            logger.error(f"Error updating password for {email}: {e}")
 
 
 # Global service instance

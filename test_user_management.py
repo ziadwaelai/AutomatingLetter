@@ -82,15 +82,20 @@ def test_email_validation(service, clients):
     print(f"Email: {test_email}")
 
     try:
-        has_access, client_info = service.validate_user_access(test_email)
+        has_access, client_info, user_info = service.validate_user_access(test_email)
 
-        if has_access and client_info:
+        if has_access and client_info and user_info:
             print(f"✓ Access granted!")
             print(f"  - Client: {client_info.display_name}")
             print(f"  - Sheet ID: {client_info.sheet_id}")
             print(f"  - Drive ID: {client_info.google_drive_id}")
+            print(f"  - User: {user_info.full_name} ({user_info.role})")
         else:
             print(f"✗ Access denied")
+            if client_info and not user_info:
+                print(f"  - Client found but user not in Users sheet")
+            elif client_info and user_info and not has_access:
+                print(f"  - User found but status: {user_info.status}")
     except Exception as e:
         print(f"✗ Error: {e}")
 
@@ -103,13 +108,16 @@ def test_email_validation(service, clients):
         print(f"Email: {test_email_extra}")
 
         try:
-            has_access, client_info = service.validate_user_access(test_email_extra)
+            has_access, client_info, user_info = service.validate_user_access(test_email_extra)
 
-            if has_access and client_info:
+            if has_access and client_info and user_info:
                 print(f"✓ Access granted!")
                 print(f"  - Client: {client_info.display_name}")
+                print(f"  - User: {user_info.full_name} ({user_info.role})")
             else:
                 print(f"✗ Access denied")
+                if client_info and not user_info:
+                    print(f"  - Client found but user not in Users sheet")
         except Exception as e:
             print(f"✗ Error: {e}")
 
@@ -119,7 +127,7 @@ def test_email_validation(service, clients):
     print(f"Email: {test_email_invalid}")
 
     try:
-        has_access, client_info = service.validate_user_access(test_email_invalid)
+        has_access, client_info, user_info = service.validate_user_access(test_email_invalid)
 
         if has_access:
             print(f"✗ Unexpected: Access granted to invalid email")
