@@ -110,6 +110,112 @@ class GoogleSheetsService:
     
     @handle_storage_errors
     @measure_performance
+    def get_data_by_key_from_sheet_id(self, sheet_id: str, key: str, sheet_name: str, concatenate_multiple: bool = False) -> Optional[str]:
+        """
+        Fetch data by key from a specified sheet in a user's spreadsheet (by sheet_id).
+        Searches first column for key, returns second column value.
+        
+        Args:
+            sheet_id: Google Sheet ID
+            key: The key/category to search for (in first column)
+            sheet_name: The worksheet name
+            concatenate_multiple: If True, concatenate multiple matches
+            
+        Returns:
+            Found data (second column) or None
+        """
+        with ErrorContext("get_data_by_key_from_sheet_id", {"sheet_id": sheet_id, "key": key, "sheet": sheet_name}):
+            try:
+                spreadsheet = self.client.open_by_key(sheet_id)
+                worksheet = spreadsheet.worksheet(sheet_name)
+                rows = worksheet.get_all_values()
+                
+                # Search first column for key, return second column
+                matches = [
+                    row[1] for row in rows
+                    if row and len(row) > 1 and row[0].strip().lower() == key.strip().lower()
+                ]
+                
+                if concatenate_multiple and len(matches) > 1:
+                    return "\n\n".join(matches[:2])  # Limit to 2 matches
+                
+                return matches[0] if matches else None
+                
+            except gspread.WorksheetNotFound:
+                logger.warning(f"Worksheet '{sheet_name}' not found in sheet {sheet_id}")
+                return None
+            except Exception as e:
+                logger.error(f"Error fetching data from sheet {sheet_id}: {e}")
+                return None
+    
+    @handle_storage_errors
+    @measure_performance
+    def get_user_info_from_sheet_id(self, sheet_id: str, full_name: str) -> Optional[str]:
+        """
+        Fetch user info from Users sheet by full_name.
+        Searches for full_name and returns email and PhoneNumber combined.
+        Columns: email, full_name, PhoneNumber, role, status, created_at
+        
+        Args:
+            sheet_id: Google Sheet ID
+            full_name: Full name to search for (case-insensitive)
+            
+        Returns:
+            String with "Email: {email}, PhoneNumber: {phone}" or None if not found
+        """
+        with ErrorContext("get_user_info_from_sheet_id", {"sheet_id": sheet_id, "full_name": full_name}):
+            try:
+                spreadsheet = self.client.open_by_key(sheet_id)
+                worksheet = spreadsheet.worksheet("Users")
+                
+                all_values = worksheet.get_all_values()
+                if not all_values or len(all_values) < 2:
+                    logger.warning(f"Users sheet is empty in sheet {sheet_id}")
+                    return None
+                
+                # Parse headers (first row) - case sensitive match
+                headers = all_values[0]
+                
+                # Find column indices
+                email_idx = None
+                full_name_idx = None
+                phone_idx = None
+                for idx, header in enumerate(headers):
+                    if header.strip() == "email":
+                        email_idx = idx
+                    elif header.strip() == "full_name":
+                        full_name_idx = idx
+                    elif header.strip() == "PhoneNumber":
+                        phone_idx = idx
+                
+                if email_idx is None or full_name_idx is None or phone_idx is None:
+                    logger.error(f"Users sheet missing required columns. Found headers: {headers}")
+                    return None
+                
+                # Search for matching full_name
+                full_name_lower = full_name.strip().lower()
+                for row in all_values[1:]:  # Skip header row
+                    if len(row) > max(email_idx, full_name_idx, phone_idx):
+                        row_full_name = row[full_name_idx].strip().lower() if full_name_idx < len(row) else ""
+                        if row_full_name == full_name_lower:
+                            email = row[email_idx].strip() if email_idx < len(row) else ""
+                            phone = row[phone_idx].strip() if phone_idx < len(row) else ""
+                            user_info = f"Email: {email}, PhoneNumber: {phone}"
+                            logger.info(f"User info found for full_name: {full_name}")
+                            return user_info if (email or phone) else None
+                
+                logger.warning(f"No user found with full_name: {full_name}")
+                return None
+                
+            except gspread.WorksheetNotFound:
+                logger.warning(f"Users worksheet not found in sheet {sheet_id}")
+                return None
+            except Exception as e:
+                logger.error(f"Error getting user info from sheet {sheet_id}: {e}")
+                return None
+    
+    @handle_storage_errors
+    @measure_performance
     def get_letter_config_by_category(self, category: str, member_name: str = "") -> Dict[str, str]:
         """
         Fetch letter configuration with parallel execution for better performance.
@@ -161,6 +267,67 @@ class GoogleSheetsService:
             except Exception as e:
                 logger.error(f"Failed to get letter config for category {category}: {e}")
                 raise StorageServiceError(f"Error fetching letter configuration: {e}")
+    
+    @handle_storage_errors
+    @measure_performance
+    def get_letter_config_by_category_from_sheet_id(self, sheet_id: str, category: str, member_name: str = "") -> Dict[str, str]:
+        """
+        Fetch letter configuration from user's sheet by category (parallel execution).
+        Same behavior as get_letter_config_by_category but uses sheet_id instead of config spreadsheet.
+        
+        Args:
+            sheet_id: Google Sheet ID
+            category: Letter category
+            member_name: Member name for personalization
+            
+        Returns:
+            Dictionary with letter, instruction, and member_info
+        """
+        with ErrorContext("get_letter_config_by_category_from_sheet_id", {"sheet_id": sheet_id, "category": category, "member": member_name}):
+            try:
+                with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+                    # Submit all tasks in parallel - load from user's sheet
+                    letter_future = executor.submit(
+                        self.get_data_by_key_from_sheet_id, sheet_id, category, "Templates", True
+                    )
+                    instruction_future = executor.submit(
+                        self.get_data_by_key_from_sheet_id, sheet_id, category, "Instructions"
+                    )
+                    all_instructions_future = executor.submit(
+                        self.get_data_by_key_from_sheet_id, sheet_id, "الجميع", "Instructions"
+                    )
+                    # Use new method to get user info (email + phone) from Users sheet
+                    member_info_future = executor.submit(
+                        self.get_user_info_from_sheet_id, sheet_id, member_name
+                    )
+                    
+                    # Get results
+                    letter = letter_future.result() or ""
+                    instruction = instruction_future.result() or ""
+                    all_instructions = all_instructions_future.result() or ""
+                    member_info = member_info_future.result() or ""
+                
+                # Combine instructions - general first, then specific
+                instructions = "\n".join(
+                    filter(None, [all_instructions.strip(), instruction.strip()])
+                )
+                
+                result = {
+                    "letter": letter,
+                    "instruction": instructions,
+                    "member_info": member_info
+                }
+                
+                logger.debug(f"Letter config retrieved from sheet {sheet_id} for category: {category}")
+                return result
+                
+            except Exception as e:
+                logger.error(f"Failed to get letter config from sheet {sheet_id} for category {category}: {e}")
+                return {
+                    "letter": "",
+                    "instruction": "اكتب خطاباً رسمياً باللغة العربية",
+                    "member_info": ""
+                }
     
     @handle_storage_errors
     @measure_performance
@@ -270,6 +437,59 @@ class GoogleSheetsService:
             Result dictionary with status information
         """
         return self.log_to_sheet(spreadsheet_name, worksheet_name, entries)
+    
+    @handle_storage_errors
+    @measure_performance
+    def log_entries_by_id(self, sheet_id: str, worksheet_name: str, entries: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Log entries to Google Sheets by sheet ID.
+        
+        Args:
+            sheet_id: Google Sheet ID
+            worksheet_name: Target worksheet name
+            entries: List of entries to log
+            
+        Returns:
+            Result dictionary with status information
+        """
+        with ErrorContext("log_entries_by_id", {"sheet_id": sheet_id, "worksheet": worksheet_name}):
+            try:
+                # Open spreadsheet by ID
+                spreadsheet = self.client.open_by_key(sheet_id)
+                worksheet = spreadsheet.worksheet(worksheet_name)
+                
+                # Get existing headers
+                all_values = worksheet.get_all_values()
+                if not all_values:
+                    # If empty, create headers from first entry
+                    if entries:
+                        headers = list(entries[0].keys())
+                        worksheet.append_row(headers)
+                        logger.info(f"Created new headers in sheet {sheet_id}: {headers}")
+                else:
+                    headers = all_values[0]
+                
+                # Prepare rows to append
+                rows_to_add = []
+                for entry in entries:
+                    row = [entry.get(header, "") for header in headers]
+                    rows_to_add.append(row)
+                
+                # Append rows
+                if rows_to_add:
+                    worksheet.append_rows(rows_to_add)
+                    logger.info(f"Successfully logged {len(rows_to_add)} entries to sheet {sheet_id}, worksheet '{worksheet_name}'")
+                
+                return {
+                    "status": "success",
+                    "entries_logged": len(rows_to_add),
+                    "sheet_id": sheet_id,
+                    "worksheet": worksheet_name
+                }
+                
+            except Exception as e:
+                logger.error(f"Error logging entries to sheet {sheet_id}: {e}")
+                raise StorageServiceError(f"Failed to log entries to sheet: {e}")
     
     @handle_storage_errors
     @measure_performance

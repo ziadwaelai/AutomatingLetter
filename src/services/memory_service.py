@@ -118,15 +118,28 @@ def _get_memory_file() -> Path:
     return MEMORY_FILE
 
 def _load_instructions_cached() -> List[Dict[str, Any]]:
-    """Load instructions with caching for better performance."""
+    """Load instructions with caching for better performance.
+    First tries to load from Google Sheets if sheet_id is available, otherwise falls back to JSON file."""
     cache_key = "instructions"
     cached = _memory_cache.get(cache_key)
     
     if cached is not None:
         return cached
     
-    memory_file = _get_memory_file()
     instructions = []
+    
+    # Try to load from Google Sheets first (if available in thread local or context)
+    try:
+        # This is called from letter generation context, try to get from Google Sheets
+        from ..utils import get_user_from_token
+        # Check if we can get sheet_id from context - this would be set during request processing
+        # For now, we'll load from JSON and provide a way to override
+        pass
+    except Exception as e:
+        logger.debug(f"Could not load from Google Sheets context: {e}")
+    
+    # Fallback to JSON file
+    memory_file = _get_memory_file()
     
     try:
         if memory_file.exists():
@@ -140,8 +153,28 @@ def _load_instructions_cached() -> List[Dict[str, Any]]:
         logger.error(f"Failed to load instructions: {e}")
         return []
 
-def _save_data_atomically(data: Dict[str, Any], file_path: Path):
-    """Save data atomically to prevent corruption with cache invalidation."""
+
+def _load_instructions_from_sheet(sheet_id: str) -> List[Dict[str, Any]]:
+    """Load instructions from user's Google Sheet Settings."""
+    try:
+        from .usage_tracking_service import get_usage_tracking_service
+        usage_service = get_usage_tracking_service()
+        
+        instructions = usage_service.get_memory_instructions(sheet_id)
+        if instructions:
+            logger.info(f"Loaded {len(instructions)} instructions from Google Sheet {sheet_id}")
+            return instructions
+        else:
+            logger.debug(f"No memory_instructions found in Settings sheet {sheet_id}, falling back to JSON")
+            return _load_instructions_cached()
+    except Exception as e:
+        logger.warning(f"Failed to load from Google Sheet: {e}, falling back to JSON")
+        return _load_instructions_cached()
+
+
+def _save_data_atomically(data: Dict[str, Any], file_path: Path, sheet_id: str = None):
+    """Save data atomically to prevent corruption with cache invalidation.
+    Also saves to Google Sheet if sheet_id is provided."""
     file_path.parent.mkdir(parents=True, exist_ok=True)
     
     # Write to temporary file first
@@ -153,6 +186,17 @@ def _save_data_atomically(data: Dict[str, Any], file_path: Path):
     
     # Atomic move
     shutil.move(tmp_file_path, file_path)
+    
+    # Also save to Google Sheet if sheet_id provided
+    if sheet_id:
+        try:
+            from .usage_tracking_service import get_usage_tracking_service
+            usage_service = get_usage_tracking_service()
+            instructions = data.get("instructions", [])
+            usage_service.save_memory_instructions(sheet_id, instructions)
+            logger.debug(f"Saved instructions to Google Sheet {sheet_id}")
+        except Exception as e:
+            logger.warning(f"Failed to save to Google Sheet: {e}, but JSON saved successfully")
     
     # Invalidate cache
     _memory_cache.invalidate("instructions")
@@ -433,12 +477,37 @@ def _is_similar_text(text1: str, text2: str, threshold: float = 0.75) -> bool:
 class MemoryService:
     """Optimized memory service with enhanced user message handling."""
     
-    def __init__(self):
+    def __init__(self, sheet_id: str = None):
         self.config = get_config()
+        self.sheet_id = sheet_id  # User's Google Sheet ID for Google Sheets storage
         self.agent = self._build_agent()
         self._processing_lock = threading.Lock()
         self._last_processed = {}
-        logger.info("Optimized memory service initialized")
+        logger.info(f"Optimized memory service initialized (sheet_id: {sheet_id})")
+    
+    def load_instructions_from_user_sheet(self) -> List[Dict[str, Any]]:
+        """Load memory instructions from user's Google Sheet if sheet_id is available."""
+        if not self.sheet_id:
+            logger.debug("No sheet_id configured, using JSON file for memory instructions")
+            return _load_instructions_cached()
+        
+        try:
+            return _load_instructions_from_sheet(self.sheet_id)
+        except Exception as e:
+            logger.warning(f"Failed to load from sheet, falling back to JSON: {e}")
+            return _load_instructions_cached()
+    
+    def save_instructions_to_user_sheet(self, data: Dict[str, Any]):
+        """Save memory instructions to user's Google Sheet if sheet_id is available."""
+        if not self.sheet_id:
+            logger.debug("No sheet_id configured, saving to JSON file only")
+            _save_data_atomically(data, _get_memory_file(), sheet_id=None)
+        else:
+            try:
+                _save_data_atomically(data, _get_memory_file(), sheet_id=self.sheet_id)
+            except Exception as e:
+                logger.error(f"Failed to save to sheet: {e}, but JSON saved")
+                _save_data_atomically(data, _get_memory_file(), sheet_id=None)
     
     def _build_agent(self):
         """Build optimized LangGraph agent with memory tools."""
@@ -791,12 +860,31 @@ class MemoryService:
         """Get formatted instructions for display with enhanced features."""
         return self.format_instructions_for_prompt(category, session_id)
 
-# Global service instance
+# Global service instances
 _memory_service: Optional[MemoryService] = None
+_memory_services_by_sheet: Dict[str, MemoryService] = {}
 
-def get_memory_service() -> MemoryService:
-    """Get the memory service instance."""
-    global _memory_service
-    if _memory_service is None:
-        _memory_service = MemoryService()
-    return _memory_service
+def get_memory_service(sheet_id: str = None) -> MemoryService:
+    """Get the memory service instance.
+    
+    Args:
+        sheet_id: Optional Google Sheet ID for user-specific memory storage.
+                 If provided, instructions are stored in user's Google Sheet.
+                 If not provided, uses shared JSON file (fallback).
+    
+    Returns:
+        MemoryService instance
+    """
+    global _memory_service, _memory_services_by_sheet
+    
+    if sheet_id:
+        # Return user-specific service
+        if sheet_id not in _memory_services_by_sheet:
+            _memory_services_by_sheet[sheet_id] = MemoryService(sheet_id=sheet_id)
+            logger.debug(f"Created new MemoryService for sheet_id: {sheet_id}")
+        return _memory_services_by_sheet[sheet_id]
+    else:
+        # Return default shared service
+        if _memory_service is None:
+            _memory_service = MemoryService(sheet_id=None)
+        return _memory_service

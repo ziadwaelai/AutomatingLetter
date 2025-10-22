@@ -86,7 +86,7 @@ class DriveLoggerService:
     def log_to_sheet(self, log_entry: Dict[str, Any], spreadsheet_name: str = "AI Letter Generating", 
                      worksheet_name: str = "Submissions") -> Dict[str, Any]:
         """
-        Log entry to Google Sheets.
+        Log entry to Google Sheets by spreadsheet name.
         
         Args:
             log_entry: Dictionary containing log data
@@ -106,6 +106,29 @@ class DriveLoggerService:
             logger.error(f"Error logging to sheet: {e}")
             raise
     
+    def log_to_sheet_by_id(self, sheet_id: str, log_entry: Dict[str, Any], 
+                           worksheet_name: str = "Submissions") -> Dict[str, Any]:
+        """
+        Log entry to Google Sheets by sheet ID.
+        
+        Args:
+            sheet_id: Google Sheet ID
+            log_entry: Dictionary containing log data
+            worksheet_name: Name of the worksheet
+            
+        Returns:
+            Result dictionary
+        """
+        try:
+            return self.sheets_service.log_entries_by_id(
+                sheet_id=sheet_id,
+                worksheet_name=worksheet_name,
+                entries=[log_entry]
+            )
+        except Exception as e:
+            logger.error(f"Error logging to sheet {sheet_id}: {e}")
+            raise
+    
     def save_letter_to_drive_and_log(self, 
                                      letter_file_path: str,
                                      letter_content: str,
@@ -113,9 +136,10 @@ class DriveLoggerService:
                                      recipient: str,
                                      title: str,
                                      is_first: bool,
-                                     folder_id: str,
+                                     sheet_id: str,
                                      letter_id: str,
-                                     username: str) -> Dict[str, Any]:
+                                     user_email: str,
+                                     folder_id: str = None) -> Dict[str, Any]:
         """
         Complete workflow: Upload PDF to Drive and log to sheets.
         
@@ -126,37 +150,66 @@ class DriveLoggerService:
             recipient: Letter recipient
             title: Letter title
             is_first: Whether this is first communication
-            folder_id: Google Drive folder ID
+            sheet_id: Google Sheet ID for logging (from JWT token)
             letter_id: Unique letter ID
-            username: Username of creator
+            user_email: User email from JWT token (for Created_by field)
+            folder_id: Optional Google Drive folder ID (if None, use from environment)
             
         Returns:
             Result dictionary with file info and log result
         """
         try:
+            # Validate folder_id is provided (required for Drive upload)
+            if folder_id is None:
+                error_msg = "folder_id (google_drive_id from JWT token) is required for Drive upload"
+                logger.error(error_msg)
+                return {
+                    "status": "error",
+                    "message": error_msg,
+                    "file_id": None,
+                    "file_url": None,
+                    "letter_id": letter_id
+                }
+            
             # Upload to Drive
             filename = f"{title}_{letter_id}.pdf" if title != 'undefined' else f"letter_{letter_id}.pdf"
-            file_id, file_url = self.upload_file_to_drive(letter_file_path, folder_id, filename)
             
-            # Prepare log entry
+            try:
+                file_id, file_url = self.upload_file_to_drive(letter_file_path, folder_id, filename)
+            except Exception as upload_error:
+                logger.error(f"Failed to upload letter {letter_id} to Drive: {upload_error}")
+                return {
+                    "status": "error",
+                    "message": f"Drive upload failed: {str(upload_error)}",
+                    "file_id": None,
+                    "file_url": None,
+                    "letter_id": letter_id
+                }
+            
+            # Prepare log entry matching Submissions sheet columns
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             log_entry = {
-                "Timestamp": timestamp,
-                "Type of Letter": letter_type,
-                "Recipient": recipient,
-                "Title": title,
-                "First Time?": "Yes" if is_first else "No",
-                "Content": letter_content,
-                "URL": file_url,
-                "Revision": "في الانتظار",
                 "ID": letter_id,
-                "Username": username
+                "Timestamp": timestamp,
+                "Created_by": user_email,
+                "Letter_type": letter_type,
+                "Recipient_name": recipient,
+                "Subject": title,
+                "Letter_content": letter_content,
+                "Is_new_letter": "Yes" if is_first else "No",
+                "Review_status": "Pending",
+                "Review_notes": "",
+                "Reviewer_email": "",
+                "Final_letter_url": file_url,
+                "Send_status": "Not Sent",
+                "Token_usage": "",
+                "Cost_usd": ""
             }
             
-            # Log to sheet
-            log_result = self.log_to_sheet(log_entry)
+            # Log to sheet using sheet_id
+            log_result = self.log_to_sheet_by_id(sheet_id, log_entry)
             
-            logger.info(f"Successfully archived letter {letter_id} to Drive and logged to sheets")
+            logger.info(f"Successfully archived letter {letter_id} to Drive and logged to sheet {sheet_id}")
             
             return {
                 "status": "success",

@@ -17,6 +17,7 @@ from .memory_service import MemoryService, get_memory_service
 from .session_storage import SessionStorage, get_session_storage
 from .session_manager import SessionManager, get_session_manager
 from .user_management_service import UserManagementService, get_user_management_service, ClientInfo
+from .usage_tracking_service import UsageTrackingService, get_usage_tracking_service
 
 __all__ = [
     # Letter Generation
@@ -56,6 +57,10 @@ __all__ = [
     "UserManagementService",
     "get_user_management_service",
     "ClientInfo",
+    
+    # Usage Tracking Services
+    "UsageTrackingService",
+    "get_usage_tracking_service",
 
     # Helper Functions
     "get_letter_config_by_category",

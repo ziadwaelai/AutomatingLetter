@@ -20,7 +20,12 @@ from .helpers import (
     validate_required_fields,
     clean_dict,
     log_function_call,
-    setup_module_logger
+    setup_module_logger,
+    # JWT utilities
+    extract_token_from_request,
+    decode_jwt_token,
+    get_user_from_token,
+    require_auth
 )
 
 from .exceptions import (

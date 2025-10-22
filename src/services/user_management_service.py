@@ -584,7 +584,7 @@ class UserManagementService:
 
     @handle_storage_errors
     @measure_performance
-    def create_user(self, email: str, password: str, full_name: str) -> tuple[bool, Optional[ClientInfo], Optional[UserInfo]]:
+    def create_user(self, email: str, password: str, full_name: str, phone_number: str = "") -> tuple[bool, Optional[ClientInfo], Optional[UserInfo]]:
         """
         Create a new user in the appropriate client sheet.
 
@@ -592,6 +592,7 @@ class UserManagementService:
             email: User email
             password: User password
             full_name: User's full name
+            phone_number: User's phone number (optional)
 
         Returns:
             Tuple of (success, client_info, user_info)
@@ -618,8 +619,9 @@ class UserManagementService:
                     worksheet = spreadsheet.worksheet("Users")
                 except gspread.WorksheetNotFound:
                     # Create the Users worksheet with headers
-                    worksheet = spreadsheet.add_worksheet(title="Users", rows=1000, cols=6)
-                    worksheet.append_row(["email", "full_name", "role", "status", "created_at", "password"])
+                    # Headers must match the actual sheet structure: email, full_name, PhoneNumber, role, status, created_at, password
+                    worksheet = spreadsheet.add_worksheet(title="Users", rows=1000, cols=7)
+                    worksheet.append_row(["email", "full_name", "PhoneNumber", "role", "status", "created_at", "password"])
                     logger.info(f"Created Users worksheet for client {client_info.display_name}")
                 
                 # Add the new user
@@ -629,13 +631,15 @@ class UserManagementService:
                 # Hash the password
                 hashed_password = generate_password_hash(password)
                 
+                # Match the exact sheet structure: email, full_name, PhoneNumber, role, status, created_at, password
                 new_row = [
                     email,
                     full_name,
-                    "user",  # Default role
-                    "active",  # Initial status - changed from inactive
-                    created_at,
-                    hashed_password
+                    phone_number,  # PhoneNumber (position 3)
+                    "user",        # Default role (position 4)
+                    "inactive",      # Initial status (position 5)
+                    created_at,    # (position 6)
+                    hashed_password  # password (position 7)
                 ]
                 
                 worksheet.append_row(new_row)
@@ -645,7 +649,7 @@ class UserManagementService:
                     email=email,
                     full_name=full_name,
                     role="user",
-                    status="active",  # Changed from inactive
+                    status="active",
                     created_at=created_at,
                     password=hashed_password
                 )
@@ -664,7 +668,8 @@ class UserManagementService:
                 "client_id": client_info.client_id,
                 "admin_email": client_info.admin_email,
                 "exp": time.time() + (self.config.auth.token_expiry_hours * 3600),
-                "sheet_id" : client_info.sheet_id,
+                "sheet_id": client_info.sheet_id,
+                "google_drive_id": client_info.google_drive_id,
                 "letter_template": client_info.letter_template,
                 "has_access": has_access,
                 "letter_type": client_info.letter_type,

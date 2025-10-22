@@ -22,7 +22,9 @@ from ..utils import (
     ErrorContext,
     build_error_response,
     validate_and_raise,
-    measure_performance
+    measure_performance,
+    require_auth,
+    get_user_from_token
 )
 
 logger = logging.getLogger(__name__)
@@ -32,12 +34,29 @@ archive_bp = Blueprint('archive', __name__, url_prefix='/api/v1/archive')
 
 @archive_bp.route('/letter', methods=['POST'])
 @measure_performance
-def archive_letter():
+@require_auth
+def archive_letter(user_info):
     """
     Archive letter to PDF, upload to Google Drive, and log to sheets.
     Process runs in background and returns immediately.
+    Requires JWT authentication.
     """
     try:
+        # Extract sheet_id and google_drive_id from JWT token
+        sheet_id = user_info.get('sheet_id')
+        if not sheet_id:
+            return build_error_response("معرف الجدول غير موجود في التوكن", 400)
+        
+        google_drive_id = user_info.get('google_drive_id')
+        if not google_drive_id:
+            return build_error_response("معرف مجلد Google Drive غير موجود في التوكن", 400)
+        
+        # Get user email for logging
+        user_email = user_info.get('user', {}).get('email', 'unknown')
+        client_id = user_info.get('client_id', 'unknown')
+        
+        logger.info(f"Archive request from user: {user_email}, client: {client_id}, sheet: {sheet_id}, drive: {google_drive_id}")
+        
         # Validate request
         data = request.get_json()
         if not data:
@@ -59,17 +78,14 @@ def archive_letter():
         is_first = data.get('is_first', False)
         letter_id = data.get('ID', '')
         template = data.get('template', 'default_template')
-        username = data.get('username', 'unknown')
         
-        # Get Google Drive folder ID from environment variables
-        folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
-        if not folder_id:
-            return build_error_response("لم يتم تكوين معرف مجلد Google Drive", 500)
+        # Use user_email from JWT token for Created_by field
+        # The sheet_id and google_drive_id will be used to log and store the letter
         
         # Start background processing
         background_thread = threading.Thread(
             target=process_letter_archive_in_background,
-            args=(template, letter_content, letter_id, letter_type, recipient, title, is_first, folder_id, username)
+            args=(template, letter_content, letter_id, letter_type, recipient, title, is_first, sheet_id, user_email, google_drive_id)
         )
         background_thread.daemon = True
         background_thread.start()
@@ -82,7 +98,7 @@ def archive_letter():
             letter_id=letter_id
         )
         
-        logger.info(f"Letter archiving initiated for ID: {letter_id}")
+        logger.info(f"Letter archiving initiated for ID: {letter_id} (sheet: {sheet_id})")
         return jsonify(response.model_dump()), 200
         
     except ValidationError as e:
@@ -100,8 +116,9 @@ def process_letter_archive_in_background(
     recipient: str,
     title: str,
     is_first: bool,
-    folder_id: str,
-    username: str
+    sheet_id: str,
+    user_email: str,
+    google_drive_id: str
 ) -> None:
     """
     Process letter archiving in background thread.
@@ -114,11 +131,12 @@ def process_letter_archive_in_background(
         recipient: Letter recipient
         title: Letter title
         is_first: Whether this is first communication
-        folder_id: Google Drive folder ID
-        username: Username of creator
+        sheet_id: Google Sheet ID for logging (from JWT token)
+        user_email: User email from JWT token (for Created_by field)
+        google_drive_id: Google Drive folder ID for upload (from JWT token)
     """
     try:
-        logger.info(f"Starting background archiving for letter ID: {letter_id}")
+        logger.info(f"Starting background archiving for letter ID: {letter_id} (sheet: {sheet_id}, drive: {google_drive_id})")
         
         # Get services
         pdf_service = get_enhanced_pdf_service()
@@ -134,8 +152,8 @@ def process_letter_archive_in_background(
         
         logger.info(f"PDF generated successfully: {pdf_result.filename}")
         
-        # Archive to Drive and log to sheets
-        logger.info(f"Uploading to Drive and logging for letter ID: {letter_id}")
+        # Archive to Drive and log to sheets using sheet_id and google_drive_id from token
+        logger.info(f"Uploading to Drive and logging for letter ID: {letter_id} to sheet: {sheet_id}, drive: {google_drive_id}")
         archive_result = drive_logger.save_letter_to_drive_and_log(
             letter_file_path=pdf_result.file_path,
             letter_content=letter_content,
@@ -143,9 +161,10 @@ def process_letter_archive_in_background(
             recipient=recipient,
             title=title,
             is_first=is_first,
-            folder_id=folder_id,
+            sheet_id=sheet_id,  # User's Google Sheet ID from token
             letter_id=letter_id,
-            username=username
+            user_email=user_email,
+            folder_id=google_drive_id  # User's Google Drive folder ID from token
         )
         
         # Clean up temporary PDF file

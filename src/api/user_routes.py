@@ -136,6 +136,7 @@ def create_user():
             email = data.get('email')
             password = data.get('password')
             full_name = data.get('full_name')
+            phone_number = data.get('phone_number', '')  # Optional field
 
             if not email:
                 return jsonify({"error": "البريد الإلكتروني مطلوب"}), 400
@@ -155,7 +156,7 @@ def create_user():
 
             # Create user
             user_service = get_user_management_service()
-            success, client_info, user_info = user_service.create_user(email, password, full_name)
+            success, client_info, user_info = user_service.create_user(email, password, full_name, phone_number)
 
             if success and client_info and user_info:
                 logger.info(f"User created successfully: {email} for client {client_info.display_name}")

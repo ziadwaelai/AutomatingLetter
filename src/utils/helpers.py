@@ -13,6 +13,8 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, Callable, List
 from contextlib import contextmanager
 import threading
+import jwt
+from flask import request
 
 logger = logging.getLogger(__name__)
 
@@ -360,3 +362,107 @@ def setup_module_logger(name: str, level: str = "INFO") -> logging.Logger:
         logger.addHandler(handler)
     
     return logger
+
+
+# JWT Token Utilities
+def extract_token_from_request() -> Optional[str]:
+    """
+    Extract JWT token from request Authorization header.
+    
+    Returns:
+        Token string if found, None otherwise
+    """
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return None
+    
+    # Support both "Bearer <token>" and just "<token>"
+    parts = auth_header.split()
+    if len(parts) == 2 and parts[0].lower() == 'bearer':
+        return parts[1]
+    elif len(parts) == 1:
+        return parts[0]
+    
+    return None
+
+
+def decode_jwt_token(token: str, secret: str, algorithm: str = "HS256") -> Optional[Dict[str, Any]]:
+    """
+    Decode JWT token and return payload.
+    
+    Args:
+        token: JWT token string
+        secret: Secret key for decoding
+        algorithm: JWT algorithm (default: HS256)
+    
+    Returns:
+        Decoded payload dictionary if valid, None otherwise
+    """
+    try:
+        payload = jwt.decode(token, secret, algorithms=[algorithm])
+        return payload
+    except jwt.ExpiredSignatureError:
+        logger.warning("JWT token has expired")
+        return None
+    except jwt.InvalidTokenError as e:
+        logger.warning(f"Invalid JWT token: {e}")
+        return None
+    except Exception as e:
+        logger.error(f"Error decoding JWT token: {e}")
+        return None
+
+
+def get_user_from_token() -> Optional[Dict[str, Any]]:
+    """
+    Extract and decode JWT token from current request, return user info.
+    
+    Returns:
+        Dictionary with user info (sheet_id, client_id, user, etc.) if valid, None otherwise
+    """
+    from ..config import get_config
+    
+    # Extract token from request
+    token = extract_token_from_request()
+    if not token:
+        logger.warning("No authorization token found in request")
+        return None
+    
+    # Get config for JWT secret
+    config = get_config()
+    
+    # Decode token
+    payload = decode_jwt_token(token, config.auth.jwt_secret, config.auth.jwt_algorithm)
+    if not payload:
+        return None
+    
+    return payload
+
+
+def require_auth(f: Callable) -> Callable:
+    """
+    Decorator to require JWT authentication for an endpoint.
+    Adds 'user_info' to kwargs containing decoded token payload.
+    
+    Usage:
+        @require_auth
+        def my_endpoint(user_info):
+            sheet_id = user_info['sheet_id']
+            ...
+    """
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        user_info = get_user_from_token()
+        
+        if not user_info:
+            from flask import jsonify
+            return jsonify({
+                "status": "error",
+                "message": "غير مصرح",
+                "error": "يجب تسجيل الدخول للوصول إلى هذه الصفحة"
+            }), 401
+        
+        # Add user_info to kwargs
+        kwargs['user_info'] = user_info
+        return f(*args, **kwargs)
+    
+    return decorated_function

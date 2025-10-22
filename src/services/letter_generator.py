@@ -44,6 +44,7 @@ class LetterGenerationContext:
     previous_letter_id: Optional[str] = None
     letter_id: Optional[str] = None
     session_id: Optional[str] = None
+    sheet_id: Optional[str] = None  # User's Google Sheet ID for memory instructions
     
     def __post_init__(self):
         """Validate and process context data."""
@@ -84,12 +85,13 @@ class ArabicLetterGenerationService:
         """Get formatted memory instructions for the prompt."""
         try:
             from .memory_service import get_memory_service
-            memory_service = get_memory_service()
+            # Pass sheet_id if available for user-specific memory storage
+            memory_service = get_memory_service(sheet_id=context.sheet_id)
             instructions = memory_service.format_instructions_for_prompt(
                 category=context.category,
                 session_id=context.session_id
             )
-            logger.info(f"Retrieved memory instructions for category='{context.category}', session_id='{context.session_id}': {len(instructions)} chars")
+            logger.info(f"Retrieved memory instructions for category='{context.category}', session_id='{context.session_id}', sheet_id='{context.sheet_id}': {len(instructions)} chars")
             logger.debug(f"Memory instructions content: {instructions}")
             return instructions
         except Exception as e:

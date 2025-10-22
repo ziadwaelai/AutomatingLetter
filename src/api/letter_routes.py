@@ -15,11 +15,14 @@ from ..models import (
     SuccessResponse
 )
 from ..services import get_letter_service, get_sheets_service, LetterGenerationContext
+from ..services.usage_tracking_service import get_usage_tracking_service
 from ..utils import (
     ErrorContext,
     build_error_response,
     validate_and_raise,
-    measure_performance
+    measure_performance,
+    require_auth,
+    get_user_from_token
 )
 
 logger = logging.getLogger(__name__)
@@ -29,18 +32,33 @@ letter_bp = Blueprint('letter', __name__, url_prefix='/api/v1/letter')
 
 @letter_bp.route('/generate', methods=['POST'])
 @measure_performance
-def generate_letter():
+@require_auth
+def generate_letter(user_info):
     """
     Generate a new letter based on user input.
+    Requires JWT authentication.
+    
+    Headers:
+        Authorization: Bearer <jwt_token>
     
     Request Body:
         GenerateLetterRequest: Letter generation parameters
+        letterType: Type of letter (used to load instructions and template)
         
     Returns:
         LetterOutput: Generated letter with metadata
     """
     with ErrorContext("generate_letter_api"):
         try:
+            # Extract sheet_id and user email from JWT token
+            sheet_id = user_info.get('sheet_id')
+            user_email = user_info.get('user', {}).get('email', 'unknown')
+            
+            if not sheet_id:
+                return build_error_response("معرف الجدول غير موجود في التوكن", 400)
+            
+            logger.info(f"Letter generation request from user: {user_email}, sheet: {sheet_id}")
+            
             # Validate request data
             if not request.is_json:
                 return jsonify({"error": "يجب أن يكون الطلب بصيغة JSON"}), 400
@@ -59,15 +77,49 @@ def generate_letter():
                     "details": e.errors()
                 }), 400
             
-            # Get letter configuration
+            # Check quota limit before generating letter
+            try:
+                usage_service = get_usage_tracking_service()
+                quota_check = usage_service.check_quota(sheet_id)
+                
+                if quota_check["status"] == "exceeded":
+                    logger.warning(f"User {user_email} exceeded monthly quota: {quota_check}")
+                    return jsonify({
+                        "error": "تم تجاوز حد الخطابات الشهري",
+                        "message": quota_check.get("reason", "Monthly letter quota has been reached"),
+                        "quota_info": {
+                            "current_count": quota_check.get("current_count", 0),
+                            "quota_limit": quota_check.get("quota_limit")
+                        }
+                    }), 429  # 429 Too Many Requests
+                
+                logger.debug(f"Quota check passed for user {user_email}: {quota_check}")
+                
+            except Exception as e:
+                logger.warning(f"Error checking quota: {e}, proceeding with generation")
+                # Continue with generation if quota check fails (fail open)
+            
+            # Get letter category for loading instructions and template
+            letter_category = letter_request.category.value
+            member_name = letter_request.member_name or ""
+            
+            # Get letter configuration from user's sheet using old behavior (Ideal, Instructions, Info sheets)
             try:
                 sheets_service = get_sheets_service()
-                letter_config = sheets_service.get_letter_config_by_category(
-                    letter_request.category.value,
-                    letter_request.member_name or ""
+                
+                # Load from user's sheets using the same old behavior
+                # Searches: Ideal (template), Instructions (instructions), Info (member info)
+                letter_config = sheets_service.get_letter_config_by_category_from_sheet_id(
+                    sheet_id=sheet_id,
+                    category=letter_category,
+                    member_name=member_name
                 )
+                
+                logger.info(f"Loaded letter config from sheet {sheet_id} for category: {letter_category}")
+                
             except Exception as e:
-                logger.warning(f"Could not fetch letter config: {e}")
+                logger.warning(f"Could not fetch letter config from user's sheet: {e}")
+                # Fallback to defaults
                 letter_config = {
                     "letter": "",
                     "instruction": "اكتب خطاباً رسمياً باللغة العربية",
@@ -88,7 +140,8 @@ def generate_letter():
                 organization_name=letter_request.organization_name,
                 previous_letter_content=letter_request.previous_letter_content,
                 previous_letter_id=letter_request.previous_letter_id,
-                session_id=letter_request.session_id
+                session_id=letter_request.session_id,
+                sheet_id=sheet_id  # Pass user's sheet_id for memory instructions
             )
             
             # Generate letter
@@ -97,7 +150,59 @@ def generate_letter():
             
             logger.info(f"Letter generated successfully: {letter_output.ID}")
             
-            return jsonify(letter_output.model_dump()), 200
+            # Track token usage and cost
+            try:
+                usage_service = get_usage_tracking_service()
+                
+                # Build the full prompt that was sent to the LLM
+                prompt_template = letter_service._get_prompt_template()
+                prompt_input = {
+                    "user_prompt": context.user_prompt,
+                    "reference_context": context.reference_letter or "",
+                    "additional_context": letter_service._build_context_string(context),
+                    "member_info": context.member_info,
+                    "writing_instructions": context.writing_instructions or "",
+                    "letter_id": context.letter_id,
+                    "current_date": letter_service._get_memory_instructions(context),  # This gets date and instructions
+                    "previous_letter_info": f"الخطاب السابق: {context.previous_letter_content}" if context.previous_letter_content else ""
+                }
+                
+                # Estimate token usage
+                prompt_text = str(prompt_input)
+                response_text = letter_output.Letter
+                
+                usage_estimate = usage_service.estimate_usage(
+                    prompt=prompt_text,
+                    response=response_text,
+                    model="gpt-4o"  # Adjust based on your config
+                )
+                
+                # Update usage statistics in the Usage sheet
+                update_result = usage_service.update_usage(
+                    sheet_id=sheet_id,
+                    tokens_used=usage_estimate["total_tokens"],
+                    cost_usd=usage_estimate["cost_usd"]
+                )
+                
+                logger.info(f"Usage tracked for letter {letter_output.ID}: {usage_estimate['total_tokens']} tokens, ${usage_estimate['cost_usd']:.6f}")
+                
+                # Add usage info to response
+                response_data = letter_output.model_dump()
+                response_data["usage"] = {
+                    "input_tokens": usage_estimate["input_tokens"],
+                    "output_tokens": usage_estimate["output_tokens"],
+                    "total_tokens": usage_estimate["total_tokens"],
+                    "cost_usd": usage_estimate["cost_usd"]
+                }
+                
+                return jsonify(response_data), 200
+                
+            except Exception as e:
+                logger.warning(f"Failed to track usage: {e}")
+                # Still return the letter even if usage tracking fails
+                response_data = letter_output.model_dump()
+                response_data["usage_error"] = str(e)
+                return jsonify(response_data), 200
             
         except ValidationError as e:
             logger.error(f"Validation error: {e}")
