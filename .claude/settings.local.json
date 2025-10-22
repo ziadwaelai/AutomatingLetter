@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(python -m py_compile:*)",
+      "Bash(python:*)",
+      "Bash(venv/Scripts/activate)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

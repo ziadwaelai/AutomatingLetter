@@ -6905,3 +6905,91 @@ current_letter
 2025-10-14 16:30:09,411 - werkzeug - INFO -  * Debugger PIN: 129-536-069
 2025-10-14 16:30:16,198 - werkzeug - INFO -  * Detected change in 'd:\\shobbak\\AutomatingLetter\\test_whatsapp_endpoints.py', reloading
 2025-10-14 16:30:16,405 - werkzeug - INFO -  * Restarting with stat
+2025-10-20 21:07:05,015 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-10-20 21:07:05,015 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-20 21:07:05,022 - werkzeug - INFO -  * Restarting with stat
+2025-10-20 21:07:08,923 - werkzeug - WARNING -  * Debugger is active!
+2025-10-20 21:07:08,931 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-20 21:12:52,978 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-10-20 21:12:52,978 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-20 21:12:52,978 - werkzeug - INFO -  * Restarting with stat
+2025-10-20 21:13:10,453 - src.services.user_management_service - INFO - Retrieved 2 clients from master sheet
+2025-10-20 21:13:10,453 - src.utils.helpers - INFO - get_all_clients executed in 3.316s
+2025-10-20 21:13:10,453 - src.services.user_management_service - INFO - Client found for email test@nabatik.com: NetZero
+2025-10-20 21:13:10,460 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-10-20 21:13:10,460 - src.services.user_management_service - INFO - User access granted for test@nabatik.com: NetZero
+2025-10-20 21:13:10,460 - src.utils.helpers - INFO - validate_user_access executed in 0.007s
+2025-10-20 21:13:10,460 - src.services.user_management_service - WARNING - No client found for email: user@invalid-domain-12345.com (domain: invalid-domain-12345.com)
+2025-10-20 21:13:10,460 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-10-20 21:13:10,460 - src.services.user_management_service - WARNING - User access denied for user@invalid-domain-12345.com: No matching client found
+2025-10-20 21:13:10,460 - src.utils.helpers - INFO - validate_user_access executed in 0.000s
+2025-10-20 21:13:10,460 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-10-20 21:13:10,460 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-10-20 21:13:10,469 - src.services.user_management_service - INFO - User management cache cleared
+2025-10-22 19:48:21,783 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-10-22 19:48:21,789 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-22 19:48:21,794 - werkzeug - INFO -  * Restarting with stat
+2025-10-22 19:48:25,563 - werkzeug - WARNING -  * Debugger is active!
+2025-10-22 19:48:25,601 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-22 19:49:28,593 - __main__ - INFO - POST http://localhost:5000/api/v1/user/validate - 127.0.0.1
+2025-10-22 19:49:31,357 - src.services.user_management_service - WARNING - No client found for email: user@example.com (domain: example.com)
+2025-10-22 19:49:31,357 - src.utils.helpers - INFO - get_client_by_email executed in 2.764s
+2025-10-22 19:49:31,357 - src.services.user_management_service - WARNING - User access denied for user@example.com: No matching client found
+2025-10-22 19:49:31,357 - src.utils.helpers - INFO - validate_user_access executed in 2.764s
+2025-10-22 19:49:31,358 - src.api.user_routes - WARNING - User validation failed: user@example.com
+2025-10-22 19:49:31,358 - src.utils.helpers - INFO - validate_user executed in 2.765s
+2025-10-22 19:49:31,358 - __main__ - INFO - Response: 403 - user.validate_user
+2025-10-22 19:49:31,359 - werkzeug - INFO - 127.0.0.1 - - [22/Oct/2025 19:49:31] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 403 -
+2025-10-22 19:50:56,702 - __main__ - INFO - POST http://localhost:5000/api/v1/user/validate - 127.0.0.1
+2025-10-22 19:50:56,703 - src.services.user_management_service - INFO - Client found for email user@nabatik.com: NetZero
+2025-10-22 19:50:56,703 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
+2025-10-22 19:50:56,703 - src.services.user_management_service - INFO - User access granted for user@nabatik.com: NetZero
+2025-10-22 19:50:56,703 - src.utils.helpers - INFO - validate_user_access executed in 0.001s
+2025-10-22 19:50:56,704 - src.api.user_routes - INFO - User validated successfully: user@nabatik.com
+2025-10-22 19:50:56,704 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-10-22 19:50:56,704 - __main__ - INFO - Response: 200 - user.validate_user
+2025-10-22 19:50:56,705 - werkzeug - INFO - 127.0.0.1 - - [22/Oct/2025 19:50:56] "POST /api/v1/user/validate HTTP/1.1" 200 -
+2025-10-22 19:51:06,671 - __main__ - INFO - POST http://localhost:5000/api/v1/user/validate - 127.0.0.1
+2025-10-22 19:51:06,671 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-10-22 19:51:06,671 - src.services.user_management_service - INFO - User access granted for user@nabatik.com: NetZero
+2025-10-22 19:51:06,671 - src.utils.helpers - INFO - validate_user_access executed in 0.000s
+2025-10-22 19:51:06,671 - src.api.user_routes - INFO - User validated successfully: user@nabatik.com
+2025-10-22 19:51:06,671 - src.utils.helpers - INFO - validate_user executed in 0.000s
+2025-10-22 19:51:06,671 - __main__ - INFO - Response: 200 - user.validate_user
+2025-10-22 19:51:06,671 - werkzeug - INFO - 127.0.0.1 - - [22/Oct/2025 19:51:06] "POST /api/v1/user/validate HTTP/1.1" 200 -
+2025-10-22 19:58:32,538 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\user_management_service.py', reloading
+2025-10-22 19:58:33,252 - werkzeug - INFO -  * Restarting with stat
+2025-10-22 20:08:30,290 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-10-22 20:08:30,290 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-22 20:08:30,298 - werkzeug - INFO -  * Restarting with stat
+2025-10-22 20:08:33,604 - werkzeug - WARNING -  * Debugger is active!
+2025-10-22 20:08:33,620 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-22 20:08:48,586 - __main__ - INFO - POST http://localhost:5000/api/v1/user/validate - 127.0.0.1
+2025-10-22 20:08:51,013 - src.services.user_management_service - INFO - Client found for email user@nabatik.com: NetZero
+2025-10-22 20:08:51,013 - src.utils.helpers - INFO - get_client_by_email executed in 2.418s
+2025-10-22 20:08:51,013 - src.services.user_management_service - INFO - User access granted for user@nabatik.com: NetZero
+2025-10-22 20:08:51,013 - src.utils.helpers - INFO - validate_user_access executed in 2.418s
+2025-10-22 20:08:51,013 - src.api.user_routes - INFO - User validated successfully: user@nabatik.com
+2025-10-22 20:08:51,015 - src.api.user_routes - ERROR - User validation failed: 'AppConfig' object has no attribute 'auth'
+2025-10-22 20:08:51,015 - src.utils.helpers - INFO - validate_user executed in 2.421s
+2025-10-22 20:08:51,016 - __main__ - INFO - Response: 500 - user.validate_user
+2025-10-22 20:08:51,016 - werkzeug - INFO - 127.0.0.1 - - [22/Oct/2025 20:08:51] "[35m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 500 -
+2025-10-22 20:09:13,926 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\config\\settings.py', reloading
+2025-10-22 20:09:14,258 - werkzeug - INFO -  * Restarting with stat
+2025-10-22 20:09:18,196 - werkzeug - WARNING -  * Debugger is active!
+2025-10-22 20:09:18,208 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-10-22 20:09:23,112 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\user_management_service.py', reloading
+2025-10-22 20:09:23,349 - werkzeug - INFO -  * Restarting with stat
+2025-10-22 20:09:33,280 - werkzeug - INFO -  * Restarting with stat

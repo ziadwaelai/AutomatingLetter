@@ -72,6 +72,19 @@ class StorageConfig:
             raise FileNotFoundError(f"Service account file not found: {self.service_account_file}")
 
 @dataclass
+class AuthConfig:
+    """Authentication configuration settings."""
+    jwt_secret: str = field(default_factory=lambda: os.getenv("JWT_SECRET", "default-jwt-secret-change-in-production"))
+    jwt_algorithm: str = "HS256"
+    token_expiry_hours: int = 24
+    
+    def __post_init__(self):
+        """Validate auth configuration."""
+        if not self.jwt_secret or self.jwt_secret == "default-jwt-secret-change-in-production":
+            logging.warning("Using default JWT secret - change in production!")
+
+
+@dataclass
 class ServerConfig:
     """Server configuration settings."""
     host: str = "0.0.0.0"
@@ -111,6 +124,7 @@ class AppConfig:
         self.ai = AIConfig()
         self.chat = ChatConfig()
         self.storage = StorageConfig()
+        self.auth = AuthConfig()
         self.server = ServerConfig()
         self.logging = LoggingConfig()
         

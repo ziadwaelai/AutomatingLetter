@@ -16,6 +16,7 @@ from .chat_service import ChatService, get_chat_service
 from .memory_service import MemoryService, get_memory_service
 from .session_storage import SessionStorage, get_session_storage
 from .session_manager import SessionManager, get_session_manager
+from .user_management_service import UserManagementService, get_user_management_service, ClientInfo
 
 __all__ = [
     # Letter Generation
@@ -48,9 +49,14 @@ __all__ = [
     # Session Services
     "SessionStorage",
     "get_session_storage",
-    "SessionManager", 
+    "SessionManager",
     "get_session_manager",
-    
+
+    # User Management Services
+    "UserManagementService",
+    "get_user_management_service",
+    "ClientInfo",
+
     # Helper Functions
     "get_letter_config_by_category",
     "log",
