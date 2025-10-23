@@ -9,13 +9,14 @@ from .chat_routes import chat_bp
 from .archive_routes import archive_bp
 from .whatsapp_routes import whatsapp_bp
 from .user_routes import user_bp
+from .submissions_routes import submissions_bp
 
-__all__ = ['letter_bp', 'chat_bp', 'archive_bp', 'whatsapp_bp', 'user_bp', 'register_api_routes']
+__all__ = ['letter_bp', 'chat_bp', 'archive_bp', 'whatsapp_bp', 'user_bp', 'submissions_bp', 'register_api_routes']
 
 def register_api_routes(app):
     """
     Register all API route blueprints with the Flask application.
-    
+
     Args:
         app: Flask application instance
     """
@@ -25,6 +26,7 @@ def register_api_routes(app):
     app.register_blueprint(archive_bp)
     app.register_blueprint(whatsapp_bp)  # WhatsApp integration routes
     app.register_blueprint(user_bp)  # User management routes
+    app.register_blueprint(submissions_bp)  # Submissions data retrieval routes
     
     # Add global API error handlers
     @app.errorhandler(404)

@@ -583,6 +583,140 @@ class UsageTrackingService:
             "status": "healthy"
         }
 
+    @handle_storage_errors
+    @measure_performance
+    def get_prompt_template(self, sheet_id: str) -> Optional[str]:
+        """
+        Get prompt template from Settings sheet.
+        Searches for key "Prompt" and returns the template value.
+
+        Args:
+            sheet_id: Google Sheet ID
+
+        Returns:
+            Prompt template string if found, None otherwise
+        """
+        with ErrorContext("get_prompt_template", {"sheet_id": sheet_id}):
+            try:
+                sheets_service = self.sheets_service
+                spreadsheet = sheets_service.client.open_by_key(sheet_id)
+
+                try:
+                    worksheet = spreadsheet.worksheet("Settings")
+                except Exception as e:
+                    logger.warning(f"Settings sheet not found in sheet {sheet_id}: {e}")
+                    return None
+
+                all_values = worksheet.get_all_values()
+                if not all_values or len(all_values) < 2:
+                    logger.warning(f"Settings sheet is empty or has no data rows in sheet {sheet_id}")
+                    return None
+
+                # Parse headers (first row)
+                headers = all_values[0]
+                logger.debug(f"Settings sheet headers: {headers}")
+
+                # Find column indices
+                key_idx = None
+                value_idx = None
+                for idx, header in enumerate(headers):
+                    if header.strip().lower() == "key":
+                        key_idx = idx
+                    elif header.strip().lower() == "value":
+                        value_idx = idx
+
+                if key_idx is None or value_idx is None:
+                    logger.error(f"Settings sheet missing 'key' or 'value' columns. Headers: {headers}")
+                    return None
+
+                logger.debug(f"key_idx={key_idx}, value_idx={value_idx}")
+
+                # Search for Prompt key
+                for row_idx, row in enumerate(all_values[1:], start=2):  # Skip header row
+                    if len(row) > max(key_idx, value_idx):
+                        row_key = row[key_idx].strip() if key_idx < len(row) else ""
+                        logger.debug(f"Row {row_idx}: key='{row_key}'")
+                        if row_key == "Prompt":
+                            template = row[value_idx].strip() if value_idx < len(row) else ""
+                            if template:
+                                logger.info(f"Found prompt template from Settings sheet (length: {len(template)} chars)")
+                                return template
+                            else:
+                                logger.warning(f"Prompt key found but value is empty")
+                                return None
+
+                logger.info(f"Prompt key not found in Settings sheet. Available keys: {[row[key_idx].strip() for row in all_values[1:] if len(row) > key_idx]}")
+                return None
+
+            except Exception as e:
+                logger.error(f"Error getting prompt template: {e}")
+                import traceback
+                logger.error(traceback.format_exc())
+                return None
+
+    @handle_storage_errors
+    @measure_performance
+    def get_context_instructions(self, sheet_id: str, instruction_key: str) -> Optional[str]:
+        """
+        Get context instructions from Settings sheet by key.
+        Searches for a specific instruction key and returns the value.
+
+        Args:
+            sheet_id: Google Sheet ID
+            instruction_key: The instruction key to search for (e.g., "recipient_title_instructions", "recipient_job_title_instructions", "first_contact_instructions", "existing_contact_instructions")
+
+        Returns:
+            Instruction text if found, None otherwise
+        """
+        with ErrorContext("get_context_instructions", {"sheet_id": sheet_id, "instruction_key": instruction_key}):
+            try:
+                sheets_service = self.sheets_service
+                spreadsheet = sheets_service.client.open_by_key(sheet_id)
+
+                try:
+                    worksheet = spreadsheet.worksheet("Settings")
+                except Exception:
+                    logger.warning(f"Settings sheet not found in sheet {sheet_id}")
+                    return None
+
+                all_values = worksheet.get_all_values()
+                if not all_values or len(all_values) < 2:
+                    logger.warning(f"Settings sheet is empty in sheet {sheet_id}")
+                    return None
+
+                # Parse headers (first row)
+                headers = all_values[0]
+
+                # Find column indices
+                key_idx = None
+                value_idx = None
+                for idx, header in enumerate(headers):
+                    if header.strip().lower() == "key":
+                        key_idx = idx
+                    elif header.strip().lower() == "value":
+                        value_idx = idx
+
+                if key_idx is None or value_idx is None:
+                    logger.error(f"Settings sheet missing 'key' or 'value' columns")
+                    return None
+
+                # Search for the instruction key
+                for row in all_values[1:]:  # Skip header row
+                    if len(row) > max(key_idx, value_idx):
+                        row_key = row[key_idx].strip() if key_idx < len(row) else ""
+                        if row_key == instruction_key:
+                            instruction = row[value_idx].strip() if value_idx < len(row) else ""
+                            if instruction:
+                                logger.debug(f"Found context instruction '{instruction_key}' from Settings sheet")
+                                return instruction
+
+                logger.debug(f"Context instruction '{instruction_key}' not found in Settings sheet")
+                return None
+
+            except Exception as e:
+                logger.error(f"Error getting context instructions: {e}")
+                return None
+
 
 # Global service instance
 _usage_service = None

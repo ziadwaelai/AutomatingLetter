@@ -68,10 +68,10 @@ class ArabicLetterGenerationService:
         """Initialize the letter generation service."""
         self.config = get_config()
         self._validate_configuration()
-        
+
         self.parser = JsonOutputParser(pydantic_object=LetterOutput)
-        self.chain = self._build_chain()
-        
+        # Don't build chain yet - it will be built dynamically with the prompt
+
         logger.info("Arabic Letter Generation Service initialized")
     
     def _validate_configuration(self):
@@ -97,14 +97,14 @@ class ArabicLetterGenerationService:
         except Exception as e:
             logger.warning(f"Failed to get memory instructions: {e}")
             return ""
-    
-    def _get_prompt_template(self) -> PromptTemplate:
+
+    def _get_default_prompt_template(self) -> str:
         """
-        Creates and returns the comprehensive prompt template for letter generation.
-        This follows the same strict guidelines as the original ai_generator.py
+        Get the default prompt template (hardcoded fallback).
+        This is used when no template is found in the Settings sheet.
         """
-        template = """
-أنت كاتب خطابات محترف ومساعد ذكي لشركة `نت زيرو`. مهمتك هي كتابة خطاب رسمي باللغة العربية بناءً على المعلومات التالية، مع الالتزام الصارم بجميع التعليمات المحددة أدناه.
+        return """
+أنت كاتب خطابات محترف ومساعد ذكي. مهمتك هي كتابة خطاب رسمي باللغة العربية بناءً على المعلومات التالية، مع الالتزام الصارم بجميع التعليمات المحددة أدناه.
 
 # المصادر والمعلومات
 1. **المحتوى الأساسي (المطلوب كتابته):** {user_prompt}
@@ -113,10 +113,8 @@ class ArabicLetterGenerationService:
 4. **معلومات المُرسِل (يجب دمجها في الخطاب بصياغة رسمية مناسبة):** {member_info}
 
 # تعليمات خاصة حول معلومات التواصل:
-- عند الحاجة لإدراج معلومات التواصل، يجب أن تُدمج في سياق الخطاب بصياغة رسمية مناسبة، مثل:
-  • "وللاستفسارات أو التنسيق، يُرجى التواصل مع الشخص المسؤول على الرقم: [رقم الجوال]، أو عبر البريد الإلكتروني: [البريد الإلكتروني]"
-  • أو: "مدير العمليات في \"نت زيرو\"، هاتف: [رقم الجوال] ، بريد إلكتروني: [البريد الإلكتروني]"
-- يُمنع سرد معلومات التواصل بشكل منفصل أو جاف (مثل: "الاسم: ...، البريد الإلكتروني: ...، الجوال: ...")، ويجب دائماً دمجها ضمن جملة رسمية أو فقرة ختامية مناسبة.
+- عند الحاجة لإدراج معلومات التواصل، يجب أن تُدمج في سياق الخطاب بصياغة رسمية مناسبة
+- يُمنع سرد معلومات التواصل بشكل منفصل أو جاف
 
 5. **تعليمات الكتابة:** {writing_instructions}
 6. **بيانات الخطاب الجديد:**
@@ -148,14 +146,59 @@ class ArabicLetterGenerationService:
 
 {format_instructions}
 """
+
+    def _get_prompt_template(self, sheet_id: Optional[str] = None) -> PromptTemplate:
+        """
+        Creates and returns the comprehensive prompt template for letter generation.
+        Attempts to load from the user's Settings sheet; falls back to default if not found.
+
+        Args:
+            sheet_id: Optional Google Sheet ID to load custom template from
+
+        Returns:
+            PromptTemplate instance
+        """
+        template = None
+
+        # Try to load from user's Settings sheet if sheet_id is provided
+        if sheet_id:
+            logger.info(f"Attempting to load prompt template from Settings sheet for sheet_id: {sheet_id}")
+            try:
+                from .usage_tracking_service import get_usage_tracking_service
+                usage_service = get_usage_tracking_service()
+                template = usage_service.get_prompt_template(sheet_id)
+                if template:
+                    logger.info(f"✅ Successfully loaded custom prompt template from Settings sheet (length: {len(template)} chars)")
+                else:
+                    logger.info("Prompt template not found in Settings sheet, will use default")
+            except Exception as e:
+                logger.warning(f"Failed to load prompt template from Settings sheet: {e}")
+                import traceback
+                logger.debug(traceback.format_exc())
+        else:
+            logger.debug("No sheet_id provided, will use default prompt template")
+
+        # Fall back to default template if not found
+        if not template:
+            template = self._get_default_prompt_template()
+            logger.info("Using default hardcoded prompt template")
+
         return PromptTemplate.from_template(
             template,
             partial_variables={"format_instructions": self.parser.get_format_instructions()}
         )
     
-    def _build_chain(self) -> Runnable:
-        """Constructs the full LCEL chain: prompt -> llm -> parser."""
-        prompt = self._get_prompt_template()
+    def _build_chain(self, sheet_id: Optional[str] = None) -> Runnable:
+        """
+        Constructs the full LCEL chain: prompt -> llm -> parser.
+
+        Args:
+            sheet_id: Optional Google Sheet ID to load custom template from
+
+        Returns:
+            Configured LCEL chain for letter generation
+        """
+        prompt = self._get_prompt_template(sheet_id)
         llm = ChatOpenAI(
             model=self.config.ai.model_name,
             temperature=self.config.ai.temperature,
@@ -190,11 +233,28 @@ class ArabicLetterGenerationService:
         # if context.organization_name:
         #     context_parts.append(f"اسم المؤسسة: {context.organization_name}")
 
-        if context.is_first_contact: 
-            context_parts.append("""هذا هو الاتصال الأول مع المستلم.
-تعليمات مهمة: هذا أول خطاب للمستلم، لذا يجب بعد التحية الرسمية مباشرة إضافة فقرة تعريفية واضحة وكاملة عن شركة "نت زيرو" توضح طبيعتها وأهدافها.
-يجب أن تكون المقدمة مفصلة وتتضمن: (1) تعريف الشركة كمشروع اجتماعي وطني، (2) ارتباطها ببرنامج سدرة التابع لوزارة البيئة والمياه والزراعة، (3) أهدافها الرئيسية.
-مثال توضيحي: "وانطلاقًا من هذا النهج الطموح، نود أن نقدم لسعادتكم "نت زيرو"، وهو مشروع اجتماعي وطني، أحد مخرجات برنامج (سدرة) التابع لوزارة البيئة والمياه والزراعة، يهدف إلى تعزيز الاستدامة البيئية وتحقيق أهداف الحياد الكربوني في المملكة...".""")
+        if context.is_first_contact:
+            # Generic default instruction for first contact (no company-specific details)
+            default_first_contact = """هذا هو الاتصال الأول مع المستقبل.
+تعليمات مهمة: نظراً لأن هذا أول خطاب للمستقبل، يجب أن تتضمن الرسالة مقدمة واضحة وشاملة تشرح:
+1. الغرض من الرسالة والمبادرة أو الجهة المرسلة
+2. الأهداف والقيم الأساسية للجهة المرسلة
+3. كيفية ارتباط الرسالة بأولويات واحتياجات المستقبل
+اجعل المقدمة احترافية وموجزة لكن معلوماتية، بحيث تترك انطباعاً إيجابياً قوياً لدى المستقبل."""
+
+            first_contact_instruction = default_first_contact
+            if context.sheet_id:
+                try:
+                    from .usage_tracking_service import get_usage_tracking_service
+                    usage_service = get_usage_tracking_service()
+                    sheet_instruction = usage_service.get_context_instructions(context.sheet_id, "is_first_contact")
+                    if sheet_instruction:
+                        first_contact_instruction = sheet_instruction
+                        logger.debug("Loaded first_contact instruction from Settings sheet")
+                except Exception as e:
+                    logger.warning(f"Failed to load first_contact instruction from sheet: {e}")
+
+            context_parts.append(first_contact_instruction)
         else:
             context_parts.append("توجد مراسلات سابقة مع الجهة المذكورة")
         
@@ -214,18 +274,21 @@ class ArabicLetterGenerationService:
     def generate_letter(self, context: LetterGenerationContext) -> LetterOutput:
         """
         Generate a professional Arabic letter using the provided context.
-        
+
         Args:
             context: Letter generation context with all necessary information
-            
+
         Returns:
             LetterOutput containing the generated letter
-            
+
         Raises:
             AIServiceError: If letter generation fails
             ValidationError: If context validation fails
         """
         with ErrorContext("letter_generation", {"letter_id": context.letter_id, "category": context.category}):
+            # Build chain dynamically with sheet_id to load custom template if available
+            chain = self._build_chain(sheet_id=context.sheet_id)
+
             # Prepare input data for the chain
             input_data = {
                 "user_prompt": context.user_prompt,
@@ -238,14 +301,14 @@ class ArabicLetterGenerationService:
                 "previous_letter_info": self._build_previous_letter_info(context),
                 "memory_instructions": self._get_memory_instructions(context)
             }
-            
+
             logger.info(f"Generating letter with ID: {context.letter_id}")
             logger.debug(f"Input data prepared for letter generation: {list(input_data.keys())}")
             logger.debug(f"Memory instructions being used: '{input_data['memory_instructions']}'")
-            
+
             try:
                 # Invoke the chain
-                result = self.chain.invoke(input_data)
+                result = chain.invoke(input_data)
                 
                 # Handle different result types from LangChain
                 if isinstance(result, dict):

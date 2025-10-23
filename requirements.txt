@@ -17,3 +17,4 @@ pdfkit
 jinja2
 requests
 werkzeug
+PyJWT

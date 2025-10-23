@@ -4,7 +4,8 @@
       "Bash(tree:*)",
       "Bash(python -m py_compile:*)",
       "Bash(python:*)",
-      "Bash(venv/Scripts/activate)"
+      "Bash(venv/Scripts/activate)",
+      "Bash(ls -la \"d:\\shobbak\\AutomatingLetter\\src\\api\"\" 2>/dev/null || echo \"Directory not found \")"
     ],
     "deny": [],
     "ask": []
