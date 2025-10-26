@@ -330,7 +330,7 @@ Return only the filled HTML template with ALL letter content preserved:"""
             # Sanitize filename - remove Arabic characters and special characters
             import re
             safe_title = re.sub(r'[^\w\s-]', '', title.replace(' ', '_'))
-            safe_title = re.sub(r'[\u0600-\u06FF]', 'letter', safe_title)  # Replace Arabic with 'letter'
+            safe_title = re.sub(r'[\u0600-\u06FF]+', 'doc', safe_title)  # Replace Arabic characters with 'doc'
             if not safe_title or safe_title.isspace():
                 safe_title = "document"
             
