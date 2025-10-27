@@ -389,21 +389,23 @@ def extract_token_from_request() -> Optional[str]:
 def decode_jwt_token(token: str, secret: str, algorithm: str = "HS256") -> Optional[Dict[str, Any]]:
     """
     Decode JWT token and return payload.
-    
+
     Args:
         token: JWT token string
         secret: Secret key for decoding
         algorithm: JWT algorithm (default: HS256)
-    
+
     Returns:
-        Decoded payload dictionary if valid, None otherwise
+        Decoded payload dictionary if valid, None otherwise.
+        Returns dict with '_token_expired': True if token has expired.
     """
     try:
         payload = jwt.decode(token, secret, algorithms=[algorithm])
         return payload
     except jwt.ExpiredSignatureError:
         logger.warning("JWT token has expired")
-        return None
+        # Return special dict to indicate token expiration
+        return {"_token_expired": True}
     except jwt.InvalidTokenError as e:
         logger.warning(f"Invalid JWT token: {e}")
         return None
@@ -415,26 +417,32 @@ def decode_jwt_token(token: str, secret: str, algorithm: str = "HS256") -> Optio
 def get_user_from_token() -> Optional[Dict[str, Any]]:
     """
     Extract and decode JWT token from current request, return user info.
-    
+
     Returns:
-        Dictionary with user info (sheet_id, client_id, user, etc.) if valid, None otherwise
+        Dictionary with user info (sheet_id, client_id, user, etc.) if valid.
+        Returns dict with '_token_expired': True if token has expired.
+        Returns None otherwise.
     """
     from ..config import get_config
-    
+
     # Extract token from request
     token = extract_token_from_request()
     if not token:
         logger.warning("No authorization token found in request")
         return None
-    
+
     # Get config for JWT secret
     config = get_config()
-    
+
     # Decode token
     payload = decode_jwt_token(token, config.auth.jwt_secret, config.auth.jwt_algorithm)
     if not payload:
         return None
-    
+
+    # Check if token is expired (special case)
+    if payload.get("_token_expired"):
+        return {"_token_expired": True}
+
     return payload
 
 
@@ -442,7 +450,7 @@ def require_auth(f: Callable) -> Callable:
     """
     Decorator to require JWT authentication for an endpoint.
     Adds 'user_info' to kwargs containing decoded token payload.
-    
+
     Usage:
         @require_auth
         def my_endpoint(user_info):
@@ -452,7 +460,7 @@ def require_auth(f: Callable) -> Callable:
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
         user_info = get_user_from_token()
-        
+
         if not user_info:
             from flask import jsonify
             return jsonify({
@@ -460,9 +468,19 @@ def require_auth(f: Callable) -> Callable:
                 "message": "غير مصرح",
                 "error": "يجب تسجيل الدخول للوصول إلى هذه الصفحة"
             }), 401
-        
+
+        # Check if token is expired
+        if user_info.get("_token_expired"):
+            from flask import jsonify
+            logger.warning("Request made with expired JWT token")
+            return jsonify({
+                "status": "error",
+                "message": "انتهت صلاحية التوكن. يرجى تسجيل الدخول مرة أخرى",
+                "status_code": 401
+            }), 401
+
         # Add user_info to kwargs
         kwargs['user_info'] = user_info
         return f(*args, **kwargs)
-    
+
     return decorated_function

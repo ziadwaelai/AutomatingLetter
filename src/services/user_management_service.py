@@ -21,6 +21,7 @@ from ..utils import (
     ErrorContext,
     StorageServiceError
 )
+from ..utils.connection_pool import ConnectionPool
 
 logger = logging.getLogger(__name__)
 
@@ -91,13 +92,25 @@ class UserManagementService:
     Validates user emails against master sheet and returns client configuration.
     """
 
-    def __init__(self):
-        """Initialize User Management service."""
+    def __init__(self, pool_size: int = 5):
+        """
+        Initialize User Management service with connection pooling.
+
+        Args:
+            pool_size: Maximum number of concurrent connections (default: 5)
+        """
         self.config = get_config()
         self._validate_configuration()
-        self._client = None
-        self._last_connection_time = 0
-        self._connection_lifetime = 3600  # 1 hour
+
+        # Create connection pool
+        self._pool = ConnectionPool(
+            connection_factory=self._create_sheets_client,
+            cleanup_func=None,  # gspread clients don't need explicit cleanup
+            pool_size=pool_size,
+            connection_timeout=30,
+            max_connection_lifetime=3600,  # 1 hour
+            max_connection_idle_time=300  # 5 minutes
+        )
 
         # Cache for client data
         self._client_cache: Dict[str, tuple[ClientInfo, float]] = {}
@@ -111,35 +124,52 @@ class UserManagementService:
                 f"Service account file not found: {self.config.storage.service_account_file}"
             )
 
+    def _create_sheets_client(self):
+        """Create a new Google Sheets client."""
+        try:
+            scopes = [
+                'https://www.googleapis.com/auth/drive.file',
+                "https://spreadsheets.google.com/feeds",
+                "https://www.googleapis.com/auth/spreadsheets",
+                "https://www.googleapis.com/auth/drive"
+            ]
+
+            creds = ServiceAccountCredentials.from_json_keyfile_name(
+                self.config.storage.service_account_file,
+                scopes
+            )
+            client = gspread.authorize(creds)
+            logger.debug("User Management Google Sheets client created from pool factory")
+            return client
+
+        except Exception as e:
+            logger.error(f"Failed to create Google Sheets client: {e}")
+            raise StorageServiceError(f"Failed to connect to Google Sheets: {e}")
+
     @property
     def client(self):
-        """Get or create Google Sheets client with connection reuse."""
-        current_time = time.time()
+        """Get a Google Sheets client from the pool."""
+        try:
+            return self._pool.acquire()
+        except Exception as e:
+            logger.error(f"Failed to acquire client from pool: {e}")
+            raise
 
-        if (self._client is None or
-            current_time - self._last_connection_time > self._connection_lifetime):
+    def _release_client(self, client):
+        """Release a client back to the pool."""
+        self._pool.release(client)
 
-            try:
-                scopes = [
-                    'https://www.googleapis.com/auth/drive.file',
-                    "https://spreadsheets.google.com/feeds",
-                    "https://www.googleapis.com/auth/spreadsheets",
-                    "https://www.googleapis.com/auth/drive"
-                ]
+    def get_client_context(self):
+        """
+        Get a context manager for safe client acquisition and release.
 
-                creds = ServiceAccountCredentials.from_json_keyfile_name(
-                    self.config.storage.service_account_file,
-                    scopes
-                )
-                self._client = gspread.authorize(creds)
-                self._last_connection_time = current_time
-
-                logger.debug("User Management Google Sheets client connection established")
-
-            except Exception as e:
-                raise StorageServiceError(f"Failed to connect to Google Sheets: {e}")
-
-        return self._client
+        Usage:
+            with service.get_client_context() as client:
+                spreadsheet = client.open_by_key(sheet_id)
+                # Client automatically released when exiting context
+        """
+        from ..utils.connection_pool import PooledConnectionManager
+        return PooledConnectionManager(self._pool)
 
     def _get_master_sheet_data(self, force_refresh: bool = False) -> List[List[str]]:
         """
@@ -162,15 +192,16 @@ class UserManagementService:
 
         # Fetch fresh data
         try:
-            spreadsheet = self.client.open_by_key(MASTER_SHEET_ID)
-            worksheet = spreadsheet.get_worksheet(0)  # First worksheet
-            all_values = worksheet.get_all_values()
+            with self.get_client_context() as client:
+                spreadsheet = client.open_by_key(MASTER_SHEET_ID)
+                worksheet = spreadsheet.get_worksheet(0)  # First worksheet
+                all_values = worksheet.get_all_values()
 
-            # Cache the data
-            self._master_data_cache = (all_values, current_time)
+                # Cache the data
+                self._master_data_cache = (all_values, current_time)
 
-            logger.debug(f"Fetched master sheet data: {len(all_values)} rows")
-            return all_values
+                logger.debug(f"Fetched master sheet data: {len(all_values)} rows")
+                return all_values
 
         except Exception as e:
             logger.error(f"Failed to fetch master sheet data: {e}")
@@ -771,34 +802,140 @@ class UserManagementService:
     def _update_user_password(self, sheet_id: str, email: str, new_password: str):
         """
         Update user password in the sheet (used for re-hashing plain text passwords).
-        
+
         Args:
             sheet_id: Google Sheet ID
             email: User email
             new_password: New password to hash and store
         """
         try:
-            spreadsheet = self.client.open_by_key(sheet_id)
-            worksheet = spreadsheet.worksheet("Users")
-            all_values = worksheet.get_all_values()
-            
-            if not all_values or len(all_values) < 2:
-                return
-            
-            headers = [h.strip().lower() for h in all_values[0]]
-            email_idx = headers.index("email")
-            password_idx = headers.index("password")
-            
-            # Find and update the user
-            for i, row in enumerate(all_values[1:], 1):  # Skip header, i starts from 1
-                if len(row) > email_idx and row[email_idx].strip().lower() == email.lower():
-                    hashed_password = generate_password_hash(new_password)
-                    worksheet.update_cell(i + 1, password_idx + 1, hashed_password)  # +1 because worksheet is 1-indexed
-                    logger.info(f"Password re-hashed for user {email}")
-                    break
-                    
+            with self.get_client_context() as client:
+                spreadsheet = client.open_by_key(sheet_id)
+                worksheet = spreadsheet.worksheet("Users")
+                all_values = worksheet.get_all_values()
+
+                if not all_values or len(all_values) < 2:
+                    return
+
+                headers = [h.strip().lower() for h in all_values[0]]
+                email_idx = headers.index("email")
+                password_idx = headers.index("password")
+
+                # Find and update the user
+                for i, row in enumerate(all_values[1:], 1):  # Skip header, i starts from 1
+                    if len(row) > email_idx and row[email_idx].strip().lower() == email.lower():
+                        hashed_password = generate_password_hash(new_password)
+                        worksheet.update_cell(i + 1, password_idx + 1, hashed_password)  # +1 because worksheet is 1-indexed
+                        logger.info(f"Password re-hashed for user {email}")
+                        break
+
         except Exception as e:
             logger.error(f"Error updating password for {email}: {e}")
+
+    def reset_password(self, email: str, old_password: str, new_password: str) -> tuple[bool, str]:
+        """
+        Reset user password (requires old password for verification).
+
+        Args:
+            email: User email
+            old_password: Current password (for verification)
+            new_password: New password to set
+
+        Returns:
+            Tuple of (success: bool, message: str)
+        """
+        try:
+            # Validate inputs
+            if not email or not old_password or not new_password:
+                return False, "البريد الإلكتروني وكلمات المرور مطلوبة"
+
+            if len(new_password) < 6:
+                return False, "كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل"
+
+            if old_password == new_password:
+                return False, "كلمة المرور الجديدة يجب أن تختلف عن كلمة المرور القديمة"
+
+            # Verify old password first
+            success, client_info, user_info = self.validate_user_credentials(email, old_password)
+
+            if not success or not client_info or not user_info:
+                logger.warning(f"Password reset failed - invalid credentials for: {email}")
+                return False, "البريد الإلكتروني أو كلمة المرور غير صحيحة"
+
+            # Update password
+            self._update_user_password(client_info.sheet_id, email, new_password)
+
+            logger.info(f"Password reset successfully for user: {email}")
+            return True, "تم تحديث كلمة المرور بنجاح"
+
+        except Exception as e:
+            logger.error(f"Error resetting password for {email}: {e}")
+            return False, f"حدث خطأ في تحديث كلمة المرور: {str(e)}"
+
+    def forgot_password_reset(self, email: str, new_password: str) -> tuple[bool, str]:
+        """
+        Reset password for forgotten password scenario (without old password verification).
+        This should be used with additional security measures (email verification, security questions, etc.)
+
+        Args:
+            email: User email
+            new_password: New password to set
+
+        Returns:
+            Tuple of (success: bool, message: str)
+        """
+        try:
+            # Validate inputs
+            if not email or not new_password:
+                return False, "البريد الإلكتروني وكلمة المرور مطلوبة"
+
+            if len(new_password) < 6:
+                return False, "كلمة المرور يجب أن تكون 6 أحرف على الأقل"
+
+            # Check if user exists
+            client_info = self.get_client_by_email(email)
+            if not client_info:
+                logger.warning(f"Forgot password reset failed - no client found for: {email}")
+                return False, "لا يوجد عميل مطابق لهذا البريد الإلكتروني"
+
+            # Get user from client sheet
+            user_info = self.get_user_details_from_client_sheet(client_info.sheet_id, email)
+            if not user_info:
+                logger.warning(f"Forgot password reset failed - user not found: {email}")
+                return False, "المستخدم غير موجود"
+
+            # Update password
+            self._update_user_password(client_info.sheet_id, email, new_password)
+
+            logger.info(f"Password reset successfully (forgot password) for user: {email}")
+            return True, "تم تحديث كلمة المرور بنجاح"
+
+        except Exception as e:
+            logger.error(f"Error resetting forgotten password for {email}: {e}")
+            return False, f"حدث خطأ في تحديث كلمة المرور: {str(e)}"
+
+    def get_service_stats(self) -> Dict[str, Any]:
+        """
+        Get service statistics and status information.
+
+        Returns:
+            Dictionary with service statistics
+        """
+        pool_stats = self._pool.get_stats()
+        return {
+            "service": "UserManagementService",
+            "pool_stats": pool_stats,
+            "cache_size": len(self._client_cache),
+            "master_data_cached": self._master_data_cache is not None,
+            "connection_lifetime": 3600,
+            "max_idle_time": 300,
+            "cache_ttl": CACHE_TTL
+        }
+
+    def close_pool(self) -> None:
+        """Close all connections in the pool."""
+        self._pool.close_all()
+        logger.info("User Management connection pool closed")
 
 
 # Global service instance

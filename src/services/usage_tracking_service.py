@@ -157,58 +157,59 @@ class UsageTrackingService:
         """
         Get existing usage row for month or create new one.
         Columns: yyyy_mm, letters_count, tokens_sum, cost_sum_usd
-        
+
         Args:
             sheet_id: Google Sheet ID
             month_key: Month in yyyy_mm format
-            
+
         Returns:
             Tuple of (row_number, row_data) where row_number is 0-indexed from data (not including header)
         """
         with ErrorContext("get_or_create_usage_row", {"sheet_id": sheet_id, "month": month_key}):
             try:
                 sheets_service = self.sheets_service
-                spreadsheet = sheets_service.client.open_by_key(sheet_id)
-                worksheet = spreadsheet.worksheet("Usage")
-                
-                all_values = worksheet.get_all_values()
-                
-                if not all_values:
-                    # Create headers if sheet is empty
-                    headers = ["yyyy_mm", "letters_count", "tokens_sum", "cost_sum_usd"]
-                    worksheet.append_row(headers)
-                    all_values = [headers]
-                    logger.info(f"Created headers in Usage sheet: {headers}")
-                
-                headers = all_values[0]
-                
-                # Check if month already exists
-                for idx, row in enumerate(all_values[1:], start=1):
-                    if row and len(row) > 0 and row[0].strip() == month_key:
-                        # Parse existing values
-                        row_data = {
-                            "yyyy_mm": row[0] if len(row) > 0 else month_key,
-                            "letters_count": int(row[1]) if len(row) > 1 and row[1] else 0,
-                            "tokens_sum": int(row[2]) if len(row) > 2 and row[2] else 0,
-                            "cost_sum_usd": float(row[3]) if len(row) > 3 and row[3] else 0.0
-                        }
-                        logger.info(f"Found existing usage row for {month_key} at row {idx + 1}: {row_data}")
-                        return idx + 1, row_data  # Row number (1-indexed from spreadsheet, which is idx+1 for data rows)
-                
-                # Create new row for this month
-                new_row = [month_key, "1", "0", "0"]
-                worksheet.append_row(new_row)
-                logger.info(f"Created new usage row for {month_key}")
-                
-                # Return the row number of the newly created row
-                new_row_number = len(all_values) + 1  # +1 because we just added a row
-                row_data = {
-                    "yyyy_mm": month_key,
-                    "letters_count": 1,
-                    "tokens_sum": 0,
-                    "cost_sum_usd": 0.0
-                }
-                return new_row_number, row_data
+                with sheets_service.get_client_context() as client:
+                    spreadsheet = client.open_by_key(sheet_id)
+                    worksheet = spreadsheet.worksheet("Usage")
+
+                    all_values = worksheet.get_all_values()
+
+                    if not all_values:
+                        # Create headers if sheet is empty
+                        headers = ["yyyy_mm", "letters_count", "tokens_sum", "cost_sum_usd"]
+                        worksheet.append_row(headers)
+                        all_values = [headers]
+                        logger.info(f"Created headers in Usage sheet: {headers}")
+
+                    headers = all_values[0]
+
+                    # Check if month already exists
+                    for idx, row in enumerate(all_values[1:], start=1):
+                        if row and len(row) > 0 and row[0].strip() == month_key:
+                            # Parse existing values
+                            row_data = {
+                                "yyyy_mm": row[0] if len(row) > 0 else month_key,
+                                "letters_count": int(row[1]) if len(row) > 1 and row[1] else 0,
+                                "tokens_sum": int(row[2]) if len(row) > 2 and row[2] else 0,
+                                "cost_sum_usd": float(row[3]) if len(row) > 3 and row[3] else 0.0
+                            }
+                            logger.info(f"Found existing usage row for {month_key} at row {idx + 1}: {row_data}")
+                            return idx + 1, row_data  # Row number (1-indexed from spreadsheet, which is idx+1 for data rows)
+
+                    # Create new row for this month
+                    new_row = [month_key, "1", "0", "0"]
+                    worksheet.append_row(new_row)
+                    logger.info(f"Created new usage row for {month_key}")
+
+                    # Return the row number of the newly created row
+                    new_row_number = len(all_values) + 1  # +1 because we just added a row
+                    row_data = {
+                        "yyyy_mm": month_key,
+                        "letters_count": 1,
+                        "tokens_sum": 0,
+                        "cost_sum_usd": 0.0
+                    }
+                    return new_row_number, row_data
                 
             except Exception as e:
                 logger.error(f"Error getting/creating usage row: {e}")
@@ -285,61 +286,62 @@ class UsageTrackingService:
         """
         Get monthly quota limit from Settings sheet.
         Searches for key "quota_month" and returns the value.
-        
+
         Args:
             sheet_id: Google Sheet ID
-            
+
         Returns:
             Quota limit (int) or None if not found
         """
         with ErrorContext("get_quota_limit", {"sheet_id": sheet_id}):
             try:
                 sheets_service = self.sheets_service
-                spreadsheet = sheets_service.client.open_by_key(sheet_id)
-                
-                try:
-                    worksheet = spreadsheet.worksheet("Settings")
-                except Exception:
-                    logger.warning(f"Settings sheet not found in sheet {sheet_id}")
+                with sheets_service.get_client_context() as client:
+                    spreadsheet = client.open_by_key(sheet_id)
+
+                    try:
+                        worksheet = spreadsheet.worksheet("Settings")
+                    except Exception:
+                        logger.warning(f"Settings sheet not found in sheet {sheet_id}")
+                        return None
+
+                    all_values = worksheet.get_all_values()
+                    if not all_values or len(all_values) < 2:
+                        logger.warning(f"Settings sheet is empty in sheet {sheet_id}")
+                        return None
+
+                    # Parse headers (first row)
+                    headers = all_values[0]
+
+                    # Find column indices for key and value
+                    key_idx = None
+                    value_idx = None
+                    for idx, header in enumerate(headers):
+                        if header.strip().lower() == "key":
+                            key_idx = idx
+                        elif header.strip().lower() == "value":
+                            value_idx = idx
+
+                    if key_idx is None or value_idx is None:
+                        logger.error(f"Settings sheet missing 'key' or 'value' columns")
+                        return None
+
+                    # Search for quota_month key
+                    for row in all_values[1:]:  # Skip header row
+                        if len(row) > max(key_idx, value_idx):
+                            row_key = row[key_idx].strip().lower() if key_idx < len(row) else ""
+                            if row_key == "quota_month":
+                                try:
+                                    quota_value = int(row[value_idx].strip()) if value_idx < len(row) else None
+                                    if quota_value is not None:
+                                        logger.info(f"Found quota_month limit: {quota_value}")
+                                        return quota_value
+                                except (ValueError, TypeError):
+                                    logger.warning(f"Invalid quota_month value: {row[value_idx]}")
+                                    return None
+
+                    logger.warning(f"quota_month not found in Settings sheet")
                     return None
-                
-                all_values = worksheet.get_all_values()
-                if not all_values or len(all_values) < 2:
-                    logger.warning(f"Settings sheet is empty in sheet {sheet_id}")
-                    return None
-                
-                # Parse headers (first row)
-                headers = all_values[0]
-                
-                # Find column indices for key and value
-                key_idx = None
-                value_idx = None
-                for idx, header in enumerate(headers):
-                    if header.strip().lower() == "key":
-                        key_idx = idx
-                    elif header.strip().lower() == "value":
-                        value_idx = idx
-                
-                if key_idx is None or value_idx is None:
-                    logger.error(f"Settings sheet missing 'key' or 'value' columns")
-                    return None
-                
-                # Search for quota_month key
-                for row in all_values[1:]:  # Skip header row
-                    if len(row) > max(key_idx, value_idx):
-                        row_key = row[key_idx].strip().lower() if key_idx < len(row) else ""
-                        if row_key == "quota_month":
-                            try:
-                                quota_value = int(row[value_idx].strip()) if value_idx < len(row) else None
-                                if quota_value is not None:
-                                    logger.info(f"Found quota_month limit: {quota_value}")
-                                    return quota_value
-                            except (ValueError, TypeError):
-                                logger.warning(f"Invalid quota_month value: {row[value_idx]}")
-                                return None
-                
-                logger.warning(f"quota_month not found in Settings sheet")
-                return None
                 
             except Exception as e:
                 logger.error(f"Error getting quota limit: {e}")
@@ -433,53 +435,54 @@ class UsageTrackingService:
         with ErrorContext("get_memory_instructions", {"sheet_id": sheet_id}):
             try:
                 sheets_service = self.sheets_service
-                spreadsheet = sheets_service.client.open_by_key(sheet_id)
-                
-                try:
-                    worksheet = spreadsheet.worksheet("Settings")
-                except Exception:
-                    logger.warning(f"Settings sheet not found in sheet {sheet_id}")
+                with sheets_service.get_client_context() as client:
+                    spreadsheet = client.open_by_key(sheet_id)
+
+                    try:
+                        worksheet = spreadsheet.worksheet("Settings")
+                    except Exception:
+                        logger.warning(f"Settings sheet not found in sheet {sheet_id}")
+                        return None
+
+                    all_values = worksheet.get_all_values()
+                    if not all_values or len(all_values) < 2:
+                        logger.warning(f"Settings sheet is empty in sheet {sheet_id}")
+                        return None
+
+                    # Parse headers (first row)
+                    headers = all_values[0]
+
+                    # Find column indices
+                    key_idx = None
+                    value_idx = None
+                    for idx, header in enumerate(headers):
+                        if header.strip().lower() == "key":
+                            key_idx = idx
+                        elif header.strip().lower() == "value":
+                            value_idx = idx
+
+                    if key_idx is None or value_idx is None:
+                        logger.error(f"Settings sheet missing 'key' or 'value' columns")
+                        return None
+
+                    # Search for memory_instructions key
+                    for row in all_values[1:]:  # Skip header row
+                        if len(row) > max(key_idx, value_idx):
+                            row_key = row[key_idx].strip().lower() if key_idx < len(row) else ""
+                            if row_key == "memory_instructions":
+                                try:
+                                    import json
+                                    instructions_json = row[value_idx].strip() if value_idx < len(row) else ""
+                                    if instructions_json:
+                                        instructions = json.loads(instructions_json)
+                                        logger.info(f"Found {len(instructions)} memory instructions from Settings sheet")
+                                        return instructions
+                                except (json.JSONDecodeError, ValueError) as e:
+                                    logger.error(f"Failed to parse memory_instructions JSON: {e}")
+                                    return None
+
+                    logger.debug(f"memory_instructions not found in Settings sheet")
                     return None
-                
-                all_values = worksheet.get_all_values()
-                if not all_values or len(all_values) < 2:
-                    logger.warning(f"Settings sheet is empty in sheet {sheet_id}")
-                    return None
-                
-                # Parse headers (first row)
-                headers = all_values[0]
-                
-                # Find column indices
-                key_idx = None
-                value_idx = None
-                for idx, header in enumerate(headers):
-                    if header.strip().lower() == "key":
-                        key_idx = idx
-                    elif header.strip().lower() == "value":
-                        value_idx = idx
-                
-                if key_idx is None or value_idx is None:
-                    logger.error(f"Settings sheet missing 'key' or 'value' columns")
-                    return None
-                
-                # Search for memory_instructions key
-                for row in all_values[1:]:  # Skip header row
-                    if len(row) > max(key_idx, value_idx):
-                        row_key = row[key_idx].strip().lower() if key_idx < len(row) else ""
-                        if row_key == "memory_instructions":
-                            try:
-                                import json
-                                instructions_json = row[value_idx].strip() if value_idx < len(row) else ""
-                                if instructions_json:
-                                    instructions = json.loads(instructions_json)
-                                    logger.info(f"Found {len(instructions)} memory instructions from Settings sheet")
-                                    return instructions
-                            except (json.JSONDecodeError, ValueError) as e:
-                                logger.error(f"Failed to parse memory_instructions JSON: {e}")
-                                return None
-                
-                logger.debug(f"memory_instructions not found in Settings sheet")
-                return None
                 
             except Exception as e:
                 logger.error(f"Error getting memory instructions: {e}")
@@ -502,74 +505,75 @@ class UsageTrackingService:
         with ErrorContext("save_memory_instructions", {"sheet_id": sheet_id}):
             try:
                 import json
-                
+
                 sheets_service = self.sheets_service
-                spreadsheet = sheets_service.client.open_by_key(sheet_id)
-                
-                try:
-                    worksheet = spreadsheet.worksheet("Settings")
-                except Exception:
-                    logger.error(f"Settings sheet not found in sheet {sheet_id}")
+                with sheets_service.get_client_context() as client:
+                    spreadsheet = client.open_by_key(sheet_id)
+
+                    try:
+                        worksheet = spreadsheet.worksheet("Settings")
+                    except Exception:
+                        logger.error(f"Settings sheet not found in sheet {sheet_id}")
+                        return {
+                            "status": "error",
+                            "message": "Settings sheet not found"
+                        }
+
+                    all_values = worksheet.get_all_values()
+
+                    if not all_values:
+                        # Create headers if sheet is empty
+                        headers = ["key", "value"]
+                        worksheet.append_row(headers)
+                        all_values = [headers]
+                        logger.info("Created headers in Settings sheet")
+
+                    # Convert instructions to JSON string
+                    instructions_json = json.dumps(instructions, ensure_ascii=False, indent=2)
+
+                    # Search for existing memory_instructions row
+                    headers = all_values[0]
+                    key_idx = None
+                    value_idx = None
+                    for idx, header in enumerate(headers):
+                        if header.strip().lower() == "key":
+                            key_idx = idx
+                        elif header.strip().lower() == "value":
+                            value_idx = idx
+
+                    if key_idx is None or value_idx is None:
+                        logger.error(f"Settings sheet missing 'key' or 'value' columns")
+                        return {
+                            "status": "error",
+                            "message": "Settings sheet missing required columns"
+                        }
+
+                    # Find and update existing row or create new one
+                    found = False
+                    for row_idx, row in enumerate(all_values[1:], start=2):  # Start at row 2 (after header)
+                        if len(row) > key_idx:
+                            row_key = row[key_idx].strip().lower() if key_idx < len(row) else ""
+                            if row_key == "memory_instructions":
+                                # Update existing row
+                                worksheet.update_cell(row_idx, value_idx + 1, instructions_json)
+                                logger.info(f"Updated memory_instructions in Settings sheet at row {row_idx}")
+                                found = True
+                                break
+
+                    if not found:
+                        # Create new row
+                        new_row = [""] * len(headers)
+                        new_row[key_idx] = "memory_instructions"
+                        new_row[value_idx] = instructions_json
+                        worksheet.append_row(new_row)
+                        logger.info(f"Created new memory_instructions row in Settings sheet")
+
                     return {
-                        "status": "error",
-                        "message": "Settings sheet not found"
+                        "status": "success",
+                        "sheet_id": sheet_id,
+                        "instructions_count": len(instructions),
+                        "row_type": "updated" if found else "created"
                     }
-                
-                all_values = worksheet.get_all_values()
-                
-                if not all_values:
-                    # Create headers if sheet is empty
-                    headers = ["key", "value"]
-                    worksheet.append_row(headers)
-                    all_values = [headers]
-                    logger.info("Created headers in Settings sheet")
-                
-                # Convert instructions to JSON string
-                instructions_json = json.dumps(instructions, ensure_ascii=False, indent=2)
-                
-                # Search for existing memory_instructions row
-                headers = all_values[0]
-                key_idx = None
-                value_idx = None
-                for idx, header in enumerate(headers):
-                    if header.strip().lower() == "key":
-                        key_idx = idx
-                    elif header.strip().lower() == "value":
-                        value_idx = idx
-                
-                if key_idx is None or value_idx is None:
-                    logger.error(f"Settings sheet missing 'key' or 'value' columns")
-                    return {
-                        "status": "error",
-                        "message": "Settings sheet missing required columns"
-                    }
-                
-                # Find and update existing row or create new one
-                found = False
-                for row_idx, row in enumerate(all_values[1:], start=2):  # Start at row 2 (after header)
-                    if len(row) > key_idx:
-                        row_key = row[key_idx].strip().lower() if key_idx < len(row) else ""
-                        if row_key == "memory_instructions":
-                            # Update existing row
-                            worksheet.update_cell(row_idx, value_idx + 1, instructions_json)
-                            logger.info(f"Updated memory_instructions in Settings sheet at row {row_idx}")
-                            found = True
-                            break
-                
-                if not found:
-                    # Create new row
-                    new_row = [""] * len(headers)
-                    new_row[key_idx] = "memory_instructions"
-                    new_row[value_idx] = instructions_json
-                    worksheet.append_row(new_row)
-                    logger.info(f"Created new memory_instructions row in Settings sheet")
-                
-                return {
-                    "status": "success",
-                    "sheet_id": sheet_id,
-                    "instructions_count": len(instructions),
-                    "row_type": "updated" if found else "created"
-                }
                 
             except Exception as e:
                 logger.error(f"Error saving memory instructions: {e}")
@@ -599,54 +603,55 @@ class UsageTrackingService:
         with ErrorContext("get_prompt_template", {"sheet_id": sheet_id}):
             try:
                 sheets_service = self.sheets_service
-                spreadsheet = sheets_service.client.open_by_key(sheet_id)
+                with sheets_service.get_client_context() as client:
+                    spreadsheet = client.open_by_key(sheet_id)
 
-                try:
-                    worksheet = spreadsheet.worksheet("Settings")
-                except Exception as e:
-                    logger.warning(f"Settings sheet not found in sheet {sheet_id}: {e}")
+                    try:
+                        worksheet = spreadsheet.worksheet("Settings")
+                    except Exception as e:
+                        logger.warning(f"Settings sheet not found in sheet {sheet_id}: {e}")
+                        return None
+
+                    all_values = worksheet.get_all_values()
+                    if not all_values or len(all_values) < 2:
+                        logger.warning(f"Settings sheet is empty or has no data rows in sheet {sheet_id}")
+                        return None
+
+                    # Parse headers (first row)
+                    headers = all_values[0]
+                    logger.debug(f"Settings sheet headers: {headers}")
+
+                    # Find column indices
+                    key_idx = None
+                    value_idx = None
+                    for idx, header in enumerate(headers):
+                        if header.strip().lower() == "key":
+                            key_idx = idx
+                        elif header.strip().lower() == "value":
+                            value_idx = idx
+
+                    if key_idx is None or value_idx is None:
+                        logger.error(f"Settings sheet missing 'key' or 'value' columns. Headers: {headers}")
+                        return None
+
+                    logger.debug(f"key_idx={key_idx}, value_idx={value_idx}")
+
+                    # Search for Prompt key
+                    for row_idx, row in enumerate(all_values[1:], start=2):  # Skip header row
+                        if len(row) > max(key_idx, value_idx):
+                            row_key = row[key_idx].strip() if key_idx < len(row) else ""
+                            logger.debug(f"Row {row_idx}: key='{row_key}'")
+                            if row_key == "Prompt":
+                                template = row[value_idx].strip() if value_idx < len(row) else ""
+                                if template:
+                                    logger.info(f"Found prompt template from Settings sheet (length: {len(template)} chars)")
+                                    return template
+                                else:
+                                    logger.warning(f"Prompt key found but value is empty")
+                                    return None
+
+                    logger.info(f"Prompt key not found in Settings sheet. Available keys: {[row[key_idx].strip() for row in all_values[1:] if len(row) > key_idx]}")
                     return None
-
-                all_values = worksheet.get_all_values()
-                if not all_values or len(all_values) < 2:
-                    logger.warning(f"Settings sheet is empty or has no data rows in sheet {sheet_id}")
-                    return None
-
-                # Parse headers (first row)
-                headers = all_values[0]
-                logger.debug(f"Settings sheet headers: {headers}")
-
-                # Find column indices
-                key_idx = None
-                value_idx = None
-                for idx, header in enumerate(headers):
-                    if header.strip().lower() == "key":
-                        key_idx = idx
-                    elif header.strip().lower() == "value":
-                        value_idx = idx
-
-                if key_idx is None or value_idx is None:
-                    logger.error(f"Settings sheet missing 'key' or 'value' columns. Headers: {headers}")
-                    return None
-
-                logger.debug(f"key_idx={key_idx}, value_idx={value_idx}")
-
-                # Search for Prompt key
-                for row_idx, row in enumerate(all_values[1:], start=2):  # Skip header row
-                    if len(row) > max(key_idx, value_idx):
-                        row_key = row[key_idx].strip() if key_idx < len(row) else ""
-                        logger.debug(f"Row {row_idx}: key='{row_key}'")
-                        if row_key == "Prompt":
-                            template = row[value_idx].strip() if value_idx < len(row) else ""
-                            if template:
-                                logger.info(f"Found prompt template from Settings sheet (length: {len(template)} chars)")
-                                return template
-                            else:
-                                logger.warning(f"Prompt key found but value is empty")
-                                return None
-
-                logger.info(f"Prompt key not found in Settings sheet. Available keys: {[row[key_idx].strip() for row in all_values[1:] if len(row) > key_idx]}")
-                return None
 
             except Exception as e:
                 logger.error(f"Error getting prompt template: {e}")
@@ -671,47 +676,48 @@ class UsageTrackingService:
         with ErrorContext("get_context_instructions", {"sheet_id": sheet_id, "instruction_key": instruction_key}):
             try:
                 sheets_service = self.sheets_service
-                spreadsheet = sheets_service.client.open_by_key(sheet_id)
+                with sheets_service.get_client_context() as client:
+                    spreadsheet = client.open_by_key(sheet_id)
 
-                try:
-                    worksheet = spreadsheet.worksheet("Settings")
-                except Exception:
-                    logger.warning(f"Settings sheet not found in sheet {sheet_id}")
+                    try:
+                        worksheet = spreadsheet.worksheet("Settings")
+                    except Exception:
+                        logger.warning(f"Settings sheet not found in sheet {sheet_id}")
+                        return None
+
+                    all_values = worksheet.get_all_values()
+                    if not all_values or len(all_values) < 2:
+                        logger.warning(f"Settings sheet is empty in sheet {sheet_id}")
+                        return None
+
+                    # Parse headers (first row)
+                    headers = all_values[0]
+
+                    # Find column indices
+                    key_idx = None
+                    value_idx = None
+                    for idx, header in enumerate(headers):
+                        if header.strip().lower() == "key":
+                            key_idx = idx
+                        elif header.strip().lower() == "value":
+                            value_idx = idx
+
+                    if key_idx is None or value_idx is None:
+                        logger.error(f"Settings sheet missing 'key' or 'value' columns")
+                        return None
+
+                    # Search for the instruction key
+                    for row in all_values[1:]:  # Skip header row
+                        if len(row) > max(key_idx, value_idx):
+                            row_key = row[key_idx].strip() if key_idx < len(row) else ""
+                            if row_key == instruction_key:
+                                instruction = row[value_idx].strip() if value_idx < len(row) else ""
+                                if instruction:
+                                    logger.debug(f"Found context instruction '{instruction_key}' from Settings sheet")
+                                    return instruction
+
+                    logger.debug(f"Context instruction '{instruction_key}' not found in Settings sheet")
                     return None
-
-                all_values = worksheet.get_all_values()
-                if not all_values or len(all_values) < 2:
-                    logger.warning(f"Settings sheet is empty in sheet {sheet_id}")
-                    return None
-
-                # Parse headers (first row)
-                headers = all_values[0]
-
-                # Find column indices
-                key_idx = None
-                value_idx = None
-                for idx, header in enumerate(headers):
-                    if header.strip().lower() == "key":
-                        key_idx = idx
-                    elif header.strip().lower() == "value":
-                        value_idx = idx
-
-                if key_idx is None or value_idx is None:
-                    logger.error(f"Settings sheet missing 'key' or 'value' columns")
-                    return None
-
-                # Search for the instruction key
-                for row in all_values[1:]:  # Skip header row
-                    if len(row) > max(key_idx, value_idx):
-                        row_key = row[key_idx].strip() if key_idx < len(row) else ""
-                        if row_key == instruction_key:
-                            instruction = row[value_idx].strip() if value_idx < len(row) else ""
-                            if instruction:
-                                logger.debug(f"Found context instruction '{instruction_key}' from Settings sheet")
-                                return instruction
-
-                logger.debug(f"Context instruction '{instruction_key}' not found in Settings sheet")
-                return None
 
             except Exception as e:
                 logger.error(f"Error getting context instructions: {e}")

@@ -11,7 +11,8 @@ from ..services import get_user_management_service
 from ..utils import (
     ErrorContext,
     build_error_response,
-    measure_performance
+    measure_performance,
+    get_token_manager
 )
 
 logger = logging.getLogger(__name__)
@@ -292,6 +293,269 @@ def clear_cache():
 
         except Exception as e:
             logger.error(f"Failed to clear cache: {e}")
+            return jsonify(build_error_response(e)), 500
+
+
+@user_bp.route('/reset-password', methods=['POST'])
+@measure_performance
+def reset_password():
+    """
+    Reset user password (requires old password verification).
+    User must provide current password to set a new one.
+
+    Request Body:
+        email: str - User email address
+        old_password: str - Current password (for verification)
+        new_password: str - New password to set
+
+    Returns:
+        Success or error message
+    """
+    with ErrorContext("reset_password_api"):
+        try:
+            # Validate request data
+            if not request.is_json:
+                return jsonify({"error": "يجب أن يكون الطلب بصيغة JSON"}), 400
+
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "لم يتم تقديم بيانات JSON"}), 400
+
+            # Get required fields
+            email = data.get('email')
+            old_password = data.get('old_password')
+            new_password = data.get('new_password')
+
+            if not email:
+                return jsonify({"error": "البريد الإلكتروني مطلوب"}), 400
+            if not old_password:
+                return jsonify({"error": "كلمة المرور الحالية مطلوبة"}), 400
+            if not new_password:
+                return jsonify({"error": "كلمة المرور الجديدة مطلوبة"}), 400
+
+            # Validate email format
+            email = email.strip()
+            if '@' not in email:
+                return jsonify({"error": "صيغة البريد الإلكتروني غير صحيحة"}), 400
+
+            # Reset password
+            user_service = get_user_management_service()
+            success, message = user_service.reset_password(email, old_password, new_password)
+
+            if success:
+                logger.info(f"Password reset successfully for user: {email}")
+                return jsonify({
+                    "status": "success",
+                    "message": message
+                }), 200
+            else:
+                logger.warning(f"Password reset failed for user: {email} - {message}")
+                return jsonify({
+                    "status": "error",
+                    "message": message
+                }), 400
+
+        except Exception as e:
+            logger.error(f"Password reset failed: {e}")
+            return jsonify(build_error_response(e)), 500
+
+
+@user_bp.route('/forgot-password/request-token', methods=['POST'])
+@measure_performance
+def request_password_reset_token():
+    """
+    Request a password reset token (Step 1 of forgot password flow).
+    Generates and stores a secure token for the user.
+
+    Request Body:
+        email: str - User email address
+
+    Returns:
+        Reset token (user should save this and use in next step)
+    """
+    with ErrorContext("request_password_reset_token_api"):
+        try:
+            # Validate request data
+            if not request.is_json:
+                return jsonify({"error": "يجب أن يكون الطلب بصيغة JSON"}), 400
+
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "لم يتم تقديم بيانات JSON"}), 400
+
+            # Get email
+            email = data.get('email', '').strip()
+
+            if not email:
+                return jsonify({"error": "البريد الإلكتروني مطلوب"}), 400
+
+            # Validate email format
+            if '@' not in email:
+                return jsonify({"error": "صيغة البريد الإلكتروني غير صحيحة"}), 400
+
+            # Check if user exists
+            user_service = get_user_management_service()
+            client_info = user_service.get_client_by_email(email)
+
+            if not client_info:
+                logger.warning(f"Password reset token request failed - no client for: {email}")
+                return jsonify({
+                    "status": "error",
+                    "message": "لا يوجد عميل مطابق لهذا البريد الإلكتروني"
+                }), 404
+
+            # Verify user exists in client sheet
+            user_info = user_service.get_user_details_from_client_sheet(client_info.sheet_id, email)
+            if not user_info:
+                logger.warning(f"Password reset token request failed - user not found: {email}")
+                return jsonify({
+                    "status": "error",
+                    "message": "المستخدم غير موجود"
+                }), 404
+
+            # Generate token (valid for 1 hour)
+            token_manager = get_token_manager()
+            token = token_manager.generate_token(email, lifetime=3600)  # 1 hour
+
+            logger.info(f"Password reset token generated for: {email}")
+            return jsonify({
+                "status": "success",
+                "message": "تم إنشاء رمز إعادة تعيين كلمة المرور. الرمز صالح لمدة 1 ساعة",
+                "token": token,
+                "expires_in_seconds": 3600
+            }), 200
+
+        except Exception as e:
+            logger.error(f"Password reset token request failed: {e}")
+            return jsonify(build_error_response(e)), 500
+
+
+@user_bp.route('/forgot-password/verify-token', methods=['POST'])
+@measure_performance
+def verify_password_reset_token():
+    """
+    Verify a password reset token (Step 2 of forgot password flow).
+    Checks if token is valid and not expired.
+
+    Request Body:
+        token: str - Password reset token
+
+    Returns:
+        Verification result
+    """
+    with ErrorContext("verify_password_reset_token_api"):
+        try:
+            # Validate request data
+            if not request.is_json:
+                return jsonify({"error": "يجب أن يكون الطلب بصيغة JSON"}), 400
+
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "لم يتم تقديم بيانات JSON"}), 400
+
+            # Get token
+            token = data.get('token', '').strip()
+
+            if not token:
+                return jsonify({"error": "الرمز مطلوب"}), 400
+
+            # Validate token
+            token_manager = get_token_manager()
+            is_valid, message, email = token_manager.validate_token(token)
+
+            if not is_valid:
+                logger.warning(f"Token verification failed: {message}")
+                return jsonify({
+                    "status": "error",
+                    "message": message
+                }), 400
+
+            # Token is valid
+            logger.info(f"Token verified successfully for: {email}")
+            return jsonify({
+                "status": "success",
+                "message": "الرمز صالح",
+                "email": email
+            }), 200
+
+        except Exception as e:
+            logger.error(f"Token verification failed: {e}")
+            return jsonify(build_error_response(e)), 500
+
+
+@user_bp.route('/forgot-password/reset', methods=['POST'])
+@measure_performance
+def reset_password_with_token():
+    """
+    Reset password using a valid token (Step 3 of forgot password flow).
+    Requires a valid, non-expired token.
+
+    Request Body:
+        token: str - Password reset token
+        new_password: str - New password to set
+
+    Returns:
+        Success or error message
+    """
+    with ErrorContext("reset_password_with_token_api"):
+        try:
+            # Validate request data
+            if not request.is_json:
+                return jsonify({"error": "يجب أن يكون الطلب بصيغة JSON"}), 400
+
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "لم يتم تقديم بيانات JSON"}), 400
+
+            # Get token and password
+            token = data.get('token', '').strip()
+            new_password = data.get('new_password', '').strip()
+
+            if not token:
+                return jsonify({"error": "الرمز مطلوب"}), 400
+            if not new_password:
+                return jsonify({"error": "كلمة المرور الجديدة مطلوبة"}), 400
+
+            # Validate password
+            if len(new_password) < 6:
+                return jsonify({"error": "كلمة المرور يجب أن تكون 6 أحرف على الأقل"}), 400
+
+            # Verify token
+            token_manager = get_token_manager()
+            is_valid, message, email = token_manager.validate_token(token)
+
+            if not is_valid:
+                logger.warning(f"Password reset failed - invalid token: {message}")
+                return jsonify({
+                    "status": "error",
+                    "message": message
+                }), 400
+
+            # Get user info to find sheet_id
+            user_service = get_user_management_service()
+            client_info = user_service.get_client_by_email(email)
+
+            if not client_info:
+                logger.error(f"Password reset failed - client not found for: {email}")
+                return jsonify({
+                    "status": "error",
+                    "message": "لا يوجد عميل مطابق لهذا البريد الإلكتروني"
+                }), 404
+
+            # Update password
+            user_service._update_user_password(client_info.sheet_id, email, new_password)
+
+            # Mark token as used
+            token_manager.use_token(token)
+
+            logger.info(f"Password reset successfully using token for: {email}")
+            return jsonify({
+                "status": "success",
+                "message": "تم تحديث كلمة المرور بنجاح"
+            }), 200
+
+        except Exception as e:
+            logger.error(f"Password reset with token failed: {e}")
             return jsonify(build_error_response(e)), 500
 
 

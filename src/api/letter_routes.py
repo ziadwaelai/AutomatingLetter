@@ -22,7 +22,8 @@ from ..utils import (
     validate_and_raise,
     measure_performance,
     require_auth,
-    get_user_from_token
+    get_user_from_token,
+    get_token_manager
 )
 
 logger = logging.getLogger(__name__)
@@ -53,10 +54,22 @@ def generate_letter(user_info):
             # Extract sheet_id and user email from JWT token
             sheet_id = user_info.get('sheet_id')
             user_email = user_info.get('user', {}).get('email', 'unknown')
-            
+
             if not sheet_id:
                 return build_error_response("معرف الجدول غير موجود في التوكن", 400)
-            
+
+            # Check if JWT token is expired (validate token expiration time from JWT)
+            import time
+            token_exp = user_info.get('exp')
+            if token_exp:
+                current_time = time.time()
+                if current_time > token_exp:
+                    logger.warning(f"JWT token expired for user: {user_email}")
+                    return jsonify({
+                        "status": "error",
+                        "message": "انتهت صلاحية التوكن. يرجى تسجيل الدخول مرة أخرى"
+                    }), 401
+
             logger.info(f"Letter generation request from user: {user_email}, sheet: {sheet_id}")
             
             # Validate request data

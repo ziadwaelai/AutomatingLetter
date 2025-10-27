@@ -46,11 +46,24 @@ def archive_letter(user_info):
         sheet_id = user_info.get('sheet_id')
         if not sheet_id:
             return build_error_response("معرف الجدول غير موجود في التوكن", 400)
-        
+
         google_drive_id = user_info.get('google_drive_id')
         if not google_drive_id:
             return build_error_response("معرف مجلد Google Drive غير موجود في التوكن", 400)
-        
+
+        # Check if JWT token is expired
+        import time
+        token_exp = user_info.get('exp')
+        if token_exp:
+            current_time = time.time()
+            if current_time > token_exp:
+                user_email = user_info.get('user', {}).get('email', 'unknown')
+                logger.warning(f"JWT token expired for user: {user_email}")
+                return jsonify({
+                    "status": "error",
+                    "message": "انتهت صلاحية التوكن. يرجى تسجيل الدخول مرة أخرى"
+                }), 401
+
         # Get user email for logging
         user_email = user_info.get('user', {}).get('email', 'unknown')
         client_id = user_info.get('client_id', 'unknown')
