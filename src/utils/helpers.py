@@ -484,3 +484,72 @@ def require_auth(f: Callable) -> Callable:
         return f(*args, **kwargs)
 
     return decorated_function
+
+
+def require_admin(f: Callable) -> Callable:
+    """
+    Decorator to require admin role for an endpoint.
+    Must be used with @require_auth decorator (apply @require_auth FIRST, then @require_admin).
+    Checks if user has 'admin' role in their JWT token.
+
+    Usage:
+        @require_admin
+        @require_auth
+        def my_endpoint(user_info):
+            # This endpoint is only accessible to admin users
+            ...
+
+    Note: Decorators execute bottom-to-top, so @require_auth executes first,
+    then @require_admin checks the role.
+    """
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        # First, check if we have user_info in kwargs (added by @require_auth)
+        user_info = kwargs.get('user_info')
+
+        if not user_info:
+            # If no user_info, perform full auth check
+            user_info = get_user_from_token()
+
+            if not user_info:
+                from flask import jsonify
+                return jsonify({
+                    "status": "error",
+                    "message": "غير مصرح",
+                    "error": "يجب تسجيل الدخول للوصول إلى هذه الصفحة"
+                }), 401
+
+            # Check if token is expired
+            if user_info.get("_token_expired"):
+                from flask import jsonify
+                logger.warning("Request made with expired JWT token")
+                return jsonify({
+                    "status": "error",
+                    "message": "انتهت صلاحية التوكن. يرجى تسجيل الدخول مرة أخرى",
+                    "status_code": 401
+                }), 401
+
+            # Add to kwargs
+            kwargs['user_info'] = user_info
+
+        # Check if user has admin role
+        # Role can be at top level or nested in 'user' object
+        user_role = user_info.get('role', '').lower()
+        if not user_role:
+            # Check if role is nested in user object
+            user_obj = user_info.get('user', {})
+            if isinstance(user_obj, dict):
+                user_role = user_obj.get('role', '').lower()
+
+        if user_role != 'admin':
+            logger.warning(f"Unauthorized admin access attempt by user with role: {user_role}")
+            from flask import jsonify
+            return jsonify({
+                "status": "error",
+                "message": "ممنوع",
+                "error": "يجب أن تكون مسؤول لتنفيذ هذا الإجراء"
+            }), 403
+
+        return f(*args, **kwargs)
+
+    return decorated_function

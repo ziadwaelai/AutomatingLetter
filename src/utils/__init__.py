@@ -25,7 +25,8 @@ from .helpers import (
     extract_token_from_request,
     decode_jwt_token,
     get_user_from_token,
-    require_auth
+    require_auth,
+    require_admin
 )
 
 from .exceptions import (
@@ -98,6 +99,13 @@ __all__ = [
     "clean_dict",
     "log_function_call",
     "setup_module_logger",
+
+    # JWT utilities
+    "extract_token_from_request",
+    "decode_jwt_token",
+    "get_user_from_token",
+    "require_auth",
+    "require_admin",
 
     # Exceptions
     "AutomatingLetterException",
