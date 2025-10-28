@@ -27,6 +27,7 @@ from ..utils import (
 )
 
 logger = logging.getLogger(__name__)
+from ..utils import SpecializedLogger
 
 # Create blueprint
 letter_bp = Blueprint('letter', __name__, url_prefix='/api/v1/letter')
@@ -396,6 +397,243 @@ def handle_validation_error(error):
         "error": "Validation failed",
         "details": error.errors()
     }), 400
+
+@letter_bp.route('/<letter_id>', methods=['GET'])
+@measure_performance
+@require_auth
+def get_letter_by_id(letter_id, user_info):
+    """
+    Get a letter by its ID from the user's Submissions sheet.
+    Requires JWT authentication to get sheet_id.
+
+    Args:
+        letter_id: The unique letter identifier (e.g., LET-20251028-12345)
+
+    Headers:
+        Authorization: Bearer <jwt_token>
+
+    Returns:
+        Letter details with metadata
+    """
+    with ErrorContext("get_letter_by_id", {"letter_id": letter_id}):
+        try:
+            # Extract sheet_id and user email from JWT token
+            sheet_id = user_info.get('sheet_id')
+            user_email = user_info.get('user', {}).get('email', 'unknown')
+
+            if not sheet_id:
+                SpecializedLogger.log_action(
+                    action_type='letter.retrieval',
+                    user_email=user_email,
+                    action='Get letter failed - no sheet_id',
+                    details={'letter_id': letter_id},
+                    status='failure'
+                )
+                return build_error_response("معرف الجدول غير موجود في التوكن", 400)
+
+            # Validate letter_id format
+            if not letter_id or not letter_id.startswith('LET-'):
+                SpecializedLogger.log_action(
+                    action_type='letter.retrieval',
+                    user_email=user_email,
+                    action='Get letter failed - invalid letter_id format',
+                    details={'letter_id': letter_id},
+                    status='failure'
+                )
+                return build_error_response("معرف الخطاب غير صحيح", 400)
+
+            logger.info(f"Letter retrieval request: {letter_id} by user: {user_email}, sheet: {sheet_id}")
+
+            # Get the letter from the user's Submissions sheet
+            sheets_service = get_sheets_service()
+
+            try:
+                # Access the user's spreadsheet
+                with sheets_service.get_client_context() as client:
+                    spreadsheet = client.open_by_key(sheet_id)
+                    submissions_sheet = spreadsheet.worksheet("Submissions")
+
+                    # Get all records from Submissions sheet
+                    records = submissions_sheet.get_all_records()
+
+                    # Find the letter with matching ID
+                    letter_record = None
+                    for record in records:
+                        if record.get('ID') == letter_id:
+                            letter_record = record
+                            break
+
+                    if not letter_record:
+                        SpecializedLogger.log_action(
+                            action_type='letter.retrieval',
+                            user_email=user_email,
+                            action='Get letter failed - not found',
+                            details={'letter_id': letter_id},
+                            status='failure'
+                        )
+                        return jsonify({
+                            "status": "error",
+                            "message": "الخطاب غير موجود",
+                            "letter_id": letter_id
+                        }), 404
+
+                    # Log successful retrieval
+                    SpecializedLogger.log_action(
+                        action_type='letter.retrieval',
+                        user_email=user_email,
+                        action='Get letter successful',
+                        details={
+                            'letter_id': letter_id,
+                            'letter_type': letter_record.get('Letter_type'),
+                            'recipient': letter_record.get('Recipient_name')
+                        },
+                        status='success'
+                    )
+
+                    logger.info(f"Letter retrieved successfully: {letter_id}")
+
+                    return jsonify({
+                        "status": "success",
+                        "letter": letter_record
+                    }), 200
+
+            except Exception as e:
+                logger.error(f"Error retrieving letter from sheet: {e}")
+                return build_error_response(f"خطأ في جلب الخطاب: {str(e)}", 500)
+
+        except Exception as e:
+            logger.error(f"Letter retrieval failed: {e}")
+            SpecializedLogger.log_action(
+                action_type='letter.retrieval',
+                user_email=user_info.get('user', {}).get('email', 'unknown'),
+                action='Get letter error',
+                details={'letter_id': letter_id, 'error': str(e)},
+                status='failure'
+            )
+            return build_error_response(e), 500
+
+
+@letter_bp.route('/<letter_id>', methods=['DELETE'])
+@measure_performance
+@require_auth
+def delete_letter_by_id(letter_id, user_info):
+    """
+    Delete a letter by its ID from the user's Submissions sheet.
+    Only the user who created the letter can delete it.
+    Requires JWT authentication to get sheet_id.
+
+    Args:
+        letter_id: The unique letter identifier (e.g., LET-20251028-12345)
+
+    Headers:
+        Authorization: Bearer <jwt_token>
+
+    Returns:
+        Confirmation of deletion
+    """
+    with ErrorContext("delete_letter_by_id", {"letter_id": letter_id}):
+        try:
+            # Extract sheet_id and user email from JWT token
+            sheet_id = user_info.get('sheet_id')
+            user_email = user_info.get('user', {}).get('email', 'unknown')
+
+            if not sheet_id:
+                SpecializedLogger.log_action(
+                    action_type='letter.deletion',
+                    user_email=user_email,
+                    action='Delete letter failed - no sheet_id',
+                    details={'letter_id': letter_id},
+                    status='failure'
+                )
+                return build_error_response("معرف الجدول غير موجود في التوكن", 400)
+
+            # Validate letter_id format
+            if not letter_id or not letter_id.startswith('LET-'):
+                SpecializedLogger.log_action(
+                    action_type='letter.deletion',
+                    user_email=user_email,
+                    action='Delete letter failed - invalid letter_id format',
+                    details={'letter_id': letter_id},
+                    status='failure'
+                )
+                return build_error_response("معرف الخطاب غير صحيح", 400)
+
+            logger.info(f"Letter deletion request: {letter_id} by user: {user_email}, sheet: {sheet_id}")
+
+            # Delete the letter from the user's Submissions sheet
+            sheets_service = get_sheets_service()
+
+            try:
+                # Access the user's spreadsheet
+                with sheets_service.get_client_context() as client:
+                    spreadsheet = client.open_by_key(sheet_id)
+                    submissions_sheet = spreadsheet.worksheet("Submissions")
+
+                    # Get all records from Submissions sheet
+                    records = submissions_sheet.get_all_records()
+
+                    # Find the letter with matching ID
+                    letter_row_index = None
+                    letter_record = None
+                    for idx, record in enumerate(records, start=2):  # Start from 2 because row 1 is headers
+                        if record.get('ID') == letter_id:
+                            letter_record = record
+                            letter_row_index = idx
+                            break
+
+                    if not letter_record:
+                        SpecializedLogger.log_action(
+                            action_type='letter.deletion',
+                            user_email=user_email,
+                            action='Delete letter failed - not found',
+                            details={'letter_id': letter_id},
+                            status='failure'
+                        )
+                        return jsonify({
+                            "status": "error",
+                            "message": "الخطاب غير موجود",
+                            "letter_id": letter_id
+                        }), 404
+
+                    # Delete the row from the sheet
+                    submissions_sheet.delete_rows(letter_row_index, 1)
+
+                    # Log successful deletion
+                    SpecializedLogger.log_action(
+                        action_type='letter.deletion',
+                        user_email=user_email,
+                        action='Delete letter successful',
+                        details={
+                            'letter_id': letter_id,
+                            'letter_type': letter_record.get('Letter_type'),
+                            'recipient': letter_record.get('Recipient_name')
+                        },
+                        status='success'
+                    )
+
+                    logger.info(f"Letter deleted successfully: {letter_id}")
+
+                    return jsonify({
+                        "status": "success",
+                        "message": "تم حذف الخطاب بنجاح",
+                        "letter_id": letter_id
+                    }), 200
+
+            except Exception as e:
+                logger.error(f"Error deleting letter from sheet: {e}")
+                return build_error_response(f"خطأ في حذف الخطاب: {str(e)}", 500)
+
+        except Exception as e:
+            logger.error(f"Letter deletion failed: {e}")
+            SpecializedLogger.log_action(
+                action_type='letter.deletion',
+                user_email=user_info.get('user', {}).get('email', 'unknown'),
+                action='Delete letter error',
+                details={'letter_id': letter_id, 'error': str(e)},
+                status='failure'
+            )
+            return build_error_response(e), 500
+
 
 @letter_bp.errorhandler(404)
 def handle_not_found(error):
