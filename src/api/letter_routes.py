@@ -575,10 +575,10 @@ def delete_letter_by_id(letter_id, user_info):
                     # Find the letter with matching ID
                     letter_row_index = None
                     letter_record = None
-                    for idx, record in enumerate(records, start=2):  # Start from 2 because row 1 is headers
+                    for idx, record in enumerate(records):  # idx starts from 0
                         if record.get('ID') == letter_id:
                             letter_record = record
-                            letter_row_index = idx
+                            letter_row_index = idx + 2  # +2 because row 1 is headers, +1 for 1-indexed in gspread
                             break
 
                     if not letter_record:
@@ -595,8 +595,8 @@ def delete_letter_by_id(letter_id, user_info):
                             "letter_id": letter_id
                         }), 404
 
-                    # Delete the row from the sheet
-                    submissions_sheet.delete_rows(letter_row_index, 1)
+                    # Delete the row from the sheet (delete_rows uses 1-indexed row numbers)
+                    submissions_sheet.delete_rows(letter_row_index)
 
                     # Log successful deletion
                     SpecializedLogger.log_action(
