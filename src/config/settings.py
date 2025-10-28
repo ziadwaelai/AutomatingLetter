@@ -5,9 +5,13 @@ Centralized configuration for the AutomatingLetter application.
 
 import os
 import logging
+from logging.handlers import RotatingFileHandler
 from dataclasses import dataclass, field
 from typing import Optional, Dict, Any
 from dotenv import load_dotenv
+
+# Import will happen later to avoid circular imports
+# from ..utils.log_manager import CustomTimedRotatingHandler
 
 # Load environment variables
 load_dotenv()
@@ -106,10 +110,15 @@ class LoggingConfig:
     file_path: Optional[str] = "logs/app.log"
     max_file_size: int = 10 * 1024 * 1024  # 10MB
     backup_count: int = 5
-    
+    retention_days: int = 30  # Keep logs for 30 days (1 month)
+    rotation_type: str = "time"  # "time" for daily rotation, "size" for size-based
+
     def __post_init__(self):
         """Load from environment variables."""
         self.level = os.getenv("LOG_LEVEL", self.level).upper()
+        self.retention_days = int(os.getenv("LOG_RETENTION_DAYS", self.retention_days))
+        self.rotation_type = os.getenv("LOG_ROTATION_TYPE", self.rotation_type).lower()
+
         if self.file_path and not os.path.exists(os.path.dirname(self.file_path)):
             os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
 
@@ -190,19 +199,47 @@ class AppConfig:
         }
     
     def setup_logging(self):
-        """Setup application logging."""
-        logging.basicConfig(
-            level=getattr(logging, self.logging.level),
-            format=self.logging.format,
-            handlers=[
-                logging.StreamHandler(),
-                logging.FileHandler(self.logging.file_path) if self.logging.file_path else logging.NullHandler()
-            ]
-        )
-        
+        """Setup application logging with time-based rotation (daily, 30-day retention)."""
+        from logging.handlers import TimedRotatingFileHandler
+
+        log_level = getattr(logging, self.logging.level)
+        formatter = logging.Formatter(self.logging.format)
+
+        # Get root logger
+        root_logger = logging.getLogger()
+        root_logger.setLevel(log_level)
+
+        # Remove existing handlers to prevent duplicates on reload
+        for handler in root_logger.handlers[:]:
+            root_logger.removeHandler(handler)
+
+        # Add console handler
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(formatter)
+        console_handler.setLevel(log_level)
+        root_logger.addHandler(console_handler)
+
+        # Add file handler with time-based rotation
+        if self.logging.file_path:
+            try:
+                # Use time-based rotation (daily) to keep only last month of logs
+                file_handler = TimedRotatingFileHandler(
+                    self.logging.file_path,
+                    when='midnight',        # Rotate at midnight (daily)
+                    interval=1,             # Every 1 day
+                    backupCount=self.logging.retention_days,  # Keep 30 days of logs
+                    encoding='utf-8'
+                )
+                file_handler.setFormatter(formatter)
+                file_handler.setLevel(log_level)
+                root_logger.addHandler(file_handler)
+            except Exception as e:
+                logging.error(f"Failed to setup file logging: {e}")
+
         # Set specific logger levels
         logging.getLogger("urllib3").setLevel(logging.WARNING)
         logging.getLogger("requests").setLevel(logging.WARNING)
+        logging.getLogger("werkzeug").setLevel(logging.INFO)
 
 # Global configuration instance
 config = AppConfig()
@@ -218,17 +255,57 @@ def reload_config() -> AppConfig:
     return config
 
 def setup_logging():
-    """Setup application logging using global config."""
+    """Setup application logging using global config with time-based rotation."""
+    from logging.handlers import TimedRotatingFileHandler
+
     cfg = get_config()
-    logging.basicConfig(
-        level=getattr(logging, cfg.logging.level),
-        format=cfg.logging.format,
-        handlers=[
-            logging.StreamHandler(),
-            logging.FileHandler(cfg.logging.file_path) if cfg.logging.file_path else logging.NullHandler()
-        ]
-    )
-    
+    log_level = getattr(logging, cfg.logging.level)
+    formatter = logging.Formatter(cfg.logging.format)
+
+    # Get root logger
+    root_logger = logging.getLogger()
+    root_logger.setLevel(log_level)
+
+    # Remove existing handlers to prevent duplicates on reload
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
+
+    # Add console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    console_handler.setLevel(log_level)
+    root_logger.addHandler(console_handler)
+
+    # Add file handler with time-based rotation
+    if cfg.logging.file_path:
+        try:
+            # Use time-based rotation (daily) instead of size-based
+            # This keeps logs for 30 days (1 month)
+            file_handler = TimedRotatingFileHandler(
+                cfg.logging.file_path,
+                when='midnight',        # Rotate at midnight (daily)
+                interval=1,             # Every 1 day
+                backupCount=cfg.logging.retention_days,  # Keep 30 days of logs
+                encoding='utf-8'
+            )
+            file_handler.setFormatter(formatter)
+            file_handler.setLevel(log_level)
+            root_logger.addHandler(file_handler)
+            logging.info(f"Logging initialized: {cfg.logging.file_path} (time-based rotation, {cfg.logging.retention_days} day retention)")
+        except Exception as e:
+            logging.error(f"Failed to setup file logging: {e}")
+
+    # Run initial log cleanup
+    try:
+        from ..utils.log_manager import setup_log_cleanup
+        setup_log_cleanup(
+            log_dir=os.path.dirname(cfg.logging.file_path) or "logs",
+            retention_days=cfg.logging.retention_days
+        )
+    except Exception as e:
+        logging.debug(f"Log cleanup initialization: {e}")
+
     # Set specific logger levels
     logging.getLogger("urllib3").setLevel(logging.WARNING)
     logging.getLogger("requests").setLevel(logging.WARNING)
+    logging.getLogger("werkzeug").setLevel(logging.INFO)
