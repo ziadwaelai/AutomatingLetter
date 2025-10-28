@@ -295,15 +295,25 @@ def setup_logging():
         except Exception as e:
             logging.error(f"Failed to setup file logging: {e}")
 
-    # Run initial log cleanup
+    # Run initial log cleanup and archiving
     try:
-        from ..utils.log_manager import setup_log_cleanup
+        from ..utils.log_manager import setup_log_cleanup, setup_log_archiving
+        log_dir = os.path.dirname(cfg.logging.file_path) or "logs"
+
+        # Setup cleanup (keeps last 30 days)
         setup_log_cleanup(
-            log_dir=os.path.dirname(cfg.logging.file_path) or "logs",
+            log_dir=log_dir,
             retention_days=cfg.logging.retention_days
         )
+
+        # Setup archiving (archives logs older than 7 days)
+        setup_log_archiving(
+            log_dir=log_dir,
+            archive_dir=os.path.join(log_dir, "archive"),
+            days_before_archive=7
+        )
     except Exception as e:
-        logging.debug(f"Log cleanup initialization: {e}")
+        logging.debug(f"Log management initialization: {e}")
 
     # Set specific logger levels
     logging.getLogger("urllib3").setLevel(logging.WARNING)

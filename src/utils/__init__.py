@@ -77,6 +77,14 @@ from .token_manager import (
     ResetToken
 )
 
+from .log_manager import (
+    LogCleanupManager,
+    LogArchiver,
+    SpecializedLogger,
+    setup_log_cleanup,
+    setup_log_archiving
+)
+
 __all__ = [
     # Helper functions
     "generate_letter_id",
@@ -146,5 +154,12 @@ __all__ = [
     # Token management
     "TokenManager",
     "get_token_manager",
-    "ResetToken"
+    "ResetToken",
+
+    # Log management
+    "LogCleanupManager",
+    "LogArchiver",
+    "SpecializedLogger",
+    "setup_log_cleanup",
+    "setup_log_archiving"
 ]
