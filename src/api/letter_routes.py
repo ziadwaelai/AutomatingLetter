@@ -548,7 +548,7 @@ def delete_letter_by_id(letter_id, user_info):
                 return build_error_response("معرف الجدول غير موجود في التوكن", 400)
 
             # Validate letter_id format
-            if not letter_id or not letter_id.startswith('LET-'):
+            if not letter_id :
                 SpecializedLogger.log_action(
                     action_type='letter.deletion',
                     user_email=user_email,
