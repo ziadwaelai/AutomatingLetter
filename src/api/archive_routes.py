@@ -45,10 +45,12 @@ def archive_letter(user_info):
         # Extract sheet_id and google_drive_id from JWT token
         sheet_id = user_info.get('sheet_id')
         if not sheet_id:
+            logger.error("DEBUG: sheet_id not found in JWT token")
             return build_error_response("معرف الجدول غير موجود في التوكن", 400)
 
         google_drive_id = user_info.get('google_drive_id')
         if not google_drive_id:
+            logger.error("DEBUG: google_drive_id not found in JWT token")
             return build_error_response("معرف مجلد Google Drive غير موجود في التوكن", 400)
 
         # Check if JWT token is expired
@@ -67,22 +69,30 @@ def archive_letter(user_info):
         # Get user email for logging
         user_email = user_info.get('user', {}).get('email', 'unknown')
         client_id = user_info.get('client_id', 'unknown')
-        
+
         logger.info(f"Archive request from user: {user_email}, client: {client_id}, sheet: {sheet_id}, drive: {google_drive_id}")
-        
+        logger.debug(f"DEBUG: JWT user_info keys: {list(user_info.keys())}")
+
         # Validate request
         data = request.get_json()
+        logger.debug(f"DEBUG: Raw request payload: {data}")
+
         if not data:
+            logger.error("DEBUG: No JSON data in request")
             return build_error_response("لم يتم تقديم بيانات JSON", 400)
-        
+
+        logger.debug(f"DEBUG: Request keys: {list(data.keys())}")
+        logger.debug(f"DEBUG: Request content type: {request.content_type}")
+
         # Validate required fields
         required_fields = ['letter_content', 'ID']
         missing_fields = [field for field in required_fields if not data.get(field)]
         if missing_fields:
+            logger.error(f"DEBUG: Missing required fields: {missing_fields}")
             field_names_ar = {'letter_content': 'محتوى الخطاب', 'ID': 'رقم الخطاب'}
             missing_ar = [field_names_ar.get(field, field) for field in missing_fields]
             return build_error_response(f"الحقول المطلوبة مفقودة: {', '.join(missing_ar)}", 400)
-        
+
         # Extract data with defaults
         letter_content = data.get('letter_content', '')
         letter_type = data.get('letter_type', 'General')
@@ -91,6 +101,16 @@ def archive_letter(user_info):
         is_first = data.get('is_first', False)
         letter_id = data.get('ID', '')
         template = data.get('template', 'default_template')
+
+        # Debug log for extracted fields
+        logger.debug(f"DEBUG: Extracted letter_id: '{letter_id}'")
+        logger.debug(f"DEBUG: Extracted letter_type: '{letter_type}'")
+        logger.debug(f"DEBUG: Extracted recipient: '{recipient}'")
+        logger.debug(f"DEBUG: Extracted title: '{title}'")
+        logger.debug(f"DEBUG: Extracted is_first: {is_first}")
+        logger.debug(f"DEBUG: Extracted template: '{template}'")
+        logger.debug(f"DEBUG: Letter content length: {len(letter_content)} characters")
+        logger.debug(f"DEBUG: Letter content preview (first 200 chars): {letter_content[:200]}")
         
         # Use user_email from JWT token for Created_by field
         # The sheet_id and google_drive_id will be used to log and store the letter
@@ -151,51 +171,83 @@ def process_letter_archive_in_background(
         google_drive_id: Google Drive folder ID for upload (from JWT token)
     """
     try:
-        logger.info(f"Starting background archiving for letter ID: {letter_id} (sheet: {sheet_id}, drive: {google_drive_id})")
-        
+        logger.info(f"[BACKGROUND] Starting background archiving for letter ID: {letter_id}")
+        logger.debug(f"[BACKGROUND] DEBUG: sheet_id: {sheet_id}")
+        logger.debug(f"[BACKGROUND] DEBUG: google_drive_id: {google_drive_id}")
+        logger.debug(f"[BACKGROUND] DEBUG: user_email: {user_email}")
+        logger.debug(f"[BACKGROUND] DEBUG: letter_type: {letter_type}")
+        logger.debug(f"[BACKGROUND] DEBUG: recipient: {recipient}")
+        logger.debug(f"[BACKGROUND] DEBUG: title: {title}")
+        logger.debug(f"[BACKGROUND] DEBUG: is_first: {is_first}")
+        logger.debug(f"[BACKGROUND] DEBUG: template: {template}")
+        logger.debug(f"[BACKGROUND] DEBUG: letter_content length: {len(letter_content)} characters")
+
         # Get services
+        logger.debug(f"[BACKGROUND] DEBUG: Getting PDF service...")
         pdf_service = get_enhanced_pdf_service()
+        logger.debug(f"[BACKGROUND] DEBUG: PDF service obtained")
+
+        logger.debug(f"[BACKGROUND] DEBUG: Getting drive logger service...")
         drive_logger = get_drive_logger_service()
-        
+        logger.debug(f"[BACKGROUND] DEBUG: Drive logger service obtained")
+
         # Generate PDF
-        logger.info(f"Generating PDF for letter ID: {letter_id}")
-        pdf_result = pdf_service.generate_pdf(
-            title=title,
-            content=letter_content,
-            template_name=template
-        )
-        
-        logger.info(f"PDF generated successfully: {pdf_result.filename}")
-        
+        logger.info(f"[BACKGROUND] Generating PDF for letter ID: {letter_id}")
+        logger.debug(f"[BACKGROUND] DEBUG: Calling generate_pdf with title='{title}', template='{template}'")
+
+        try:
+            pdf_result = pdf_service.generate_pdf(
+                title=title,
+                content=letter_content,
+                template_name=template
+            )
+            logger.info(f"[BACKGROUND] PDF generated successfully: {pdf_result.filename}")
+            logger.debug(f"[BACKGROUND] DEBUG: PDF file path: {pdf_result.file_path}")
+        except Exception as pdf_error:
+            logger.error(f"[BACKGROUND] ERROR during PDF generation: {str(pdf_error)}", exc_info=True)
+            raise
+
         # Archive to Drive and log to sheets using sheet_id and google_drive_id from token
-        logger.info(f"Uploading to Drive and logging for letter ID: {letter_id} to sheet: {sheet_id}, drive: {google_drive_id}")
-        archive_result = drive_logger.save_letter_to_drive_and_log(
-            letter_file_path=pdf_result.file_path,
-            letter_content=letter_content,
-            letter_type=letter_type,
-            recipient=recipient,
-            title=title,
-            is_first=is_first,
-            sheet_id=sheet_id,  # User's Google Sheet ID from token
-            letter_id=letter_id,
-            user_email=user_email,
-            folder_id=google_drive_id  # User's Google Drive folder ID from token
-        )
-        
+        logger.info(f"[BACKGROUND] Uploading to Drive and logging for letter ID: {letter_id}")
+        logger.debug(f"[BACKGROUND] DEBUG: Calling save_letter_to_drive_and_log...")
+
+        try:
+            archive_result = drive_logger.save_letter_to_drive_and_log(
+                letter_file_path=pdf_result.file_path,
+                letter_content=letter_content,
+                letter_type=letter_type,
+                recipient=recipient,
+                title=title,
+                is_first=is_first,
+                sheet_id=sheet_id,  # User's Google Sheet ID from token
+                letter_id=letter_id,
+                user_email=user_email,
+                folder_id=google_drive_id  # User's Google Drive folder ID from token
+            )
+            logger.debug(f"[BACKGROUND] DEBUG: Archive result: {archive_result}")
+        except Exception as archive_error:
+            logger.error(f"[BACKGROUND] ERROR during archive/upload: {str(archive_error)}", exc_info=True)
+            raise
+
         # Clean up temporary PDF file
         try:
+            logger.debug(f"[BACKGROUND] DEBUG: Cleaning up temporary file: {pdf_result.file_path}")
             drive_logger.cleanup_temp_file(pdf_result.file_path)
+            logger.debug(f"[BACKGROUND] DEBUG: Cleanup completed")
         except Exception as cleanup_error:
-            logger.warning(f"Error cleaning up temporary file for {letter_id}: {cleanup_error}")
-        
-        if archive_result["status"] == "success":
-            logger.info(f"Background archiving completed successfully for letter ID: {letter_id}")
-            logger.info(f"Drive URL: {archive_result.get('file_url', 'N/A')}")
+            logger.warning(f"[BACKGROUND] Warning: Error cleaning up temporary file for {letter_id}: {cleanup_error}")
+
+        if archive_result.get("status") == "success":
+            logger.info(f"[BACKGROUND] ✅ Background archiving completed successfully for letter ID: {letter_id}")
+            logger.info(f"[BACKGROUND] Drive URL: {archive_result.get('file_url', 'N/A')}")
+            logger.debug(f"[BACKGROUND] DEBUG: Full result: {archive_result}")
         else:
-            logger.error(f"Background archiving failed for letter ID: {letter_id}: {archive_result.get('message', 'Unknown error')}")
-            
+            logger.error(f"[BACKGROUND] ❌ Background archiving failed for letter ID: {letter_id}: {archive_result.get('message', 'Unknown error')}")
+            logger.debug(f"[BACKGROUND] DEBUG: Full result: {archive_result}")
+
     except Exception as e:
-        logger.error(f"Error in background archiving for letter ID {letter_id}: {str(e)}", exc_info=True)
+        logger.error(f"[BACKGROUND] ❌ CRITICAL ERROR in background archiving for letter ID {letter_id}: {str(e)}", exc_info=True)
+        logger.debug(f"[BACKGROUND] DEBUG: Exception type: {type(e).__name__}")
 
 @archive_bp.route('/status/<letter_id>', methods=['GET'])
 def get_archive_status(letter_id: str):
