@@ -98,10 +98,12 @@ def archive_letter(user_info):
         # Start background processing
         background_thread = threading.Thread(
             target=process_letter_archive_in_background,
-            args=(template, letter_content, letter_id, letter_type, recipient, title, is_first, sheet_id, user_email, google_drive_id)
+            args=(template, letter_content, letter_id, letter_type, recipient, title, is_first, sheet_id, user_email, google_drive_id),
+            name=f"ArchiveThread-{letter_id}"
         )
-        background_thread.daemon = True
+        background_thread.daemon = False  # Changed from True - ensure thread completes before app shutdown
         background_thread.start()
+        logger.debug(f"Background archiving thread started: {background_thread.name}")
         
         # Return immediate success response
         response = ArchiveResponse(
@@ -325,10 +327,12 @@ def update_letter(user_info):
             # Start background processing with user's context
             background_thread = threading.Thread(
                 target=process_letter_update_in_background,
-                args=(update_request.letter_id, update_request.content, update_request.template, google_drive_id, sheet_id, user_email)
+                args=(update_request.letter_id, update_request.content, update_request.template, google_drive_id, sheet_id, user_email),
+                name=f"UpdateThread-{update_request.letter_id}"
             )
-            background_thread.daemon = True
+            background_thread.daemon = False  # Changed from True - ensure thread completes before app shutdown
             background_thread.start()
+            logger.debug(f"Background update thread started: {background_thread.name}")
 
             # Return immediate success response
             response = {
