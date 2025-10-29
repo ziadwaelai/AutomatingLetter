@@ -374,3 +374,142 @@ def get_submissions_stats(user_info):
         except Exception as e:
             logger.error(f"Error calculating submissions stats: {e}", exc_info=True)
             return build_error_response(f"خطأ في حساب الإحصائيات: {str(e)}", 500)
+
+
+@submissions_bp.route('/review/<submission_id>', methods=['PUT'])
+@measure_performance
+@require_auth
+def review_submission(user_info, submission_id):
+    """
+    Update review status for a submission/letter.
+
+    Path Parameters:
+        submission_id (str): The ID of the submission to review
+
+    Headers:
+        Authorization: Bearer <jwt_token>
+
+    Request Body:
+        {
+            "Review_status": "Approved" | "Rejected" | "Pending",
+            "Review_notes": "Optional review notes or comments"
+        }
+
+    Returns:
+        Success response with updated submission data
+    """
+    with ErrorContext("review_submission_api"):
+        try:
+            # Extract sheet_id and reviewer email from JWT token
+            sheet_id = user_info.get('sheet_id')
+            reviewer_email = user_info.get('user', {}).get('email', 'unknown')
+
+            if not sheet_id:
+                return build_error_response("معرف الجدول غير موجود في التوكن", 400)
+
+            logger.info(f"Review request for submission: {submission_id} by reviewer: {reviewer_email}, sheet: {sheet_id}")
+
+            # Validate request data
+            if not request.is_json:
+                return build_error_response("يجب أن يكون الطلب بصيغة JSON", 400)
+
+            data = request.get_json()
+            if not data:
+                return build_error_response("لم يتم تقديم بيانات JSON", 400)
+
+            # Extract review data
+            review_status = data.get('Review_status', '').strip()
+            review_notes = data.get('Review_notes', '').strip()
+
+            # Validate review status
+            valid_statuses = ['Approved', 'Rejected', 'Pending']
+            if not review_status or review_status not in valid_statuses:
+                return build_error_response(
+                    f"حالة المراجعة غير صحيحة. يجب أن تكون: {', '.join(valid_statuses)}",
+                    400
+                )
+
+            # Get sheets service
+            sheets_service = get_sheets_service()
+
+            # Update submission in Submissions sheet
+            try:
+                with sheets_service.get_client_context() as client:
+                    spreadsheet = client.open_by_key(sheet_id)
+                    submissions_sheet = spreadsheet.worksheet("Submissions")
+
+                    # Get all records to find the submission
+                    all_values = submissions_sheet.get_all_values()
+
+                    if not all_values:
+                        return build_error_response("ورقة Submissions فارغة", 404)
+
+                    headers = all_values[0]
+
+                    # Find column indices for review fields
+                    review_status_col = None
+                    review_notes_col = None
+                    reviewer_email_col = None
+                    id_col = None
+
+                    for idx, header in enumerate(headers):
+                        header_lower = header.strip().lower()
+                        if header_lower == 'id':
+                            id_col = idx
+                        elif header_lower == 'review_status':
+                            review_status_col = idx
+                        elif header_lower == 'review_notes':
+                            review_notes_col = idx
+                        elif header_lower == 'reviewer_email':
+                            reviewer_email_col = idx
+
+                    # Check if all required columns exist
+                    if id_col is None:
+                        return build_error_response("عمود ID غير موجود في الورقة", 500)
+                    if review_status_col is None:
+                        return build_error_response("عمود Review_status غير موجود في الورقة", 500)
+                    if review_notes_col is None:
+                        return build_error_response("عمود Review_notes غير موجود في الورقة", 500)
+                    if reviewer_email_col is None:
+                        return build_error_response("عمود Reviewer_email غير موجود في الورقة", 500)
+
+                    # Find the row with matching submission ID
+                    submission_row_index = None
+                    normalized_search_id = submission_id.strip()
+
+                    for row_idx, row in enumerate(all_values[1:], start=2):  # Start from row 2 (skip header)
+                        if id_col < len(row):
+                            sheet_id_value = str(row[id_col]).strip()
+                            if sheet_id_value == normalized_search_id:
+                                submission_row_index = row_idx
+                                break
+
+                    if submission_row_index is None:
+                        logger.warning(f"Submission with ID '{submission_id}' not found")
+                        return build_error_response(f"لم يتم العثور على الخطاب برقم: {submission_id}", 404)
+
+                    # Update the review fields in the worksheet
+                    # Note: gspread uses 1-indexed row and column numbers
+                    submissions_sheet.update_cell(submission_row_index, review_status_col + 1, review_status)
+                    submissions_sheet.update_cell(submission_row_index, review_notes_col + 1, review_notes)
+                    submissions_sheet.update_cell(submission_row_index, reviewer_email_col + 1, reviewer_email)
+
+                    logger.info(f"Successfully updated review for submission {submission_id}: status={review_status}, reviewer={reviewer_email}")
+
+                    return jsonify({
+                        "status": "success",
+                        "message": "تم تحديث حالة المراجعة بنجاح",
+                        "submission_id": submission_id,
+                        "review_status": review_status,
+                        "review_notes": review_notes,
+                        "reviewer_email": reviewer_email,
+                        "updated_row": submission_row_index
+                    }), 200
+
+            except Exception as e:
+                logger.error(f"Error updating submission review: {e}")
+                return build_error_response(f"خطأ في تحديث المراجعة: {str(e)}", 500)
+
+        except Exception as e:
+            logger.error(f"Review submission failed: {e}", exc_info=True)
+            return build_error_response(f"خطأ في معالجة المراجعة: {str(e)}", 500)

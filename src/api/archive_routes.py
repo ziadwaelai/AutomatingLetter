@@ -262,26 +262,56 @@ def health_check():
 
 @archive_bp.route('/update', methods=['PUT'])
 @measure_performance
-def update_letter():
+@require_auth
+def update_letter(user_info):
     """
     Update existing letter: regenerate PDF and update Google Sheets row.
-    
+    Requires JWT authentication.
+
+    Headers:
+        Authorization: Bearer <jwt_token>
+
     Request Body:
         UpdateLetterRequest: Contains letter_id, content, and optional template
-        
+
     Returns:
         Success response with processing status
     """
     with ErrorContext("update_letter_api"):
         try:
+            # Extract sheet_id and google_drive_id from JWT token
+            sheet_id = user_info.get('sheet_id')
+            google_drive_id = user_info.get('google_drive_id')
+            user_email = user_info.get('user', {}).get('email', 'unknown')
+
+            if not sheet_id:
+                return build_error_response("معرف الجدول غير موجود في التوكن", 400)
+
+            if not google_drive_id:
+                return build_error_response("معرف مجلد Google Drive غير موجود في التوكن", 400)
+
+            # Check if JWT token is expired
+            import time
+            token_exp = user_info.get('exp')
+            if token_exp:
+                current_time = time.time()
+                if current_time > token_exp:
+                    logger.warning(f"JWT token expired for user: {user_email}")
+                    return jsonify({
+                        "status": "error",
+                        "message": "انتهت صلاحية التوكن. يرجى تسجيل الدخول مرة أخرى"
+                    }), 401
+
+            logger.info(f"Letter update request from user: {user_email}, sheet: {sheet_id}, drive: {google_drive_id}")
+
             # Validate request data
             if not request.is_json:
                 return jsonify({"error": "يجب أن يكون الطلب بصيغة JSON"}), 400
-            
+
             data = request.get_json()
             if not data:
                 return jsonify({"error": "لم يتم تقديم بيانات JSON"}), 400
-            
+
             # Parse and validate request
             try:
                 update_request = UpdateLetterRequest(**data)
@@ -291,20 +321,15 @@ def update_letter():
                     "error": "بيانات الطلب غير صحيحة",
                     "details": e.errors()
                 }), 400
-            
-            # Get Google Drive folder ID from environment variables
-            folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
-            if not folder_id:
-                return build_error_response("لم يتم تكوين معرف مجلد Google Drive", 500)
-            
-            # Start background processing
+
+            # Start background processing with user's context
             background_thread = threading.Thread(
                 target=process_letter_update_in_background,
-                args=(update_request.letter_id, update_request.content, update_request.template, folder_id)
+                args=(update_request.letter_id, update_request.content, update_request.template, google_drive_id, sheet_id, user_email)
             )
             background_thread.daemon = True
             background_thread.start()
-            
+
             # Return immediate success response
             response = {
                 "status": "success",
@@ -313,10 +338,10 @@ def update_letter():
                 "letter_id": update_request.letter_id,
                 "template": update_request.template
             }
-            
-            logger.info(f"Letter update initiated for ID: {update_request.letter_id}")
+
+            logger.info(f"Letter update initiated for ID: {update_request.letter_id} (sheet: {sheet_id})")
             return jsonify(response), 200
-            
+
         except ValidationError as e:
             logger.error(f"Validation error: {e}")
             return jsonify(build_error_response(e)), 400
@@ -326,39 +351,45 @@ def update_letter():
 
 def process_letter_update_in_background(
     letter_id: str,
-    new_content: str, 
+    new_content: str,
     template: str,
-    folder_id: str
+    google_drive_id: str,
+    sheet_id: str,
+    user_email: str
 ) -> None:
     """
     Process letter update in background thread.
-    
+
     Args:
         letter_id: ID of the letter to update
         new_content: New letter content
         template: Template name for PDF generation
-        folder_id: Google Drive folder ID
+        google_drive_id: User's Google Drive folder ID from JWT token
+        sheet_id: User's Google Sheet ID from JWT token
+        user_email: User email from JWT token (for audit logging)
     """
     try:
-        logger.info(f"Starting background update for letter ID: {letter_id}")
-        
+        logger.info(f"Starting background update for letter ID: {letter_id} (sheet: {sheet_id}, user: {user_email})")
+
         # Get drive logger service
         drive_logger = get_drive_logger_service()
-        
+
         # Update letter: generate new PDF, upload to Drive, and update sheet
         result = drive_logger.update_letter_pdf_and_log(
             letter_id=letter_id,
             new_content=new_content,
-            folder_id=folder_id,
-            template=template
+            folder_id=google_drive_id,
+            template=template,
+            sheet_id=sheet_id,
+            user_email=user_email
         )
-        
+
         if result["status"] == "success":
             logger.info(f"Background update completed successfully for letter ID: {letter_id}")
             logger.info(f"New Drive URL: {result.get('file_url', 'N/A')}")
         else:
             logger.error(f"Background update failed for letter ID: {letter_id}: {result.get('message', 'Unknown error')}")
-            
+
     except Exception as e:
         logger.error(f"Error in background update for letter ID {letter_id}: {str(e)}", exc_info=True)
 
