@@ -149,17 +149,17 @@ def get_submissions(user_info):
             # Fetch submissions data from user's sheet
             logger.debug(f"Fetching Submissions sheet from user's sheet: {sheet_id}")
             try:
-                spreadsheet = sheets_service.client.open_by_key(sheet_id)
-                worksheet = spreadsheet.worksheet("Submissions")
+                with sheets_service.get_client_context() as client:
+                    spreadsheet = client.open_by_key(sheet_id)
+                    worksheet = spreadsheet.worksheet("Submissions")
+                    # Get all data from sheet (must be inside context to keep connection valid)
+                    all_values = worksheet.get_all_values()
             except Exception as e:
                 logger.warning(f"Submissions sheet not found in sheet {sheet_id}: {e}")
                 return build_error_response(
                     "لم يتم العثور على ورقة 'Submissions' في الجدول",
                     404
                 )
-
-            # Get all data from sheet
-            all_values = worksheet.get_all_values()
 
             if not all_values:
                 return build_error_response("ورقة Submissions فارغة", 404)
@@ -235,14 +235,14 @@ def get_submission_by_id(user_info, submission_id):
 
             # Fetch submissions data
             try:
-                spreadsheet = sheets_service.client.open_by_key(sheet_id)
-                worksheet = spreadsheet.worksheet("Submissions")
+                with sheets_service.get_client_context() as client:
+                    spreadsheet = client.open_by_key(sheet_id)
+                    worksheet = spreadsheet.worksheet("Submissions")
+                    # Get all data (must be inside context to keep connection valid)
+                    all_values = worksheet.get_all_values()
             except Exception as e:
                 logger.warning(f"Submissions sheet not found: {e}")
                 return build_error_response("لم يتم العثور على ورقة Submissions", 404)
-
-            # Get all data
-            all_values = worksheet.get_all_values()
 
             if not all_values:
                 return build_error_response("ورقة Submissions فارغة", 404)
@@ -313,14 +313,14 @@ def get_submissions_stats(user_info):
 
             # Fetch submissions data
             try:
-                spreadsheet = sheets_service.client.open_by_key(sheet_id)
-                worksheet = spreadsheet.worksheet("Submissions")
+                with sheets_service.get_client_context() as client:
+                    spreadsheet = client.open_by_key(sheet_id)
+                    worksheet = spreadsheet.worksheet("Submissions")
+                    # Get all data (must be inside context to keep connection valid)
+                    all_values = worksheet.get_all_values()
             except Exception as e:
                 logger.warning(f"Submissions sheet not found: {e}")
                 return build_error_response("لم يتم العثور على ورقة Submissions", 404)
-
-            # Get all data
-            all_values = worksheet.get_all_values()
 
             if not all_values:
                 return build_error_response("ورقة Submissions فارغة", 404)

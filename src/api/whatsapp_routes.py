@@ -74,65 +74,66 @@ def send_whatsapp_letter():
                 return jsonify({"error": "Validation error", "details": e.errors()}), 400
             
             sheets_service = get_sheets_service()
-            
+
             # Step 1: Check WhatsApp sheet for existing assignment
             logger.info(f"Checking WhatsApp sheet for phone number: {send_request.phone_number}")
-            
+
             try:
-                # Get all records from WhatsApp sheet
-                whatsapp_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("WhatApp")
-                whatsapp_records = whatsapp_worksheet.get_all_records()
-                
-                # Find the record with matching phone number
-                target_row = None
-                existing_letter_id = None
-                Name=None
-                
-                for idx, record in enumerate(whatsapp_records):
-                    if str(record.get('Number', '')).strip() == str(send_request.phone_number).strip():
-                        target_row = idx + 2  # +2 because records start from row 2 (row 1 is header)
-                        existing_letter_id = str(record.get('Letter_Id', '')).strip()
-                        Name=str(record.get('Name', '')).strip()
-                        break
-                
-                if target_row is None:
-                    return jsonify({
-                        "error": "Phone number not found in WhatsApp sheet",
-                        "message": "The provided phone number is not registered"
-                    }), 404
-                
-                # Step 2: Check if already assigned
-                if existing_letter_id and existing_letter_id != "":
-                    return jsonify({
-                        "error": "Phone number already assigned",
-                        "message": f"This phone number is already assigned to letter {existing_letter_id}. The signer is busy now."
-                    }), 409
-                
-                # Step 3: Assign letter_id to the phone number
-                logger.info(f"Assigning letter_id {send_request.letter_id} to phone number {send_request.phone_number} at row {target_row}")
-                whatsapp_worksheet.update_cell(target_row, 3, send_request.letter_id)  # Column C (Letter_id)
-                
-                # Step 4: Get letter data from Submissions sheet
-                logger.info(f"Fetching letter data for ID: {send_request.letter_id}")
-                
-                submissions_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("Submissions")
-                submissions_records = submissions_worksheet.get_all_records()
-                
-                letter_data = None
-                for record in submissions_records:
-                    if str(record.get('ID', '')).strip() == str(send_request.letter_id).strip():
-                        letter_data = record
-                        break
-                
-                if not letter_data:
-                    # Rollback: Clear the letter_id we just assigned
-                    whatsapp_worksheet.update_cell(target_row, 3, "")
-                    return jsonify({
-                        "error": "Letter not found",
-                        "message": f"Letter with ID {send_request.letter_id} not found in submissions"
-                    }), 404
-                
-                # Step 5: Send to webhook
+                # Get all records from WhatsApp sheet using context manager
+                with sheets_service.get_client_context() as client:
+                    whatsapp_worksheet = client.open(sheets_service.config.database.spreadsheet_name).worksheet("WhatApp")
+                    whatsapp_records = whatsapp_worksheet.get_all_records()
+
+                    # Find the record with matching phone number
+                    target_row = None
+                    existing_letter_id = None
+                    Name=None
+
+                    for idx, record in enumerate(whatsapp_records):
+                        if str(record.get('Number', '')).strip() == str(send_request.phone_number).strip():
+                            target_row = idx + 2  # +2 because records start from row 2 (row 1 is header)
+                            existing_letter_id = str(record.get('Letter_Id', '')).strip()
+                            Name=str(record.get('Name', '')).strip()
+                            break
+
+                    if target_row is None:
+                        return jsonify({
+                            "error": "Phone number not found in WhatsApp sheet",
+                            "message": "The provided phone number is not registered"
+                        }), 404
+
+                    # Step 2: Check if already assigned
+                    if existing_letter_id and existing_letter_id != "":
+                        return jsonify({
+                            "error": "Phone number already assigned",
+                            "message": f"This phone number is already assigned to letter {existing_letter_id}. The signer is busy now."
+                        }), 409
+
+                    # Step 3: Assign letter_id to the phone number
+                    logger.info(f"Assigning letter_id {send_request.letter_id} to phone number {send_request.phone_number} at row {target_row}")
+                    whatsapp_worksheet.update_cell(target_row, 3, send_request.letter_id)  # Column C (Letter_id)
+
+                    # Step 4: Get letter data from Submissions sheet
+                    logger.info(f"Fetching letter data for ID: {send_request.letter_id}")
+
+                    submissions_worksheet = client.open(sheets_service.config.database.spreadsheet_name).worksheet("Submissions")
+                    submissions_records = submissions_worksheet.get_all_records()
+
+                    letter_data = None
+                    for record in submissions_records:
+                        if str(record.get('ID', '')).strip() == str(send_request.letter_id).strip():
+                            letter_data = record
+                            break
+
+                    if not letter_data:
+                        # Rollback: Clear the letter_id we just assigned
+                        whatsapp_worksheet.update_cell(target_row, 3, "")
+                        return jsonify({
+                            "error": "Letter not found",
+                            "message": f"Letter with ID {send_request.letter_id} not found in submissions"
+                        }), 404
+
+                # Step 5: Send to webhook (outside context is OK - just using data we already fetched)
                 webhook_url = "https://superpowerss.app.n8n.cloud/webhook/send"
                 webhook_payload = {
                     "phone_number": send_request.phone_number,
@@ -140,9 +141,9 @@ def send_whatsapp_letter():
                     "letter_id": send_request.letter_id,
                     "letter_data": letter_data
                 }
-                
+
                 logger.info(f"Sending letter data to webhook: {webhook_url}")
-                
+
                 try:
                     webhook_response = requests.post(
                         webhook_url,
@@ -151,21 +152,27 @@ def send_whatsapp_letter():
                         headers={'Content-Type': 'application/json'}
                     )
                     webhook_response.raise_for_status()
-                    
+
                     logger.info(f"Successfully sent letter {send_request.letter_id} to phone {send_request.phone_number}")
-                    
+
                     return jsonify({
                         "message": "Letter sent successfully via WhatsApp",
                         "letter_id": send_request.letter_id,
                         "phone_number": send_request.phone_number,
                         "webhook_status": webhook_response.status_code
                     }), 200
-                    
+
                 except requests.RequestException as e:
-                    # Rollback: Clear the letter_id we assigned
-                    whatsapp_worksheet.update_cell(target_row, 3, "")
+                    # Rollback: need to clear the letter_id - get fresh connection
                     logger.error(f"Webhook request failed: {e}")
-                    
+
+                    try:
+                        with sheets_service.get_client_context() as rollback_client:
+                            rollback_worksheet = rollback_client.open(sheets_service.config.database.spreadsheet_name).worksheet("WhatApp")
+                            rollback_worksheet.update_cell(target_row, 3, "")
+                    except Exception as rollback_error:
+                        logger.error(f"Failed to rollback letter assignment: {rollback_error}")
+
                     return jsonify({
                         "error": "Webhook delivery failed",
                         "message": f"Failed to send to webhook: {str(e)}"
@@ -217,37 +224,38 @@ def update_whatsapp_status():
                 return jsonify({"error": "Validation error", "details": e.errors()}), 400
             
             sheets_service = get_sheets_service()
-            
+
             # Step 1: Get letter_id from WhatsApp sheet
             logger.info(f"Getting letter_id for phone number {status_request.phone_number}")
-            
+
             try:
-                whatsapp_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("WhatApp")
-                whatsapp_records = whatsapp_worksheet.get_all_records()
-                
-                target_row = None
-                letter_id = None
-                
-                for idx, record in enumerate(whatsapp_records):
-                    if str(record.get('Number', '')).strip() == str(status_request.phone_number).strip():
-                        target_row = idx + 2  # +2 because records start from row 2
-                        letter_id = str(record.get('Letter_Id', '')).strip()
-                        break
-                
-                if target_row is None:
-                    return jsonify({
-                        "error": "Phone number not found",
-                        "message": f"Phone number {status_request.phone_number} not found in WhatsApp sheet"
-                    }), 404
-                
-                if not letter_id or letter_id == "":
-                    return jsonify({
-                        "error": "No letter assigned",
-                        "message": f"Phone number {status_request.phone_number} has no letter assigned"
-                    }), 400
-                
-                logger.info(f"Found letter_id {letter_id} for phone number {status_request.phone_number}")
-                
+                with sheets_service.get_client_context() as client:
+                    whatsapp_worksheet = client.open(sheets_service.config.database.spreadsheet_name).worksheet("WhatApp")
+                    whatsapp_records = whatsapp_worksheet.get_all_records()
+
+                    target_row = None
+                    letter_id = None
+
+                    for idx, record in enumerate(whatsapp_records):
+                        if str(record.get('Number', '')).strip() == str(status_request.phone_number).strip():
+                            target_row = idx + 2  # +2 because records start from row 2
+                            letter_id = str(record.get('Letter_Id', '')).strip()
+                            break
+
+                    if target_row is None:
+                        return jsonify({
+                            "error": "Phone number not found",
+                            "message": f"Phone number {status_request.phone_number} not found in WhatsApp sheet"
+                        }), 404
+
+                    if not letter_id or letter_id == "":
+                        return jsonify({
+                            "error": "No letter assigned",
+                            "message": f"Phone number {status_request.phone_number} has no letter assigned"
+                        }), 400
+
+                    logger.info(f"Found letter_id {letter_id} for phone number {status_request.phone_number}")
+
             except Exception as e:
                 logger.error(f"Error accessing WhatsApp sheet: {e}")
                 return jsonify({
@@ -278,12 +286,14 @@ def update_whatsapp_status():
             
             # Step 3: Clear letter_id from WhatsApp sheet
             logger.info(f"Clearing letter_id for phone number {status_request.phone_number}")
-            
+
             try:
-                # Clear the letter_id (column C)
-                whatsapp_worksheet.update_cell(target_row, 3, "")
+                # Clear the letter_id (column C) - use new context since first context ended
+                with sheets_service.get_client_context() as client:
+                    clear_worksheet = client.open(sheets_service.config.database.spreadsheet_name).worksheet("WhatApp")
+                    clear_worksheet.update_cell(target_row, 3, "")
                 logger.info(f"Successfully cleared letter_id for phone number {status_request.phone_number}")
-                
+
                 return jsonify({
                     "message": "Status updated and WhatsApp assignment cleared successfully",
                     "letter_id": letter_id,
@@ -292,7 +302,7 @@ def update_whatsapp_status():
                     "submissions_updated": True,
                     "whatsapp_cleared": True
                 }), 200
-                
+
             except Exception as e:
                 logger.error(f"Failed to clear WhatsApp assignment: {e}")
                 # Main update was successful, so return partial success
@@ -334,34 +344,35 @@ def get_letter_by_id(letter_id: str):
             letter_id = letter_id.strip()
             
             sheets_service = get_sheets_service()
-            
+
             # Get letter data from Submissions sheet
             logger.info(f"Fetching letter data for ID: {letter_id}")
-            
+
             try:
-                submissions_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("Submissions")
-                submissions_records = submissions_worksheet.get_all_records()
-                
-                letter_data = None
-                for record in submissions_records:
-                    if str(record.get('ID', '')).strip() == letter_id:
-                        letter_data = record
-                        break
-                
-                if not letter_data:
-                    return jsonify({
-                        "error": "Letter not found",
-                        "message": f"Letter with ID {letter_id} not found in submissions"
-                    }), 404
-                
+                with sheets_service.get_client_context() as client:
+                    submissions_worksheet = client.open(sheets_service.config.database.spreadsheet_name).worksheet("Submissions")
+                    submissions_records = submissions_worksheet.get_all_records()
+
+                    letter_data = None
+                    for record in submissions_records:
+                        if str(record.get('ID', '')).strip() == letter_id:
+                            letter_data = record
+                            break
+
+                    if not letter_data:
+                        return jsonify({
+                            "error": "Letter not found",
+                            "message": f"Letter with ID {letter_id} not found in submissions"
+                        }), 404
+
                 logger.info(f"Successfully retrieved letter data for ID: {letter_id}")
-                
+
                 return jsonify({
                     "message": "Letter data retrieved successfully",
                     "letter_id": letter_id,
                     "letter_data": letter_data
                 }), 200
-                
+
             except Exception as e:
                 logger.error(f"Error accessing Google Sheets: {e}")
                 return jsonify({
@@ -397,50 +408,51 @@ def get_assigned_letter_id(phone_number: str):
             phone_number = phone_number.strip()
             
             sheets_service = get_sheets_service()
-            
+
             # Get assigned letter_id from WhatsApp sheet
             logger.info(f"Getting assigned letter_id for phone number: {phone_number}")
-            
+
             try:
-                whatsapp_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("WhatApp")
-                whatsapp_records = whatsapp_worksheet.get_all_records()
-                
-                # Find the record with matching phone number
-                assigned_letter_id = None
-                name = None
-                
-                for record in whatsapp_records:
-                    if str(record.get('Number', '')).strip() == str(phone_number).strip():
-                        assigned_letter_id = str(record.get('Letter_Id', '')).strip()
-                        name = str(record.get('Name', '')).strip()
-                        break
-                
-                if assigned_letter_id is None:
+                with sheets_service.get_client_context() as client:
+                    whatsapp_worksheet = client.open(sheets_service.config.database.spreadsheet_name).worksheet("WhatApp")
+                    whatsapp_records = whatsapp_worksheet.get_all_records()
+
+                    # Find the record with matching phone number
+                    assigned_letter_id = None
+                    name = None
+
+                    for record in whatsapp_records:
+                        if str(record.get('Number', '')).strip() == str(phone_number).strip():
+                            assigned_letter_id = str(record.get('Letter_Id', '')).strip()
+                            name = str(record.get('Name', '')).strip()
+                            break
+
+                    if assigned_letter_id is None:
+                        return jsonify({
+                            "error": "Phone number not found",
+                            "message": f"Phone number {phone_number} not found in WhatsApp sheet"
+                        }), 404
+
+                    # Check if letter is assigned
+                    if not assigned_letter_id or assigned_letter_id == "":
+                        return jsonify({
+                            "message": "No letter assigned",
+                            "phone_number": phone_number,
+                            "name": name,
+                            "assigned_letter_id": None,
+                            "is_assigned": False
+                        }), 200
+
+                    logger.info(f"Found assigned letter_id {assigned_letter_id} for phone number {phone_number}")
+
                     return jsonify({
-                        "error": "Phone number not found",
-                        "message": f"Phone number {phone_number} not found in WhatsApp sheet"
-                    }), 404
-                
-                # Check if letter is assigned
-                if not assigned_letter_id or assigned_letter_id == "":
-                    return jsonify({
-                        "message": "No letter assigned",
+                        "message": "Letter assignment found",
                         "phone_number": phone_number,
                         "name": name,
-                        "assigned_letter_id": None,
-                        "is_assigned": False
+                        "assigned_letter_id": assigned_letter_id,
+                        "is_assigned": True
                     }), 200
-                
-                logger.info(f"Found assigned letter_id {assigned_letter_id} for phone number {phone_number}")
-                
-                return jsonify({
-                    "message": "Letter assignment found",
-                    "phone_number": phone_number,
-                    "name": name,
-                    "assigned_letter_id": assigned_letter_id,
-                    "is_assigned": True
-                }), 200
-                
+
             except Exception as e:
                 logger.error(f"Error accessing WhatsApp sheet: {e}")
                 return jsonify({
