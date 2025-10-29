@@ -458,8 +458,13 @@ def get_letter_by_id(letter_id, user_info):
 
                     # Find the letter with matching ID
                     letter_record = None
+                    # Normalize the search ID for comparison (strip whitespace)
+                    normalized_search_id = letter_id.strip()
+
                     for record in records:
-                        if record.get('ID') == letter_id:
+                        # Normalize the sheet ID for comparison (strip whitespace)
+                        sheet_id_value = str(record.get('ID', '')).strip()
+                        if sheet_id_value == normalized_search_id:
                             letter_record = record
                             break
 
@@ -575,8 +580,13 @@ def delete_letter_by_id(letter_id, user_info):
                     # Find the letter with matching ID
                     letter_row_index = None
                     letter_record = None
+                    # Normalize the search ID for comparison (strip whitespace)
+                    normalized_search_id = letter_id.strip()
+
                     for idx, record in enumerate(records):  # idx starts from 0
-                        if record.get('ID') == letter_id:
+                        # Normalize the sheet ID for comparison (strip whitespace)
+                        sheet_id_value = str(record.get('ID', '')).strip()
+                        if sheet_id_value == normalized_search_id:
                             letter_record = record
                             letter_row_index = idx + 2  # +2 because row 1 is headers, +1 for 1-indexed in gspread
                             break
