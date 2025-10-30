@@ -40,7 +40,7 @@ class GenerateLetterRequest(BaseModel):
     recipient: str = Field(..., min_length=1, max_length=200)
     prompt: str = Field(..., min_length=10, max_length=2000)
     is_first: bool = Field(..., description="Whether this is the first communication")
-    member_name: Optional[str] = Field(None, max_length=100)
+    member_email: Optional[str] = Field(None, max_length=100, description="Email of the member/sender")
     recipient_job_title: Optional[str] = Field(None, max_length=100)
     recipient_title: Optional[str] = Field(None, max_length=50)
     organization_name: Optional[str] = Field(None, max_length=100)

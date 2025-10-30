@@ -14,7 +14,7 @@ from ..models import (
     ErrorResponse,
     SuccessResponse
 )
-from ..services import get_letter_service, get_sheets_service, LetterGenerationContext
+from ..services import get_letter_service, get_sheets_service, LetterGenerationContext, get_user_management_service
 from ..services.usage_tracking_service import get_usage_tracking_service
 from ..utils import (
     ErrorContext,
@@ -115,22 +115,71 @@ def generate_letter(user_info):
             
             # Get letter category for loading instructions and template
             letter_category = letter_request.category.value
-            member_name = letter_request.member_name or ""
-            
+            member_email = letter_request.member_email or ""
+
+            # Fetch member info from Users sheet if member_email is provided
+            member_info_text = ""
+            if member_email:
+                try:
+                    sheets_service = get_sheets_service()
+                    user_service = get_user_management_service()
+
+                    # Get the client info
+                    client_info = user_service.get_client_by_email(user_email)
+                    if client_info:
+                        # Fetch user details from the client's Users sheet
+                        logger.debug(f"Fetching member info for email: {member_email}")
+                        with sheets_service.get_client_context() as client:
+                            spreadsheet = client.open_by_key(client_info.sheet_id)
+
+                            # Try to get the "Users" worksheet
+                            try:
+                                worksheet = spreadsheet.worksheet("Users")
+                            except:
+                                worksheet = spreadsheet.get_worksheet(0)
+
+                            rows = worksheet.get_all_values()
+                            headers = rows[0] if rows else []
+
+                            # Find the user by email (first column usually)
+                            for row in rows[1:]:
+                                if len(row) > 0 and row[0].strip() == member_email.strip():
+                                    # Extract user info
+                                    user_data = {}
+                                    for idx, header in enumerate(headers):
+                                        if idx < len(row):
+                                            user_data[header.lower()] = row[idx]
+
+                                    # Build member info string
+                                    name = user_data.get('full_name', user_data.get('name', ''))
+                                    phone = user_data.get('phonenumber', user_data.get('phone_number', ''))
+                                    email = user_data.get('email', member_email)
+
+                                    member_info_text = f"الاسم: {name}\nالبريد الإلكتروني: {email}\nرقم الهاتف: {phone}"
+                                    logger.debug(f"Found member info for {member_email}: {member_info_text}")
+                                    break
+
+                            if not member_info_text:
+                                logger.warning(f"Member email '{member_email}' not found in Users sheet")
+                                member_info_text = f"البريد الإلكتروني: {member_email}"
+                except Exception as e:
+                    logger.warning(f"Error fetching member info: {e}")
+                    member_info_text = f"البريد الإلكتروني: {member_email}"
+
             # Get letter configuration from user's sheet using old behavior (Ideal, Instructions, Info sheets)
             try:
                 sheets_service = get_sheets_service()
-                
+
                 # Load from user's sheets using the same old behavior
                 # Searches: Ideal (template), Instructions (instructions), Info (member info)
                 letter_config = sheets_service.get_letter_config_by_category_from_sheet_id(
                     sheet_id=sheet_id,
                     category=letter_category,
-                    member_name=member_name
+                    member_name=""  # No longer using member_name
                 )
-                
+
                 logger.info(f"Loaded letter config from sheet {sheet_id} for category: {letter_category}")
-                
+
             except Exception as e:
                 logger.warning(f"Could not fetch letter config from user's sheet: {e}")
                 # Fallback to defaults
@@ -141,10 +190,13 @@ def generate_letter(user_info):
                 }
             
             # Create generation context
+            # Use fetched member_info if available, otherwise fall back to config
+            final_member_info = member_info_text if member_info_text else letter_config.get("member_info", "غير محدد")
+
             context = LetterGenerationContext(
                 user_prompt=letter_request.prompt,
                 recipient=letter_request.recipient,
-                member_info=letter_config.get("member_info", "غير محدد"),
+                member_info=final_member_info,
                 is_first_contact=letter_request.is_first,
                 reference_letter=letter_config.get("letter"),
                 category=letter_request.category.value,
