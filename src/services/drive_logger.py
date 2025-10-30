@@ -255,47 +255,48 @@ class DriveLoggerService:
             
             # First, get the current file URL from Google Sheets to extract the old file ID
             try:
-                worksheet = self.sheets_service.client.open(spreadsheet_name).worksheet(worksheet_name)
-                all_values = worksheet.get_all_values()
-                headers = all_values[0]
-                header_map = {h.strip(): idx for idx, h in enumerate(headers)}
-                
-                old_file_url = None
-                old_file_id = None
-                original_filename = None
-                
-                # Find the current row and get the old file URL
-                if "ID" in header_map and "URL" in header_map:
-                    id_col_index = header_map["ID"]
-                    url_col_index = header_map["URL"]
-                    
-                    for row in all_values[1:]:
-                        if id_col_index < len(row) and row[id_col_index].strip() == letter_id.strip():
-                            if url_col_index < len(row):
-                                old_file_url = row[url_col_index].strip()
-                                # Extract file ID from Google Drive URL
-                                if "/d/" in old_file_url:
-                                    old_file_id = old_file_url.split("/d/")[1].split("/")[0]
-                                    logger.info(f"Found old file ID: {old_file_id}")
-                                break
-                
-                # Get original filename from Drive if we have the file ID
-                if old_file_id:
-                    try:
-                        creds = service_account.Credentials.from_service_account_file(
-                            self.service_account_file, scopes=self.scopes
-                        )
-                        drive_service = build('drive', 'v3', credentials=creds)
-                        
-                        # Get the original filename
-                        file_metadata = drive_service.files().get(fileId=old_file_id, fields='name').execute()
-                        original_filename = file_metadata.get('name')
-                        logger.info(f"Original filename: {original_filename}")
-                        
-                    except Exception as e:
-                        logger.warning(f"Could not get original filename: {e}")
-                        original_filename = f"letter_{letter_id}.pdf"
-                
+                with self.sheets_service.get_client_context() as client:
+                    worksheet = client.open(spreadsheet_name).worksheet(worksheet_name)
+                    all_values = worksheet.get_all_values()
+                    headers = all_values[0]
+                    header_map = {h.strip(): idx for idx, h in enumerate(headers)}
+
+                    old_file_url = None
+                    old_file_id = None
+                    original_filename = None
+
+                    # Find the current row and get the old file URL
+                    if "ID" in header_map and "URL" in header_map:
+                        id_col_index = header_map["ID"]
+                        url_col_index = header_map["URL"]
+
+                        for row in all_values[1:]:
+                            if id_col_index < len(row) and row[id_col_index].strip() == letter_id.strip():
+                                if url_col_index < len(row):
+                                    old_file_url = row[url_col_index].strip()
+                                    # Extract file ID from Google Drive URL
+                                    if "/d/" in old_file_url:
+                                        old_file_id = old_file_url.split("/d/")[1].split("/")[0]
+                                        logger.info(f"Found old file ID: {old_file_id}")
+                                    break
+
+                    # Get original filename from Drive if we have the file ID
+                    if old_file_id:
+                        try:
+                            creds = service_account.Credentials.from_service_account_file(
+                                self.service_account_file, scopes=self.scopes
+                            )
+                            drive_service = build('drive', 'v3', credentials=creds)
+
+                            # Get the original filename
+                            file_metadata = drive_service.files().get(fileId=old_file_id, fields='name').execute()
+                            original_filename = file_metadata.get('name')
+                            logger.info(f"Original filename: {original_filename}")
+
+                        except Exception as e:
+                            logger.warning(f"Could not get original filename: {e}")
+                            original_filename = f"letter_{letter_id}.pdf"
+
             except Exception as e:
                 logger.warning(f"Could not retrieve old file info: {e}")
                 original_filename = f"letter_{letter_id}.pdf"

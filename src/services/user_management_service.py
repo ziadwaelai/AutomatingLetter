@@ -425,59 +425,60 @@ class UserManagementService:
         """
         with ErrorContext("get_user_details_from_client_sheet", {"sheet_id": sheet_id, "email": email}):
             try:
-                # Open the client's spreadsheet
-                spreadsheet = self.client.open_by_key(sheet_id)
+                # Open the client's spreadsheet using context manager
+                with self.get_client_context() as client:
+                    spreadsheet = client.open_by_key(sheet_id)
 
-                # Try to get the "Users" worksheet
-                try:
-                    worksheet = spreadsheet.worksheet("Users")
-                except gspread.WorksheetNotFound:
-                    logger.warning(f"Users worksheet not found in sheet {sheet_id}")
+                    # Try to get the "Users" worksheet
+                    try:
+                        worksheet = spreadsheet.worksheet("Users")
+                    except gspread.WorksheetNotFound:
+                        logger.warning(f"Users worksheet not found in sheet {sheet_id}")
+                        return None
+
+                    # Get all values
+                    all_values = worksheet.get_all_values()
+                    if not all_values or len(all_values) < 2:
+                        logger.warning(f"Users worksheet is empty in sheet {sheet_id}")
+                        return None
+
+                    # Parse headers
+                    headers = [h.strip().lower() for h in all_values[0]]
+
+                    # Find column indices
+                    try:
+                        email_idx = headers.index("email")
+                        full_name_idx = headers.index("full_name")
+                        role_idx = headers.index("role")
+                        status_idx = headers.index("status")
+                        created_at_idx = headers.index("created_at")
+                        password_idx = headers.index("password")
+                    except ValueError as e:
+                        logger.error(f"Users sheet missing required column in {sheet_id}: {e}")
+                        return None
+
+                    # Search for the user email
+                    email_search = email.strip().lower()
+                    for row in all_values[1:]:  # Skip header row
+                        if len(row) <= email_idx:
+                            continue
+
+                        row_email = row[email_idx].strip().lower() if email_idx < len(row) else ""
+                        if row_email == email_search:
+                            # Found the user
+                            user_info = UserInfo(
+                                email=row[email_idx].strip() if email_idx < len(row) else "",
+                                full_name=row[full_name_idx].strip() if full_name_idx < len(row) else "",
+                                role=row[role_idx].strip() if role_idx < len(row) else "",
+                                status=row[status_idx].strip() if status_idx < len(row) else "",
+                                created_at=row[created_at_idx].strip() if created_at_idx < len(row) else "",
+                                password=row[password_idx].strip() if password_idx < len(row) else ""
+                            )
+                            logger.info(f"User details found for {email} in sheet {sheet_id}")
+                            return user_info
+
+                    logger.warning(f"User {email} not found in Users worksheet of sheet {sheet_id}")
                     return None
-
-                # Get all values
-                all_values = worksheet.get_all_values()
-                if not all_values or len(all_values) < 2:
-                    logger.warning(f"Users worksheet is empty in sheet {sheet_id}")
-                    return None
-
-                # Parse headers
-                headers = [h.strip().lower() for h in all_values[0]]
-
-                # Find column indices
-                try:
-                    email_idx = headers.index("email")
-                    full_name_idx = headers.index("full_name")
-                    role_idx = headers.index("role")
-                    status_idx = headers.index("status")
-                    created_at_idx = headers.index("created_at")
-                    password_idx = headers.index("password")
-                except ValueError as e:
-                    logger.error(f"Users sheet missing required column in {sheet_id}: {e}")
-                    return None
-
-                # Search for the user email
-                email = email.strip().lower()
-                for row in all_values[1:]:  # Skip header row
-                    if len(row) <= email_idx:
-                        continue
-
-                    row_email = row[email_idx].strip().lower() if email_idx < len(row) else ""
-                    if row_email == email:
-                        # Found the user
-                        user_info = UserInfo(
-                            email=row[email_idx].strip() if email_idx < len(row) else "",
-                            full_name=row[full_name_idx].strip() if full_name_idx < len(row) else "",
-                            role=row[role_idx].strip() if role_idx < len(row) else "",
-                            status=row[status_idx].strip() if status_idx < len(row) else "",
-                            created_at=row[created_at_idx].strip() if created_at_idx < len(row) else "",
-                            password=row[password_idx].strip() if password_idx < len(row) else ""
-                        )
-                        logger.info(f"User details found for {email} in sheet {sheet_id}")
-                        return user_info
-
-                logger.warning(f"User {email} not found in Users worksheet of sheet {sheet_id}")
-                return None
 
             except Exception as e:
                 logger.error(f"Error getting user details from client sheet {sheet_id} for {email}: {e}")
@@ -557,58 +558,59 @@ class UserManagementService:
         """
         with ErrorContext("get_user_info", {"client_sheet_id": client_sheet_id, "email": email}):
             try:
-                # Open the client's spreadsheet
-                spreadsheet = self.client.open_by_key(client_sheet_id)
-                
-                # Try to get the "Users" worksheet
-                try:
-                    worksheet = spreadsheet.worksheet("Users")
-                except gspread.WorksheetNotFound:
-                    logger.warning(f"Users worksheet not found in client sheet {client_sheet_id}")
+                # Open the client's spreadsheet using context manager
+                with self.get_client_context() as client:
+                    spreadsheet = client.open_by_key(client_sheet_id)
+
+                    # Try to get the "Users" worksheet
+                    try:
+                        worksheet = spreadsheet.worksheet("Users")
+                    except gspread.WorksheetNotFound:
+                        logger.warning(f"Users worksheet not found in client sheet {client_sheet_id}")
+                        return None
+
+                    all_values = worksheet.get_all_values()
+
+                    if not all_values or len(all_values) < 2:
+                        logger.warning(f"Users sheet is empty for client {client_sheet_id}")
+                        return None
+
+                    # Parse headers
+                    headers = [h.strip().lower() for h in all_values[0]]
+
+                    # Find column indices
+                    try:
+                        email_idx = headers.index("email")
+                        full_name_idx = headers.index("full_name")
+                        role_idx = headers.index("role")
+                        status_idx = headers.index("status")
+                        created_at_idx = headers.index("created_at")
+                        password_idx = headers.index("password")
+                    except ValueError as e:
+                        logger.error(f"Users sheet missing required column: {e}")
+                        return None
+
+                    # Search for the user
+                    for row in all_values[1:]:  # Skip header
+                        if len(row) <= email_idx:
+                            continue
+
+                        row_email = row[email_idx].strip().lower()
+                        if row_email == email.lower():
+                            user_info = UserInfo(
+                                email=row[email_idx].strip(),
+                                full_name=row[full_name_idx].strip() if full_name_idx < len(row) and row[full_name_idx] else "",
+                                role=row[role_idx].strip() if role_idx < len(row) and row[role_idx] else "user",
+                                status=row[status_idx].strip() if status_idx < len(row) and row[status_idx] else "inactive",
+                                created_at=row[created_at_idx].strip() if created_at_idx < len(row) and row[created_at_idx] else "",
+                                password=row[password_idx].strip() if password_idx < len(row) and row[password_idx] else ""
+                            )
+                            logger.info(f"User found: {email} in client sheet {client_sheet_id}")
+                            return user_info
+
+                    logger.info(f"User not found: {email} in client sheet {client_sheet_id}")
                     return None
-                
-                all_values = worksheet.get_all_values()
-                
-                if not all_values or len(all_values) < 2:
-                    logger.warning(f"Users sheet is empty for client {client_sheet_id}")
-                    return None
-                
-                # Parse headers
-                headers = [h.strip().lower() for h in all_values[0]]
-                
-                # Find column indices
-                try:
-                    email_idx = headers.index("email")
-                    full_name_idx = headers.index("full_name")
-                    role_idx = headers.index("role")
-                    status_idx = headers.index("status")
-                    created_at_idx = headers.index("created_at")
-                    password_idx = headers.index("password")
-                except ValueError as e:
-                    logger.error(f"Users sheet missing required column: {e}")
-                    return None
-                
-                # Search for the user
-                for row in all_values[1:]:  # Skip header
-                    if len(row) <= email_idx:
-                        continue
-                    
-                    row_email = row[email_idx].strip().lower()
-                    if row_email == email.lower():
-                        user_info = UserInfo(
-                            email=row[email_idx].strip(),
-                            full_name=row[full_name_idx].strip() if full_name_idx < len(row) and row[full_name_idx] else "",
-                            role=row[role_idx].strip() if role_idx < len(row) and row[role_idx] else "user",
-                            status=row[status_idx].strip() if status_idx < len(row) and row[status_idx] else "inactive",
-                            created_at=row[created_at_idx].strip() if created_at_idx < len(row) and row[created_at_idx] else "",
-                            password=row[password_idx].strip() if password_idx < len(row) and row[password_idx] else ""
-                        )
-                        logger.info(f"User found: {email} in client sheet {client_sheet_id}")
-                        return user_info
-                
-                logger.info(f"User not found: {email} in client sheet {client_sheet_id}")
-                return None
-                
+
             except Exception as e:
                 logger.error(f"Error getting user info for {email}: {e}")
                 return None
@@ -641,41 +643,42 @@ class UserManagementService:
                 if existing_user:
                     logger.warning(f"User {email} already exists in client {client_info.display_name}")
                     return False, client_info, existing_user
-                
-                # Open the client's spreadsheet
-                spreadsheet = self.client.open_by_key(client_info.sheet_id)
-                
-                # Get or create the "Users" worksheet
-                try:
-                    worksheet = spreadsheet.worksheet("Users")
-                except gspread.WorksheetNotFound:
-                    # Create the Users worksheet with headers
-                    # Headers must match the actual sheet structure: email, full_name, PhoneNumber, role, status, created_at, password
-                    worksheet = spreadsheet.add_worksheet(title="Users", rows=1000, cols=7)
-                    worksheet.append_row(["email", "full_name", "PhoneNumber", "role", "status", "created_at", "password"])
-                    logger.info(f"Created Users worksheet for client {client_info.display_name}")
-                
-                # Add the new user
-                from datetime import datetime
-                created_at = datetime.now().isoformat()
-                
-                # Hash the password
-                hashed_password = generate_password_hash(password)
-                
-                # Match the exact sheet structure: email, full_name, PhoneNumber, role, status, created_at, password
-                new_row = [
-                    email,
-                    full_name,
-                    phone_number,  # PhoneNumber (position 3)
-                    "user",        # Default role (position 4)
-                    "inactive",      # Initial status (position 5)
-                    created_at,    # (position 6)
-                    hashed_password  # password (position 7)
-                ]
-                
-                worksheet.append_row(new_row)
-                
-                # Create UserInfo object
+
+                # Open the client's spreadsheet using context manager
+                with self.get_client_context() as client:
+                    spreadsheet = client.open_by_key(client_info.sheet_id)
+
+                    # Get or create the "Users" worksheet
+                    try:
+                        worksheet = spreadsheet.worksheet("Users")
+                    except gspread.WorksheetNotFound:
+                        # Create the Users worksheet with headers
+                        # Headers must match the actual sheet structure: email, full_name, PhoneNumber, role, status, created_at, password
+                        worksheet = spreadsheet.add_worksheet(title="Users", rows=1000, cols=7)
+                        worksheet.append_row(["email", "full_name", "PhoneNumber", "role", "status", "created_at", "password"])
+                        logger.info(f"Created Users worksheet for client {client_info.display_name}")
+
+                    # Add the new user
+                    from datetime import datetime
+                    created_at = datetime.now().isoformat()
+
+                    # Hash the password
+                    hashed_password = generate_password_hash(password)
+
+                    # Match the exact sheet structure: email, full_name, PhoneNumber, role, status, created_at, password
+                    new_row = [
+                        email,
+                        full_name,
+                        phone_number,  # PhoneNumber (position 3)
+                        "user",        # Default role (position 4)
+                        "inactive",      # Initial status (position 5)
+                        created_at,    # (position 6)
+                        hashed_password  # password (position 7)
+                    ]
+
+                    worksheet.append_row(new_row)
+
+                # Create UserInfo object (outside context since we just need local data)
                 user_info = UserInfo(
                     email=email,
                     full_name=full_name,
@@ -684,7 +687,7 @@ class UserManagementService:
                     created_at=created_at,
                     password=hashed_password
                 )
-                
+
                 logger.info(f"User created successfully: {email} in client {client_info.display_name}")
                 return True, client_info, user_info
                 

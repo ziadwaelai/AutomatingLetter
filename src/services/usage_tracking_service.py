@@ -254,16 +254,17 @@ class UsageTrackingService:
                     "cost_sum_usd": f"{new_cost_sum:.6f}"
                 }
                 
-                # Update the row
+                # Update the row using context manager
                 sheets_service = self.sheets_service
-                spreadsheet = sheets_service.client.open_by_key(sheet_id)
-                worksheet = spreadsheet.worksheet("Usage")
-                
-                # Update cells (row_number is already 1-indexed from spreadsheet perspective)
-                worksheet.update_cell(row_number, 1, update_data["yyyy_mm"])
-                worksheet.update_cell(row_number, 2, update_data["letters_count"])
-                worksheet.update_cell(row_number, 3, update_data["tokens_sum"])
-                worksheet.update_cell(row_number, 4, update_data["cost_sum_usd"])
+                with sheets_service.get_client_context() as client:
+                    spreadsheet = client.open_by_key(sheet_id)
+                    worksheet = spreadsheet.worksheet("Usage")
+
+                    # Update cells (row_number is already 1-indexed from spreadsheet perspective)
+                    worksheet.update_cell(row_number, 1, update_data["yyyy_mm"])
+                    worksheet.update_cell(row_number, 2, update_data["letters_count"])
+                    worksheet.update_cell(row_number, 3, update_data["tokens_sum"])
+                    worksheet.update_cell(row_number, 4, update_data["cost_sum_usd"])
                 
                 logger.info(f"Updated usage for {month_key}: letters={new_letters_count}, tokens={new_tokens_sum}, cost=${new_cost_sum:.6f}")
                 
