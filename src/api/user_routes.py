@@ -744,6 +744,89 @@ def admin_list_users(user_info):
             return jsonify(build_error_response(e)), 500
 
 
+@user_bp.route('/users', methods=['GET'])
+@measure_performance
+@require_auth
+def list_users(user_info):
+    """
+    List all user emails from a client.
+    Available to both admin and normal users - each user sees emails from their own client.
+
+    Returns:
+        List of user emails only from the user's client
+
+    Authentication:
+        Requires JWT token (both admin and normal users can access)
+    """
+    with ErrorContext("list_users_api"):
+        try:
+            user_service = get_user_management_service()
+
+            # Get user's client info from their email in the token
+            user_email = user_info.get('user', {}).get('email')
+            target_client = user_service.get_client_by_email(user_email) if user_email else None
+
+            if not target_client:
+                logger.warning(f"List users failed - client not found for user {user_email}")
+                return jsonify({
+                    "status": "error",
+                    "message": "لا يوجد عميل مطابق"
+                }), 404
+
+            client_id = target_client.client_id
+
+            # Get all users from the client's sheet
+            from ..services.google_services import get_sheets_service
+
+            emails_list = []
+            try:
+                sheets_service = get_sheets_service()
+                with sheets_service.get_client_context() as sheets_client:
+                    spreadsheet = sheets_client.open_by_key(target_client.sheet_id)
+
+                    # Try to get the "Users" worksheet
+                    try:
+                        worksheet = spreadsheet.worksheet("Users")
+                    except:
+                        # If Users worksheet doesn't exist, use first worksheet
+                        worksheet = spreadsheet.get_worksheet(0)
+
+                    rows = worksheet.get_all_values()
+
+                    # Extract emails only
+                    if len(rows) > 1:
+                        # Skip header row
+                        for row in rows[1:]:
+                            if len(row) > 0:  # Skip empty rows
+                                try:
+                                    # Find email column (usually first column)
+                                    email = row[0].strip() if row[0] else None
+                                    if email:  # Only add non-empty emails
+                                        emails_list.append(email)
+                                except Exception as e:
+                                    logger.warning(f"Error parsing email from row: {e}")
+                                    continue
+            except Exception as e:
+                logger.error(f"Error reading users from sheet: {e}")
+                return jsonify({
+                    "status": "error",
+                    "message": "فشل في قراءة البيانات"
+                }), 500
+
+            logger.info(f"User '{user_email}' listed {len(emails_list)} user emails from client {client_id}")
+
+            return jsonify({
+                "status": "success",
+                "count": len(emails_list),
+                "client_id": client_id,
+                "emails": emails_list
+            }), 200
+
+        except Exception as e:
+            logger.error(f"List users failed: {e}")
+            return jsonify(build_error_response(e)), 500
+
+
 @user_bp.route('/admin/users/create', methods=['POST'])
 @measure_performance
 @require_admin
