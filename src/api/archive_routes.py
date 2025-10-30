@@ -431,14 +431,22 @@ def process_letter_update_in_background(
         drive_logger = get_drive_logger_service()
 
         # Update letter: generate new PDF, upload to Drive, and update sheet
-        result = drive_logger.update_letter_pdf_and_log(
-            letter_id=letter_id,
-            new_content=new_content,
-            folder_id=google_drive_id,
-            template=template,
-            sheet_id=sheet_id,
-            user_email=user_email
-        )
+        logger.debug(f"[BACKGROUND] DEBUG: Calling update_letter_pdf_and_log with:")
+        logger.debug(f"[BACKGROUND] DEBUG: letter_id={letter_id}")
+        logger.debug(f"[BACKGROUND] DEBUG: folder_id={google_drive_id}")
+        logger.debug(f"[BACKGROUND] DEBUG: template={template}")
+
+        try:
+            result = drive_logger.update_letter_pdf_and_log(
+                letter_id=letter_id,
+                new_content=new_content,
+                folder_id=google_drive_id,
+                template=template
+            )
+            logger.debug(f"[BACKGROUND] DEBUG: Update result: {result}")
+        except Exception as update_error:
+            logger.error(f"[BACKGROUND] ERROR during update_letter_pdf_and_log: {str(update_error)}", exc_info=True)
+            raise
 
         if result["status"] == "success":
             logger.info(f"Background update completed successfully for letter ID: {letter_id}")
