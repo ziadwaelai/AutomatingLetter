@@ -16,3 +16,4 @@ wkhtmltopdf
 pdfkit
 jinja2
 requests
+python-docx
