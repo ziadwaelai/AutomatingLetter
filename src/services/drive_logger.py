@@ -33,12 +33,12 @@ class DriveLoggerService:
     def upload_file_to_drive(self, file_path: str, folder_id: str, filename: Optional[str] = None) -> Tuple[str, str]:
         """
         Upload a file to Google Drive and return its ID and web view link.
-        
+
         Args:
             file_path: Path to the file to upload
             folder_id: Google Drive folder ID
             filename: Custom filename (optional)
-            
+
         Returns:
             Tuple of (file_id, web_view_link)
         """
@@ -48,21 +48,35 @@ class DriveLoggerService:
                 self.service_account_file, scopes=self.scopes
             )
             drive_service = build('drive', 'v3', credentials=creds)
-            
+
             # Use provided filename or extract from path
             if filename is None:
                 filename = os.path.basename(file_path)
-            
+
             # Prepare file metadata
             file_metadata = {
                 'name': filename,
                 'parents': [folder_id]
             }
-            
+
+            # Detect MIME type based on file extension
+            file_ext = os.path.splitext(file_path)[1].lower()
+            mimetype_map = {
+                '.pdf': 'application/pdf',
+                '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                '.doc': 'application/msword',
+                '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                '.xls': 'application/vnd.ms-excel',
+                '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                '.ppt': 'application/vnd.ms-powerpoint',
+                '.txt': 'text/plain'
+            }
+            mimetype = mimetype_map.get(file_ext, 'application/octet-stream')
+
             # Create media upload
             media = MediaFileUpload(
                 file_path,
-                mimetype='application/pdf',
+                mimetype=mimetype,
                 resumable=True
             )
             
@@ -134,8 +148,16 @@ class DriveLoggerService:
             Result dictionary with file info and log result
         """
         try:
+            # Preserve original file extension from file_path
+            file_ext = os.path.splitext(letter_file_path)[1]
+
+            # Generate filename preserving extension
+            if title != 'undefined':
+                filename = f"{title}_{letter_id}{file_ext}"
+            else:
+                filename = f"letter_{letter_id}{file_ext}"
+
             # Upload to Drive
-            filename = f"{title}_{letter_id}.pdf" if title != 'undefined' else f"letter_{letter_id}.pdf"
             file_id, file_url = self.upload_file_to_drive(letter_file_path, folder_id, filename)
             
             # Prepare log entry

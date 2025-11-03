@@ -17,7 +17,7 @@ from ..models import (
     ErrorResponse,
     SuccessResponse
 )
-from ..services import get_drive_logger_service, get_enhanced_pdf_service
+from ..services import get_drive_logger_service, get_enhanced_pdf_service, get_enhanced_docx_service
 from ..utils import (
     ErrorContext,
     build_error_response,
@@ -91,6 +91,141 @@ def archive_letter():
     except Exception as e:
         logger.error(f"Letter archiving failed: {e}")
         return build_error_response(f"خطأ في الأرشفة: {str(e)}", 500)
+
+@archive_bp.route('/letter/docx', methods=['POST'])
+@measure_performance
+def archive_letter_docx():
+    """
+    Archive letter to DOCX with PDF-matching styling, upload to Google Drive, and log to sheets.
+    Process runs in background and returns immediately.
+    """
+    try:
+        # Validate request
+        data = request.get_json()
+        if not data:
+            return build_error_response("لم يتم تقديم بيانات JSON", 400)
+
+        # Validate required fields
+        required_fields = ['letter_content', 'ID']
+        missing_fields = [field for field in required_fields if not data.get(field)]
+        if missing_fields:
+            field_names_ar = {'letter_content': 'محتوى الخطاب', 'ID': 'رقم الخطاب'}
+            missing_ar = [field_names_ar.get(field, field) for field in missing_fields]
+            return build_error_response(f"الحقول المطلوبة مفقودة: {', '.join(missing_ar)}", 400)
+
+        # Extract data with defaults
+        letter_content = data.get('letter_content', '')
+        letter_type = data.get('letter_type', 'General')
+        recipient = data.get('recipient', '')
+        title = data.get('title', 'undefined')
+        is_first = data.get('is_first', False)
+        letter_id = data.get('ID', '')
+        document_id = data.get('document_id', '')
+        username = data.get('username', 'unknown')
+
+        # Get Google Drive folder ID from environment variables
+        folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
+        if not folder_id:
+            return build_error_response("لم يتم تكوين معرف مجلد Google Drive", 500)
+
+        # Start background processing
+        background_thread = threading.Thread(
+            target=process_letter_archive_docx_in_background,
+            args=(letter_content, letter_id, letter_type, recipient, title, is_first, folder_id, username, document_id)
+        )
+        background_thread.daemon = True
+        background_thread.start()
+
+        # Return immediate success response
+        response = ArchiveResponse(
+            status="success",
+            message=f"Letter DOCX archiving started for ID: {letter_id}",
+            processing="background",
+            letter_id=letter_id
+        )
+
+        logger.info(f"Letter DOCX archiving initiated for ID: {letter_id}")
+        return jsonify(response.model_dump()), 200
+
+    except ValidationError as e:
+        logger.warning(f"Validation error in letter DOCX archiving: {e}")
+        return build_error_response(f"خطأ في التحقق من البيانات: {e}", 400)
+    except Exception as e:
+        logger.error(f"Letter DOCX archiving failed: {e}")
+        return build_error_response(f"خطأ في الأرشفة: {str(e)}", 500)
+
+def process_letter_archive_docx_in_background(
+    letter_content: str,
+    letter_id: str,
+    letter_type: str,
+    recipient: str,
+    title: str,
+    is_first: bool,
+    folder_id: str,
+    username: str,
+    document_id: str = ""
+) -> None:
+    """
+    Process letter DOCX archiving in background thread.
+
+    Args:
+        letter_content: Content of the letter
+        letter_id: Unique letter ID
+        letter_type: Type/category of letter
+        recipient: Letter recipient
+        title: Letter title
+        is_first: Whether this is first communication
+        folder_id: Google Drive folder ID
+        username: Username of creator
+        document_id: Document ID number
+    """
+    try:
+        logger.info(f"Starting background DOCX archiving for letter ID: {letter_id}")
+
+        # Get services
+        docx_service = get_enhanced_docx_service()
+        drive_logger = get_drive_logger_service()
+
+        # Generate DOCX
+        logger.info(f"Generating DOCX for letter ID: {letter_id}")
+        docx_result = docx_service.generate_docx(
+            title=title,
+            content=letter_content,
+            recipient=recipient,
+            letter_id=letter_id,
+            document_id=document_id
+        )
+
+        logger.info(f"DOCX generated successfully: {docx_result.filename}")
+
+        # Archive to Drive and log to sheets
+        logger.info(f"Uploading DOCX to Drive and logging for letter ID: {letter_id}")
+        archive_result = drive_logger.save_letter_to_drive_and_log(
+            letter_file_path=docx_result.file_path,
+            letter_content=letter_content,
+            letter_type=letter_type,
+            recipient=recipient,
+            title=title,
+            is_first=is_first,
+            folder_id=folder_id,
+            letter_id=letter_id,
+            username=username
+        )
+
+        # Clean up temporary DOCX file
+        try:
+            drive_logger.cleanup_temp_file(docx_result.file_path)
+        except Exception as cleanup_error:
+            logger.warning(f"Error cleaning up temporary DOCX file for {letter_id}: {cleanup_error}")
+
+        if archive_result["status"] == "success":
+            logger.info(f"Background DOCX archiving completed successfully for letter ID: {letter_id}")
+            logger.info(f"Drive URL: {archive_result.get('file_url', 'N/A')}")
+        else:
+            logger.error(f"Background DOCX archiving failed for letter ID: {letter_id}: {archive_result.get('message', 'Unknown error')}")
+
+    except Exception as e:
+        logger.error(f"Error in background DOCX archiving for letter ID {letter_id}: {str(e)}", exc_info=True)
 
 def process_letter_archive_in_background(
     template: str,
