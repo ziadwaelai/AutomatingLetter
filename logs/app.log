@@ -7143,3 +7143,138 @@ current_letter
 2025-11-03 21:09:46,101 - werkzeug - INFO -  * Debugger PIN: 129-536-069
 2025-11-03 21:09:49,602 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\enhanced_doc_service.py', reloading
 2025-11-03 21:09:49,876 - werkzeug - INFO -  * Restarting with stat
+2025-11-05 14:25:09,721 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-11-05 14:25:09,722 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-05 14:25:09,734 - werkzeug - INFO -  * Restarting with stat
+2025-11-05 14:25:15,423 - werkzeug - WARNING -  * Debugger is active!
+2025-11-05 14:25:15,432 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-05 14:25:27,872 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
+2025-11-05 14:25:28,200 - src.api.archive_routes - INFO - Starting background DOCX archiving for letter ID: LET-202510sdfsd23
+2025-11-05 14:25:28,201 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd23
+2025-11-05 14:25:28,202 - src.api.archive_routes - ERROR - CRITICAL ERROR in background DOCX archiving for letter ID LET-202510sdfsd23: Template file 'Netzero.docx' not found at: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+Traceback (most recent call last):
+  File "D:\shobbak\AutomatingLetter\src\api\archive_routes.py", line 192, in process_letter_archive_docx_in_background
+    docx_service = get_enhanced_docx_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\shobbak\AutomatingLetter\src\services\doc_service.py", line 555, in get_enhanced_docx_service
+    _docx_service = CreateDocument()
+                    ^^^^^^^^^^^^^^^^
+  File "D:\shobbak\AutomatingLetter\src\services\doc_service.py", line 41, in __init__
+    raise FileNotFoundError(
+FileNotFoundError: Template file 'Netzero.docx' not found at: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-11-05 14:25:28,203 - src.utils.helpers - INFO - archive_letter_docx executed in 0.331s
+2025-11-05 14:25:28,209 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
+2025-11-05 14:25:28,212 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 14:25:28] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
+2025-11-05 14:26:37,793 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_service.py', reloading
+2025-11-05 14:26:38,173 - werkzeug - INFO -  * Restarting with stat
+2025-11-05 14:26:47,958 - werkzeug - WARNING -  * Debugger is active!
+2025-11-05 14:26:47,964 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-05 14:27:09,011 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
+2025-11-05 14:27:09,720 - src.api.archive_routes - INFO - Starting background DOCX archiving for letter ID: LET-202510sdfsd23
+2025-11-05 14:27:09,720 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd23
+2025-11-05 14:27:09,720 - src.services.doc_service - INFO - Using template at: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-11-05 14:27:09,720 - src.utils.helpers - INFO - archive_letter_docx executed in 0.709s
+2025-11-05 14:27:09,720 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-11-05 14:27:09,720 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
+2025-11-05 14:27:09,720 - src.api.archive_routes - INFO - Creating DOCX document for letter ID: LET-202510sdfsd23
+2025-11-05 14:27:09,724 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 14:27:09] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
+2025-11-05 14:27:10,459 - src.services.doc_service - INFO - Starting raw letter content parsing with GPT-4o
+2025-11-05 14:27:18,584 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-05 14:27:18,601 - src.services.doc_service - INFO - Letter content parsed successfully
+2025-11-05 14:27:18,601 - src.services.doc_service - INFO - Document letter ID set to: LET-202510sdfsd23
+2025-11-05 14:27:18,612 - src.services.doc_service - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-11-05 14:27:24,749 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_service.py', reloading
+2025-11-05 14:27:28,427 - src.services.doc_service - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd23)
+2025-11-05 14:27:28,444 - src.services.doc_service - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
+2025-11-05 14:27:28,445 - src.api.archive_routes - INFO - DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
+2025-11-05 14:27:28,446 - src.api.archive_routes - INFO - Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd23
+2025-11-05 14:27:28,446 - src.api.archive_routes - ERROR - Error during Drive upload: DriveLoggerService.save_letter_to_drive_and_log() got an unexpected keyword argument 'sheet_id'
+Traceback (most recent call last):
+  File "D:\shobbak\AutomatingLetter\src\api\archive_routes.py", line 222, in process_letter_archive_docx_in_background
+    archive_result = drive_logger.save_letter_to_drive_and_log(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: DriveLoggerService.save_letter_to_drive_and_log() got an unexpected keyword argument 'sheet_id'
+2025-11-05 14:27:28,447 - src.api.archive_routes - ERROR - CRITICAL ERROR in background DOCX archiving for letter ID LET-202510sdfsd23: DriveLoggerService.save_letter_to_drive_and_log() got an unexpected keyword argument 'sheet_id'
+Traceback (most recent call last):
+  File "D:\shobbak\AutomatingLetter\src\api\archive_routes.py", line 222, in process_letter_archive_docx_in_background
+    archive_result = drive_logger.save_letter_to_drive_and_log(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: DriveLoggerService.save_letter_to_drive_and_log() got an unexpected keyword argument 'sheet_id'
+2025-11-05 14:27:28,790 - werkzeug - INFO -  * Restarting with stat
+2025-11-05 14:36:23,714 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-11-05 14:36:23,715 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-05 14:36:23,717 - werkzeug - INFO -  * Restarting with stat
+2025-11-05 14:36:26,395 - werkzeug - WARNING -  * Debugger is active!
+2025-11-05 14:36:26,401 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-05 14:36:27,848 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
+2025-11-05 14:36:27,848 - src.api.archive_routes - INFO - Starting background DOCX archiving for letter ID: LET-202510sdfsd23
+2025-11-05 14:36:27,849 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd23
+2025-11-05 14:36:27,849 - src.utils.helpers - INFO - archive_letter_docx executed in 0.001s
+2025-11-05 14:36:27,849 - src.services.doc_service - INFO - Using template at: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-11-05 14:36:27,849 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
+2025-11-05 14:36:27,850 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 14:36:27] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
+2025-11-05 14:36:27,850 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-11-05 14:36:27,850 - src.api.archive_routes - INFO - Creating DOCX document for letter ID: LET-202510sdfsd23
+2025-11-05 14:36:28,476 - src.services.doc_service - INFO - Starting raw letter content parsing with GPT-4o
+2025-11-05 14:36:34,194 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-05 14:36:34,241 - src.services.doc_service - INFO - Letter content parsed successfully
+2025-11-05 14:36:34,242 - src.services.doc_service - INFO - Document letter ID set to: LET-202510sdfsd23
+2025-11-05 14:36:34,255 - src.services.doc_service - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-11-05 14:36:34,547 - src.services.doc_service - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd23)
+2025-11-05 14:36:34,551 - src.api.archive_routes - INFO - Using default temp path: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
+2025-11-05 14:36:34,591 - src.services.doc_service - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
+2025-11-05 14:36:34,592 - src.api.archive_routes - INFO - DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
+2025-11-05 14:36:34,592 - src.api.archive_routes - INFO - Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd23
+2025-11-05 14:36:34,647 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-11-05 14:36:38,278 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_LET-202510sdfsd23.docx (ID: 1YkDr2SK2rvoBAlbF4jcnHS_HNyH6Jtgm)
+2025-11-05 14:36:41,854 - src.services.google_services - INFO - Successfully logged 1 entries to AI Letter Generating/Submissions
+2025-11-05 14:36:41,854 - src.utils.helpers - INFO - log_to_sheet executed in 3.575s
+2025-11-05 14:36:41,855 - src.services.drive_logger - INFO - Successfully archived letter LET-202510sdfsd23 to Drive and logged to sheets
+2025-11-05 14:36:41,855 - src.api.archive_routes - INFO - DOCX archived to Drive successfully for letter ID: LET-202510sdfsd23
+2025-11-05 14:36:41,856 - src.api.archive_routes - INFO - Drive URL: https://docs.google.com/document/d/1YkDr2SK2rvoBAlbF4jcnHS_HNyH6Jtgm/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
+2025-11-05 14:36:41,857 - src.api.archive_routes - INFO - DOCX archiving completed for letter ID: LET-202510sdfsd23
+2025-11-05 14:56:37,033 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_service.py', reloading
+2025-11-05 14:56:37,652 - werkzeug - INFO -  * Restarting with stat
+2025-11-05 14:56:40,598 - werkzeug - WARNING -  * Debugger is active!
+2025-11-05 14:56:40,600 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-05 14:57:32,635 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-11-05 14:57:32,635 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-05 14:57:32,638 - werkzeug - INFO -  * Restarting with stat
+2025-11-05 14:57:34,844 - werkzeug - WARNING -  * Debugger is active!
+2025-11-05 14:57:34,847 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-05 14:57:43,260 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
+2025-11-05 14:57:43,261 - src.api.archive_routes - INFO - Starting background DOCX archiving for letter ID: LET-202510sdfsd23
+2025-11-05 14:57:43,261 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd23
+2025-11-05 14:57:43,261 - src.services.doc_service - INFO - Using default template path: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-11-05 14:57:43,262 - src.utils.helpers - INFO - archive_letter_docx executed in 0.000s
+2025-11-05 14:57:43,262 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
+2025-11-05 14:57:43,262 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-11-05 14:57:43,262 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 14:57:43] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
+2025-11-05 14:57:43,262 - src.api.archive_routes - INFO - Creating DOCX document for letter ID: LET-202510sdfsd23
+2025-11-05 14:57:43,581 - src.services.doc_service - INFO - Starting raw letter content parsing with GPT-4o
+2025-11-05 14:57:48,075 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-05 14:57:48,118 - src.services.doc_service - INFO - Letter content parsed successfully
+2025-11-05 14:57:48,119 - src.services.doc_service - INFO - Document letter ID set to: LET-202510sdfsd23
+2025-11-05 14:57:48,129 - src.services.doc_service - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-11-05 14:57:48,257 - src.services.doc_service - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd23)
+2025-11-05 14:57:48,258 - src.api.archive_routes - INFO - Using default temp path: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
+2025-11-05 14:57:48,274 - src.services.doc_service - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
+2025-11-05 14:57:48,274 - src.api.archive_routes - INFO - DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
+2025-11-05 14:57:48,274 - src.api.archive_routes - INFO - Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd23
+2025-11-05 14:57:48,280 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-11-05 14:57:51,859 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_LET-202510sdfsd23.docx (ID: 1gImoaCHjHFZG9oVql67SRJg4BstktY3f)
+2025-11-05 14:57:54,466 - src.services.google_services - INFO - Successfully logged 1 entries to AI Letter Generating/Submissions
+2025-11-05 14:57:54,467 - src.utils.helpers - INFO - log_to_sheet executed in 2.608s
+2025-11-05 14:57:54,467 - src.services.drive_logger - INFO - Successfully archived letter LET-202510sdfsd23 to Drive and logged to sheets
+2025-11-05 14:57:54,467 - src.api.archive_routes - INFO - DOCX archived to Drive successfully for letter ID: LET-202510sdfsd23
+2025-11-05 14:57:54,469 - src.api.archive_routes - INFO - Drive URL: https://docs.google.com/document/d/1gImoaCHjHFZG9oVql67SRJg4BstktY3f/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
+2025-11-05 14:57:54,470 - src.api.archive_routes - INFO - DOCX archiving completed for letter ID: LET-202510sdfsd23
