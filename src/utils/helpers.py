@@ -17,19 +17,18 @@ import threading
 logger = logging.getLogger(__name__)
 
 # ID Generation
-def generate_letter_id(prefix: str = "LET") -> str:
+def generate_letter_id() -> str:
     """
-    Generate a unique letter ID in the format PREFIX-YYYYMMDD-XXXXX.
-    
-    Args:
-        prefix: Prefix for the ID (default: LET)
-        
+    Generate a unique letter ID in the format YYMMDD-XXXXX.
+    Removes the "20" from the beginning of the year for a shorter format.
+
     Returns:
-        Unique letter ID string
+        Unique letter ID string (format: YYMMDD-XXXXX)
     """
-    date_part = datetime.now().strftime("%Y%m%d")
+    # Get date in YYMMDD format (removes the "20" from year)
+    date_part = datetime.now().strftime("%y%m%d")
     random_part = str(uuid.uuid4().int)[-5:]  # Last 5 digits of UUID
-    return f"{prefix}-{date_part}-{random_part}"
+    return f"{date_part}-{random_part}"
 
 def generate_session_id() -> str:
     """Generate a unique session ID."""
