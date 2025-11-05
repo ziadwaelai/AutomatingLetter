@@ -626,3 +626,39 @@ TypeError: DriveLoggerService.save_letter_to_drive_and_log() got an unexpected k
 2025-11-05 12:35:05,416 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
 2025-11-05 12:35:05,438 - werkzeug - WARNING -  * Debugger is active!
 2025-11-05 12:35:05,443 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-05 14:59:15,796 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-05 14:59:15,836 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-11-05 14:59:15,837 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-05 14:59:15,838 - werkzeug - INFO -  * Restarting with stat
+2025-11-05 14:59:18,040 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-05 14:59:18,076 - werkzeug - WARNING -  * Debugger is active!
+2025-11-05 14:59:18,079 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-05 14:59:21,290 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
+2025-11-05 14:59:21,290 - src.api.archive_routes - INFO - DOCX Archive request from user: ziad@moe.gov.sa, client: CLI-002, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, drive: 1Ckh0fh4qFSZZnNxc57Ads6HDVmHTM1wU
+2025-11-05 14:59:21,291 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd23
+2025-11-05 14:59:21,291 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd23 (sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
+2025-11-05 14:59:21,292 - src.utils.helpers - INFO - archive_letter_docx executed in 0.002s
+2025-11-05 14:59:21,292 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
+2025-11-05 14:59:21,292 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-11-05 14:59:21,293 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 14:59:21] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
+2025-11-05 14:59:21,293 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Creating DOCX document for letter ID: LET-202510sdfsd23
+2025-11-05 14:59:21,294 - src.services.doc_services - INFO - Using default template path: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-11-05 14:59:21,575 - src.services.doc_services - INFO - Starting raw letter content parsing with GPT-4o
+2025-11-05 14:59:27,388 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-05 14:59:27,408 - src.services.doc_services - INFO - Letter content parsed successfully
+2025-11-05 14:59:27,408 - src.services.doc_services - INFO - Document letter ID set to: LET-202510sdfsd23
+2025-11-05 14:59:27,414 - src.services.doc_services - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-11-05 14:59:27,534 - src.services.doc_services - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd23)
+2025-11-05 14:59:27,549 - src.services.doc_services - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
+2025-11-05 14:59:27,550 - src.api.archive_routes - INFO - [DOCX BACKGROUND] DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
+2025-11-05 14:59:27,550 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd23
+2025-11-05 14:59:27,555 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-11-05 14:59:30,935 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_LET-202510sdfsd23.docx (ID: 1oyBmvkWYrdTP7K1JvHh0LMBpp4k-Q9k7)
+2025-11-05 14:59:34,553 - src.services.google_services - INFO - Successfully logged 1 entries to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, worksheet 'Submissions'
+2025-11-05 14:59:34,557 - src.utils.helpers - INFO - log_entries_by_id executed in 3.622s
+2025-11-05 14:59:34,557 - src.services.drive_logger - INFO - Successfully archived DOCX letter LET-202510sdfsd23 to Drive and logged to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
+2025-11-05 14:59:34,558 - src.api.archive_routes - INFO - [DOCX BACKGROUND] ✅ Background DOCX archiving completed successfully for letter ID: LET-202510sdfsd23
+2025-11-05 14:59:34,558 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Drive URL: https://docs.google.com/document/d/1oyBmvkWYrdTP7K1JvHh0LMBpp4k-Q9k7/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true

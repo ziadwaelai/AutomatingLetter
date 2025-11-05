@@ -31,21 +31,32 @@ class CreateDocument:
 
         Args:
             template_path: Path to the Netzero.docx template.
-                          If None, uses default path.
+                          If None, tries environment variable or relative path.
         """
         if template_path is None:
-            # Use the fixed template path
-            self.template_path = r"D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx"
+            # Try to get template path from environment variable
+            env_template_path = os.getenv("DOCX_TEMPLATE_PATH")
 
+            if env_template_path:
+                self.template_path = env_template_path
+                logger.info(f"Using template path from DOCX_TEMPLATE_PATH env var: {self.template_path}")
+            else:
+                # Use relative path from current directory (server-safe)
+                # This will work on any server regardless of location
+                base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                self.template_path = os.path.join(base_dir, "LetterToPdf", "templates", "Netzero.docx")
+                logger.info(f"Using default template path: {self.template_path}")
+
+            # If template doesn't exist, log warning and set to None (will create blank document)
             if not os.path.exists(self.template_path):
-                raise FileNotFoundError(
-                    f"Template file 'Netzero.docx' not found at: {self.template_path}"
-                )
-            logger.info(f"Using template at: {self.template_path}")
+                logger.warning(f"Template file not found at: {self.template_path}, will create blank document")
+                self.template_path = None
         else:
             self.template_path = template_path
+            # If custom path doesn't exist, log warning but allow blank document creation
             if not os.path.exists(self.template_path):
-                raise FileNotFoundError(f"Template file not found at: {self.template_path}")
+                logger.warning(f"Custom template path not found: {self.template_path}, will create blank document")
+                self.template_path = None
 
         self.document = None
         self.letter_id = None  # Store letter ID for the document
