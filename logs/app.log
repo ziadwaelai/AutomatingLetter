@@ -68,3 +68,248 @@
 2025-10-29 11:54:48,380 - src.utils.helpers - INFO - review_submission executed in 5.860s
 2025-10-29 11:54:48,381 - __main__ - INFO - Response: 200 - submissions.review_submission
 2025-10-29 11:54:48,382 - werkzeug - INFO - 127.0.0.1 - - [29/Oct/2025 11:54:48] "PUT /api/v1/submissions/review/LET-20251023-1231245 HTTP/1.1" 200 -
+2025-11-05 10:34:11,067 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-05 10:34:11,184 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-11-05 10:34:11,186 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-05 10:34:11,195 - werkzeug - INFO -  * Restarting with stat
+2025-11-05 10:34:16,329 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-05 10:34:16,363 - werkzeug - WARNING -  * Debugger is active!
+2025-11-05 10:34:16,370 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-05 10:34:54,903 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/letter/generate - 127.0.0.1
+2025-11-05 10:34:54,905 - src.utils.helpers - WARNING - JWT token has expired
+2025-11-05 10:34:54,905 - src.utils.helpers - WARNING - Request made with expired JWT token
+2025-11-05 10:34:54,905 - src.utils.helpers - INFO - generate_letter executed in 0.001s
+2025-11-05 10:34:54,906 - __main__ - INFO - Response: 401 - letter.generate_letter
+2025-11-05 10:34:54,908 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 10:34:54] "[31m[1mPOST /api/v1/letter/generate HTTP/1.1[0m" 401 -
+2025-11-05 10:35:02,667 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-05 10:35:05,947 - src.services.user_management_service - INFO - Client found for email ziad@moe.gov.sa: Ministry of Education
+2025-11-05 10:35:05,947 - src.utils.helpers - INFO - get_client_by_email executed in 3.279s
+2025-11-05 10:35:08,839 - src.services.user_management_service - INFO - User found: ziad@moe.gov.sa in client sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
+2025-11-05 10:35:08,841 - src.utils.helpers - INFO - get_user_info executed in 2.892s
+2025-11-05 10:35:08,904 - src.services.user_management_service - INFO - User credentials validated successfully: ziad@moe.gov.sa for client Ministry of Education
+2025-11-05 10:35:08,904 - src.utils.helpers - INFO - validate_user_credentials executed in 6.236s
+2025-11-05 10:35:08,904 - src.api.user_routes - INFO - User validated successfully: ziad@moe.gov.sa
+2025-11-05 10:35:08,905 - src.utils.helpers - INFO - validate_user executed in 6.237s
+2025-11-05 10:35:08,905 - __main__ - INFO - Response: 200 - user.validate_user
+2025-11-05 10:35:08,905 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 10:35:08] "POST /api/v1/user/validate HTTP/1.1" 200 -
+2025-11-05 10:35:25,323 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/letter/generate - 127.0.0.1
+2025-11-05 10:35:25,323 - src.api.letter_routes - INFO - Letter generation request from user: ziad@moe.gov.sa, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
+2025-11-05 10:35:27,385 - src.services.usage_tracking_service - INFO - Usage Tracking Service initialized
+2025-11-05 10:35:29,586 - src.services.usage_tracking_service - INFO - Found quota_month limit: 100
+2025-11-05 10:35:29,586 - src.utils.helpers - INFO - get_quota_limit executed in 2.201s
+2025-11-05 10:35:31,506 - src.services.usage_tracking_service - INFO - Found existing usage row for 2025_11 at row 3: {'yyyy_mm': '2025_11', 'letters_count': 3, 'tokens_sum': 8361, 'cost_sum_usd': 0.054525}
+2025-11-05 10:35:31,507 - src.utils.helpers - INFO - get_or_create_usage_row executed in 1.920s
+2025-11-05 10:35:31,508 - src.services.usage_tracking_service - INFO - Quota check passed: 3/100 (97 remaining)
+2025-11-05 10:35:31,508 - src.utils.helpers - INFO - check_quota executed in 4.122s
+2025-11-05 10:35:31,508 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-05 10:35:35,265 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 1.800s
+2025-11-05 10:35:35,269 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 1.804s
+2025-11-05 10:35:35,766 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 2.301s
+2025-11-05 10:35:35,827 - src.services.google_services - WARNING - No user found with full_name: 
+2025-11-05 10:35:35,828 - src.utils.helpers - INFO - get_user_info_from_sheet_id executed in 2.362s
+2025-11-05 10:35:35,829 - src.utils.helpers - INFO - get_letter_config_by_category_from_sheet_id executed in 2.364s
+2025-11-05 10:35:35,829 - src.api.letter_routes - INFO - Loaded letter config from sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg for category: طلب
+2025-11-05 10:35:35,830 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
+2025-11-05 10:35:35,830 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
+2025-11-05 10:35:35,830 - src.services.letter_generator - INFO - Attempting to load prompt template from Settings sheet for sheet_id: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
+2025-11-05 10:35:37,772 - src.services.usage_tracking_service - INFO - Found prompt template from Settings sheet (length: 7472 chars)
+2025-11-05 10:35:37,773 - src.utils.helpers - INFO - get_prompt_template executed in 1.943s
+2025-11-05 10:35:37,773 - src.services.letter_generator - INFO - ✅ Successfully loaded custom prompt template from Settings sheet (length: 7472 chars)
+2025-11-05 10:35:40,760 - src.utils.helpers - INFO - get_context_instructions executed in 2.434s
+2025-11-05 10:35:40,796 - src.services.memory_service - INFO - Optimized memory service initialized (sheet_id: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
+2025-11-05 10:35:40,832 - src.services.letter_generator - INFO - Retrieved memory instructions for category='طلب', session_id='None', sheet_id='17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg': 125 chars
+2025-11-05 10:35:40,833 - src.services.letter_generator - INFO - Generating letter with ID: LET-20251105-80254
+2025-11-05 10:35:41,594 - src.services.letter_generator - ERROR - Letter generation failed for ID LET-20251105-80254: "Input to PromptTemplate is missing variables {'recipient_title'}.  Expected: ['additional_context', 'current_date', 'letter_id', 'member_info', 'memory_instructions', 'previous_letter_info', 'recipient_title', 'reference_context', 'user_prompt', 'writing_instructions'] Received: ['user_prompt', 'reference_context', 'additional_context', 'writing_instructions', 'member_info', 'letter_id', 'current_date', 'previous_letter_info', 'memory_instructions']\nNote: if you intended {recipient_title} to be part of the string and not a variable, please escape it with double curly braces like: '{{recipient_title}}'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT "
+2025-11-05 10:35:41,594 - src.utils.exceptions - ERROR - Operation failed: letter_generation
+2025-11-05 10:35:41,594 - src.utils.helpers - ERROR - generate_letter failed after 5.765s: Failed to generate letter: "Input to PromptTemplate is missing variables {'recipient_title'}.  Expected: ['additional_context', 'current_date', 'letter_id', 'member_info', 'memory_instructions', 'previous_letter_info', 'recipient_title', 'reference_context', 'user_prompt', 'writing_instructions'] Received: ['user_prompt', 'reference_context', 'additional_context', 'writing_instructions', 'member_info', 'letter_id', 'current_date', 'previous_letter_info', 'memory_instructions']\nNote: if you intended {recipient_title} to be part of the string and not a variable, please escape it with double curly braces like: '{{recipient_title}}'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT "
+2025-11-05 10:35:41,594 - src.api.letter_routes - ERROR - Letter generation failed: AI service error: Failed to generate letter: "Input to PromptTemplate is missing variables {'recipient_title'}.  Expected: ['additional_context', 'current_date', 'letter_id', 'member_info', 'memory_instructions', 'previous_letter_info', 'recipient_title', 'reference_context', 'user_prompt', 'writing_instructions'] Received: ['user_prompt', 'reference_context', 'additional_context', 'writing_instructions', 'member_info', 'letter_id', 'current_date', 'previous_letter_info', 'memory_instructions']\nNote: if you intended {recipient_title} to be part of the string and not a variable, please escape it with double curly braces like: '{{recipient_title}}'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT "
+2025-11-05 10:35:41,595 - src.utils.helpers - INFO - generate_letter executed in 16.272s
+2025-11-05 10:35:41,595 - __main__ - INFO - Response: 500 - letter.generate_letter
+2025-11-05 10:35:41,596 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 10:35:41] "[35m[1mPOST /api/v1/letter/generate HTTP/1.1[0m" 500 -
+2025-11-05 10:37:27,740 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\api\\__init__.py', reloading
+2025-11-05 10:37:28,099 - werkzeug - INFO -  * Restarting with stat
+2025-11-05 10:39:50,657 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-05 10:39:50,704 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-11-05 10:39:50,704 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-05 10:39:50,708 - werkzeug - INFO -  * Restarting with stat
+2025-11-05 10:39:53,841 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-05 10:39:54,041 - werkzeug - WARNING -  * Debugger is active!
+2025-11-05 10:39:54,041 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-05 10:39:54,124 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/letter/generate - 127.0.0.1
+2025-11-05 10:39:54,124 - src.api.letter_routes - INFO - Letter generation request from user: ziad@moe.gov.sa, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
+2025-11-05 10:39:54,358 - src.services.usage_tracking_service - INFO - Usage Tracking Service initialized
+2025-11-05 10:39:57,698 - src.services.usage_tracking_service - INFO - Found quota_month limit: 100
+2025-11-05 10:39:57,699 - src.utils.helpers - INFO - get_quota_limit executed in 3.341s
+2025-11-05 10:40:00,057 - src.services.usage_tracking_service - INFO - Found existing usage row for 2025_11 at row 3: {'yyyy_mm': '2025_11', 'letters_count': 3, 'tokens_sum': 8361, 'cost_sum_usd': 0.054525}
+2025-11-05 10:40:00,057 - src.utils.helpers - INFO - get_or_create_usage_row executed in 2.359s
+2025-11-05 10:40:00,058 - src.services.usage_tracking_service - INFO - Quota check passed: 3/100 (97 remaining)
+2025-11-05 10:40:00,058 - src.utils.helpers - INFO - check_quota executed in 5.701s
+2025-11-05 10:40:02,938 - src.services.user_management_service - INFO - Client found for email ziad@moe.gov.sa: Ministry of Education
+2025-11-05 10:40:02,939 - src.utils.helpers - INFO - get_client_by_email executed in 2.880s
+2025-11-05 10:40:06,200 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 1.965s
+2025-11-05 10:40:06,689 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 2.452s
+2025-11-05 10:40:06,700 - src.services.google_services - WARNING - No user found with full_name: 
+2025-11-05 10:40:06,700 - src.utils.helpers - INFO - get_user_info_from_sheet_id executed in 2.463s
+2025-11-05 10:40:07,589 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 3.352s
+2025-11-05 10:40:07,591 - src.utils.helpers - INFO - get_letter_config_by_category_from_sheet_id executed in 3.355s
+2025-11-05 10:40:07,591 - src.api.letter_routes - INFO - Loaded letter config from sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg for category: طلب
+2025-11-05 10:40:07,592 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
+2025-11-05 10:40:07,592 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
+2025-11-05 10:40:07,592 - src.services.letter_generator - INFO - Attempting to load prompt template from Settings sheet for sheet_id: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
+2025-11-05 10:40:08,990 - src.services.usage_tracking_service - INFO - Found prompt template from Settings sheet (length: 7365 chars)
+2025-11-05 10:40:08,992 - src.utils.helpers - INFO - get_prompt_template executed in 1.401s
+2025-11-05 10:40:08,993 - src.services.letter_generator - INFO - ✅ Successfully loaded custom prompt template from Settings sheet (length: 7365 chars)
+2025-11-05 10:40:10,219 - src.utils.helpers - INFO - get_context_instructions executed in 0.878s
+2025-11-05 10:40:10,230 - src.services.memory_service - INFO - Optimized memory service initialized (sheet_id: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
+2025-11-05 10:40:10,241 - src.services.letter_generator - INFO - Retrieved memory instructions for category='طلب', session_id='None', sheet_id='17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg': 125 chars
+2025-11-05 10:40:10,242 - src.services.letter_generator - INFO - Generating letter with ID: LET-20251105-28290
+2025-11-05 10:40:10,360 - src.services.letter_generator - ERROR - Letter generation failed for ID LET-20251105-28290: "Input to PromptTemplate is missing variables {'recipient_title'}.  Expected: ['additional_context', 'current_date', 'letter_id', 'member_info', 'memory_instructions', 'previous_letter_info', 'recipient_title', 'reference_context', 'user_prompt', 'writing_instructions'] Received: ['user_prompt', 'reference_context', 'additional_context', 'writing_instructions', 'member_info', 'letter_id', 'current_date', 'previous_letter_info', 'memory_instructions']\nNote: if you intended {recipient_title} to be part of the string and not a variable, please escape it with double curly braces like: '{{recipient_title}}'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT "
+2025-11-05 10:40:10,360 - src.utils.exceptions - ERROR - Operation failed: letter_generation
+2025-11-05 10:40:10,360 - src.utils.helpers - ERROR - generate_letter failed after 2.768s: Failed to generate letter: "Input to PromptTemplate is missing variables {'recipient_title'}.  Expected: ['additional_context', 'current_date', 'letter_id', 'member_info', 'memory_instructions', 'previous_letter_info', 'recipient_title', 'reference_context', 'user_prompt', 'writing_instructions'] Received: ['user_prompt', 'reference_context', 'additional_context', 'writing_instructions', 'member_info', 'letter_id', 'current_date', 'previous_letter_info', 'memory_instructions']\nNote: if you intended {recipient_title} to be part of the string and not a variable, please escape it with double curly braces like: '{{recipient_title}}'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT "
+2025-11-05 10:40:10,361 - src.api.letter_routes - ERROR - Letter generation failed: AI service error: Failed to generate letter: "Input to PromptTemplate is missing variables {'recipient_title'}.  Expected: ['additional_context', 'current_date', 'letter_id', 'member_info', 'memory_instructions', 'previous_letter_info', 'recipient_title', 'reference_context', 'user_prompt', 'writing_instructions'] Received: ['user_prompt', 'reference_context', 'additional_context', 'writing_instructions', 'member_info', 'letter_id', 'current_date', 'previous_letter_info', 'memory_instructions']\nNote: if you intended {recipient_title} to be part of the string and not a variable, please escape it with double curly braces like: '{{recipient_title}}'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT "
+2025-11-05 10:40:10,361 - src.utils.helpers - INFO - generate_letter executed in 16.237s
+2025-11-05 10:40:10,361 - __main__ - INFO - Response: 500 - letter.generate_letter
+2025-11-05 10:40:10,361 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 10:40:10] "[35m[1mPOST /api/v1/letter/generate HTTP/1.1[0m" 500 -
+2025-11-05 10:42:19,020 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\letter_generator.py', reloading
+2025-11-05 10:42:19,277 - werkzeug - INFO -  * Restarting with stat
+2025-11-05 10:42:21,623 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-05 10:42:21,649 - werkzeug - WARNING -  * Debugger is active!
+2025-11-05 10:42:21,652 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-05 10:42:27,682 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/letter/generate - 127.0.0.1
+2025-11-05 10:42:27,682 - src.api.letter_routes - INFO - Letter generation request from user: ziad@moe.gov.sa, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
+2025-11-05 10:42:27,786 - src.services.usage_tracking_service - INFO - Usage Tracking Service initialized
+2025-11-05 10:42:30,914 - src.services.usage_tracking_service - INFO - Found quota_month limit: 100
+2025-11-05 10:42:30,915 - src.utils.helpers - INFO - get_quota_limit executed in 3.128s
+2025-11-05 10:42:32,806 - src.services.usage_tracking_service - INFO - Found existing usage row for 2025_11 at row 3: {'yyyy_mm': '2025_11', 'letters_count': 3, 'tokens_sum': 8361, 'cost_sum_usd': 0.054525}
+2025-11-05 10:42:32,806 - src.utils.helpers - INFO - get_or_create_usage_row executed in 1.891s
+2025-11-05 10:42:32,806 - src.services.usage_tracking_service - INFO - Quota check passed: 3/100 (97 remaining)
+2025-11-05 10:42:32,806 - src.utils.helpers - INFO - check_quota executed in 5.020s
+2025-11-05 10:42:35,573 - src.services.user_management_service - INFO - Client found for email ziad@moe.gov.sa: Ministry of Education
+2025-11-05 10:42:35,574 - src.utils.helpers - INFO - get_client_by_email executed in 2.767s
+2025-11-05 10:42:37,896 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 0.900s
+2025-11-05 10:42:38,800 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 1.803s
+2025-11-05 10:42:38,859 - src.services.google_services - WARNING - No user found with full_name: 
+2025-11-05 10:42:38,859 - src.utils.helpers - INFO - get_user_info_from_sheet_id executed in 1.858s
+2025-11-05 10:42:39,509 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 2.508s
+2025-11-05 10:42:39,509 - src.utils.helpers - INFO - get_letter_config_by_category_from_sheet_id executed in 2.514s
+2025-11-05 10:42:39,509 - src.api.letter_routes - INFO - Loaded letter config from sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg for category: طلب
+2025-11-05 10:42:39,509 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
+2025-11-05 10:42:39,510 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
+2025-11-05 10:42:39,510 - src.services.letter_generator - INFO - Attempting to load prompt template from Settings sheet for sheet_id: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
+2025-11-05 10:42:40,365 - src.services.usage_tracking_service - INFO - Found prompt template from Settings sheet (length: 7341 chars)
+2025-11-05 10:42:40,365 - src.utils.helpers - INFO - get_prompt_template executed in 0.855s
+2025-11-05 10:42:40,366 - src.services.letter_generator - INFO - ✅ Successfully loaded custom prompt template from Settings sheet (length: 7341 chars)
+2025-11-05 10:42:42,725 - src.utils.helpers - INFO - get_context_instructions executed in 2.047s
+2025-11-05 10:42:42,745 - src.services.memory_service - INFO - Optimized memory service initialized (sheet_id: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
+2025-11-05 10:42:42,757 - src.services.letter_generator - INFO - Retrieved memory instructions for category='طلب', session_id='None', sheet_id='17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg': 125 chars
+2025-11-05 10:42:42,757 - src.services.letter_generator - INFO - Generating letter with ID: LET-20251105-07703
+2025-11-05 10:42:52,311 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-05 10:42:52,401 - src.services.letter_generator - ERROR - Letter generation failed for ID LET-20251105-07703: Invalid json output: بسم الله الرحمن الرحيم
+
+خطاب شكر وتقدير لجهود إدارة المشاريع في دعم المبادرات البيئية
+
+الأستاذ الفاضل أحمد محمد علي                                                                                   سلمه الله
+
+السلام عليكم ورحمة الله وبركاته،
+
+     نثمن جهودكم المتميزة في تطوير منظومة المشاريع، ونقدر دوركم الفاعل في دعم المبادرات التنموية ذات الأثر المستدام على البيئة والمجتمع.
+
+     وانطلاقًا من هذا النهج الطموح، نود أن نقدم لسعادتكم "نت زيرو"، وهو مشروع اجتماعي وطني، أحد مخرجات برنامج (سدرة) التابع لوزارة البيئة والمياه والزراعة، يهدف إلى تعزيز الاستدامة البيئية وتحقيق أهداف الحياد الكربوني في المملكة، من خلال تطوير حلول تقنية مبتكرة تدعم التشجير الذكي، وتوثيق الغطاء النباتي، ورفع كفاءة إدارة الموارد الطبيعية بما يواكب مستهدفات رؤية المملكة 2030 ومبادرة "السعودية الخضراء".
+
+     نتقدم إلى سعادتكم بجزيل الشكر والتقدير على ما تبذلونه من جهود ملموسة في دعم المبادرات البيئية، وحرصكم الدائم على تسهيل أعمال الفرق المختصة، مما كان له بالغ الأثر في تحقيق نتائج إيجابية على مستوى المشاريع البيئية المشتركة. إن تعاونكم البنّاء وتوجيهاتكم السديدة أسهما في تذليل العقبات وتعزيز جودة التنفيذ، الأمر الذي انعكس إيجابًا على تحقيق الأهداف الوطنية في مجال الاستدامة البيئية.
+
+     ونؤكد اعتزازنا بالشراكة مع إدارتكم الموقرة، ونتطلع إلى استمرار التعاون المثمر في سبيل تحقيق المزيد من الإنجازات النوعية، بما يخدم تطلعات الوطن ويعزز مكانته الريادية في مجال حماية البيئة.
+
+     للاستفسار أو مزيد من المعلومات، يُرجى التواصل مع الأستاذ زياد وائل، عبر البريد الإلكتروني: ziad@moe.gov.sa.
+
+وتفضلوا بقبول فائق الاحترام والتقدير،،،
+For troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/OUTPUT_PARSING_FAILURE 
+2025-11-05 10:42:52,402 - src.utils.exceptions - ERROR - Operation failed: letter_generation
+2025-11-05 10:42:52,402 - src.utils.helpers - ERROR - generate_letter failed after 12.893s: Failed to generate letter: Invalid json output: بسم الله الرحمن الرحيم
+
+خطاب شكر وتقدير لجهود إدارة المشاريع في دعم المبادرات البيئية
+
+الأستاذ الفاضل أحمد محمد علي                                                                                   سلمه الله
+
+السلام عليكم ورحمة الله وبركاته،
+
+     نثمن جهودكم المتميزة في تطوير منظومة المشاريع، ونقدر دوركم الفاعل في دعم المبادرات التنموية ذات الأثر المستدام على البيئة والمجتمع.
+
+     وانطلاقًا من هذا النهج الطموح، نود أن نقدم لسعادتكم "نت زيرو"، وهو مشروع اجتماعي وطني، أحد مخرجات برنامج (سدرة) التابع لوزارة البيئة والمياه والزراعة، يهدف إلى تعزيز الاستدامة البيئية وتحقيق أهداف الحياد الكربوني في المملكة، من خلال تطوير حلول تقنية مبتكرة تدعم التشجير الذكي، وتوثيق الغطاء النباتي، ورفع كفاءة إدارة الموارد الطبيعية بما يواكب مستهدفات رؤية المملكة 2030 ومبادرة "السعودية الخضراء".
+
+     نتقدم إلى سعادتكم بجزيل الشكر والتقدير على ما تبذلونه من جهود ملموسة في دعم المبادرات البيئية، وحرصكم الدائم على تسهيل أعمال الفرق المختصة، مما كان له بالغ الأثر في تحقيق نتائج إيجابية على مستوى المشاريع البيئية المشتركة. إن تعاونكم البنّاء وتوجيهاتكم السديدة أسهما في تذليل العقبات وتعزيز جودة التنفيذ، الأمر الذي انعكس إيجابًا على تحقيق الأهداف الوطنية في مجال الاستدامة البيئية.
+
+     ونؤكد اعتزازنا بالشراكة مع إدارتكم الموقرة، ونتطلع إلى استمرار التعاون المثمر في سبيل تحقيق المزيد من الإنجازات النوعية، بما يخدم تطلعات الوطن ويعزز مكانته الريادية في مجال حماية البيئة.
+
+     للاستفسار أو مزيد من المعلومات، يُرجى التواصل مع الأستاذ زياد وائل، عبر البريد الإلكتروني: ziad@moe.gov.sa.
+
+وتفضلوا بقبول فائق الاحترام والتقدير،،،
+For troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/OUTPUT_PARSING_FAILURE 
+2025-11-05 10:42:52,403 - src.api.letter_routes - ERROR - Letter generation failed: AI service error: Failed to generate letter: Invalid json output: بسم الله الرحمن الرحيم
+
+خطاب شكر وتقدير لجهود إدارة المشاريع في دعم المبادرات البيئية
+
+الأستاذ الفاضل أحمد محمد علي                                                                                   سلمه الله
+
+السلام عليكم ورحمة الله وبركاته،
+
+     نثمن جهودكم المتميزة في تطوير منظومة المشاريع، ونقدر دوركم الفاعل في دعم المبادرات التنموية ذات الأثر المستدام على البيئة والمجتمع.
+
+     وانطلاقًا من هذا النهج الطموح، نود أن نقدم لسعادتكم "نت زيرو"، وهو مشروع اجتماعي وطني، أحد مخرجات برنامج (سدرة) التابع لوزارة البيئة والمياه والزراعة، يهدف إلى تعزيز الاستدامة البيئية وتحقيق أهداف الحياد الكربوني في المملكة، من خلال تطوير حلول تقنية مبتكرة تدعم التشجير الذكي، وتوثيق الغطاء النباتي، ورفع كفاءة إدارة الموارد الطبيعية بما يواكب مستهدفات رؤية المملكة 2030 ومبادرة "السعودية الخضراء".
+
+     نتقدم إلى سعادتكم بجزيل الشكر والتقدير على ما تبذلونه من جهود ملموسة في دعم المبادرات البيئية، وحرصكم الدائم على تسهيل أعمال الفرق المختصة، مما كان له بالغ الأثر في تحقيق نتائج إيجابية على مستوى المشاريع البيئية المشتركة. إن تعاونكم البنّاء وتوجيهاتكم السديدة أسهما في تذليل العقبات وتعزيز جودة التنفيذ، الأمر الذي انعكس إيجابًا على تحقيق الأهداف الوطنية في مجال الاستدامة البيئية.
+
+     ونؤكد اعتزازنا بالشراكة مع إدارتكم الموقرة، ونتطلع إلى استمرار التعاون المثمر في سبيل تحقيق المزيد من الإنجازات النوعية، بما يخدم تطلعات الوطن ويعزز مكانته الريادية في مجال حماية البيئة.
+
+     للاستفسار أو مزيد من المعلومات، يُرجى التواصل مع الأستاذ زياد وائل، عبر البريد الإلكتروني: ziad@moe.gov.sa.
+
+وتفضلوا بقبول فائق الاحترام والتقدير،،،
+For troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/OUTPUT_PARSING_FAILURE 
+2025-11-05 10:42:52,403 - src.utils.helpers - INFO - generate_letter executed in 24.721s
+2025-11-05 10:42:52,404 - __main__ - INFO - Response: 500 - letter.generate_letter
+2025-11-05 10:42:52,404 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 10:42:52] "[35m[1mPOST /api/v1/letter/generate HTTP/1.1[0m" 500 -
+2025-11-05 10:44:49,872 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/letter/generate - 127.0.0.1
+2025-11-05 10:44:49,872 - src.api.letter_routes - INFO - Letter generation request from user: ziad@moe.gov.sa, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
+2025-11-05 10:44:51,353 - src.services.usage_tracking_service - INFO - Found quota_month limit: 100
+2025-11-05 10:44:51,371 - src.utils.helpers - INFO - get_quota_limit executed in 1.498s
+2025-11-05 10:44:53,855 - src.services.usage_tracking_service - INFO - Found existing usage row for 2025_11 at row 3: {'yyyy_mm': '2025_11', 'letters_count': 3, 'tokens_sum': 8361, 'cost_sum_usd': 0.054525}
+2025-11-05 10:44:53,856 - src.utils.helpers - INFO - get_or_create_usage_row executed in 2.484s
+2025-11-05 10:44:53,856 - src.services.usage_tracking_service - INFO - Quota check passed: 3/100 (97 remaining)
+2025-11-05 10:44:53,856 - src.utils.helpers - INFO - check_quota executed in 3.983s
+2025-11-05 10:44:53,856 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-05 10:44:55,888 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 1.062s
+2025-11-05 10:44:56,264 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 1.435s
+2025-11-05 10:44:56,336 - src.services.google_services - WARNING - No user found with full_name: 
+2025-11-05 10:44:56,347 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 1.513s
+2025-11-05 10:44:56,579 - src.utils.helpers - INFO - get_user_info_from_sheet_id executed in 1.742s
+2025-11-05 10:44:56,580 - src.utils.helpers - INFO - get_letter_config_by_category_from_sheet_id executed in 1.759s
+2025-11-05 10:44:56,580 - src.api.letter_routes - INFO - Loaded letter config from sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg for category: طلب
+2025-11-05 10:44:56,581 - src.services.letter_generator - INFO - Attempting to load prompt template from Settings sheet for sheet_id: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
+2025-11-05 10:44:57,520 - src.services.usage_tracking_service - INFO - Found prompt template from Settings sheet (length: 7359 chars)
+2025-11-05 10:44:57,521 - src.utils.helpers - INFO - get_prompt_template executed in 0.940s
+2025-11-05 10:44:57,521 - src.services.letter_generator - INFO - ✅ Successfully loaded custom prompt template from Settings sheet (length: 7359 chars)
+2025-11-05 10:44:58,418 - src.utils.helpers - INFO - get_context_instructions executed in 0.895s
+2025-11-05 10:44:58,442 - src.services.letter_generator - INFO - Retrieved memory instructions for category='طلب', session_id='None', sheet_id='17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg': 125 chars
+2025-11-05 10:44:58,442 - src.services.letter_generator - INFO - Generating letter with ID: LET-20251105-45834
+2025-11-05 10:45:09,125 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-05 10:45:09,135 - src.services.letter_generator - INFO - Letter generated successfully: LET-20251105-45834
+2025-11-05 10:45:09,135 - src.utils.helpers - INFO - generate_letter executed in 12.554s
+2025-11-05 10:45:09,135 - src.api.letter_routes - INFO - Letter generated successfully: LET-20251105-45834
+2025-11-05 10:45:09,135 - src.services.letter_generator - INFO - Using default hardcoded prompt template
+2025-11-05 10:45:10,392 - src.utils.helpers - INFO - get_context_instructions executed in 1.256s
+2025-11-05 10:45:10,411 - src.services.letter_generator - INFO - Retrieved memory instructions for category='طلب', session_id='None', sheet_id='17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg': 125 chars
+2025-11-05 10:45:10,418 - src.services.usage_tracking_service - INFO - Usage estimate: 5758 tokens ($0.037070)
+2025-11-05 10:45:11,329 - src.services.usage_tracking_service - INFO - Found existing usage row for 2025_11 at row 3: {'yyyy_mm': '2025_11', 'letters_count': 3, 'tokens_sum': 8361, 'cost_sum_usd': 0.054525}
+2025-11-05 10:45:11,329 - src.utils.helpers - INFO - get_or_create_usage_row executed in 0.911s
+2025-11-05 10:45:14,270 - src.services.usage_tracking_service - INFO - Updated usage for 2025_11: letters=4, tokens=14119, cost=$0.091595
+2025-11-05 10:45:14,270 - src.utils.helpers - INFO - update_usage executed in 3.852s
+2025-11-05 10:45:14,270 - src.api.letter_routes - INFO - Usage tracked for letter LET-20251105-45834: 5758 tokens, $0.037070
+2025-11-05 10:45:14,271 - src.utils.helpers - INFO - generate_letter executed in 24.398s
+2025-11-05 10:45:14,271 - __main__ - INFO - Response: 200 - letter.generate_letter
+2025-11-05 10:45:14,272 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 10:45:14] "POST /api/v1/letter/generate HTTP/1.1" 200 -

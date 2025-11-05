@@ -299,7 +299,8 @@ class ArabicLetterGenerationService:
                 "letter_id": context.letter_id,
                 "current_date": get_current_arabic_date(),
                 "previous_letter_info": self._build_previous_letter_info(context),
-                "memory_instructions": self._get_memory_instructions(context)
+                "memory_instructions": self._get_memory_instructions(context),
+                "recipient_title": context.recipient_title or ""
             }
 
             logger.info(f"Generating letter with ID: {context.letter_id}")
