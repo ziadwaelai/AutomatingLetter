@@ -18,6 +18,7 @@ from ..models import (
     SuccessResponse
 )
 from ..services import get_drive_logger_service, get_enhanced_pdf_service
+from ..services.doc_services import CreateDocument
 from ..utils import (
     ErrorContext,
     build_error_response,
@@ -248,6 +249,214 @@ def process_letter_archive_in_background(
     except Exception as e:
         logger.error(f"[BACKGROUND] ❌ CRITICAL ERROR in background archiving for letter ID {letter_id}: {str(e)}", exc_info=True)
         logger.debug(f"[BACKGROUND] DEBUG: Exception type: {type(e).__name__}")
+
+@archive_bp.route('/letter/docx', methods=['POST'])
+@measure_performance
+@require_auth
+def archive_letter_docx(user_info):
+    """
+    Archive letter to DOCX, upload to Google Drive, and log to sheets.
+    Similar to PDF archiving but saves as Word document (.docx) instead.
+    Process runs in background and returns immediately.
+    Requires JWT authentication.
+    """
+    try:
+        # Extract sheet_id and google_drive_id from JWT token
+        sheet_id = user_info.get('sheet_id')
+        if not sheet_id:
+            logger.error("DEBUG: sheet_id not found in JWT token")
+            return build_error_response("معرف الجدول غير موجود في التوكن", 400)
+
+        google_drive_id = user_info.get('google_drive_id')
+        if not google_drive_id:
+            logger.error("DEBUG: google_drive_id not found in JWT token")
+            return build_error_response("معرف مجلد Google Drive غير موجود في التوكن", 400)
+
+        # Check if JWT token is expired
+        import time
+        token_exp = user_info.get('exp')
+        if token_exp:
+            current_time = time.time()
+            if current_time > token_exp:
+                user_email = user_info.get('user', {}).get('email', 'unknown')
+                logger.warning(f"JWT token expired for user: {user_email}")
+                return jsonify({
+                    "status": "error",
+                    "message": "انتهت صلاحية التوكن. يرجى تسجيل الدخول مرة أخرى"
+                }), 401
+
+        # Get user email for logging
+        user_email = user_info.get('user', {}).get('email', 'unknown')
+        client_id = user_info.get('client_id', 'unknown')
+
+        logger.info(f"DOCX Archive request from user: {user_email}, client: {client_id}, sheet: {sheet_id}, drive: {google_drive_id}")
+
+        # Validate request
+        data = request.get_json()
+        logger.debug(f"DEBUG: Raw DOCX request payload: {data}")
+
+        if not data:
+            logger.error("DEBUG: No JSON data in request")
+            return build_error_response("لم يتم تقديم بيانات JSON", 400)
+
+        # Validate required fields
+        required_fields = ['letter_content', 'ID']
+        missing_fields = [field for field in required_fields if not data.get(field)]
+        if missing_fields:
+            logger.error(f"DEBUG: Missing required fields: {missing_fields}")
+            field_names_ar = {'letter_content': 'محتوى الخطاب', 'ID': 'رقم الخطاب'}
+            missing_ar = [field_names_ar.get(field, field) for field in missing_fields]
+            return build_error_response(f"الحقول المطلوبة مفقودة: {', '.join(missing_ar)}", 400)
+
+        # Extract data with defaults
+        letter_content = data.get('letter_content', '')
+        letter_type = data.get('letter_type', 'General')
+        recipient = data.get('recipient', '')
+        title = data.get('title', 'undefined')
+        is_first = data.get('is_first', False)
+        letter_id = data.get('ID', '')
+
+        logger.debug(f"DEBUG: Extracted letter_id: '{letter_id}'")
+        logger.debug(f"DEBUG: Extracted letter_type: '{letter_type}'")
+        logger.debug(f"DEBUG: Extracted recipient: '{recipient}'")
+        logger.debug(f"DEBUG: Extracted title: '{title}'")
+        logger.debug(f"DEBUG: Extracted is_first: {is_first}")
+        logger.debug(f"DEBUG: Letter content length: {len(letter_content)} characters")
+
+        # Start background processing
+        background_thread = threading.Thread(
+            target=process_letter_docx_archive_in_background,
+            args=(letter_content, letter_id, letter_type, recipient, title, is_first, sheet_id, user_email, google_drive_id),
+            name=f"DocxArchiveThread-{letter_id}"
+        )
+        background_thread.daemon = False
+        background_thread.start()
+        logger.debug(f"Background DOCX archiving thread started: {background_thread.name}")
+
+        # Return immediate success response
+        response = ArchiveResponse(
+            status="success",
+            message=f"Letter DOCX archiving started for ID: {letter_id}",
+            processing="background",
+            letter_id=letter_id
+        )
+
+        logger.info(f"Letter DOCX archiving initiated for ID: {letter_id} (sheet: {sheet_id})")
+        return jsonify(response.model_dump()), 200
+
+    except ValidationError as e:
+        logger.warning(f"Validation error in letter DOCX archiving: {e}")
+        return build_error_response(f"خطأ في التحقق من البيانات: {e}", 400)
+    except Exception as e:
+        logger.error(f"Letter DOCX archiving failed: {e}")
+        return build_error_response(f"خطأ في الأرشفة: {str(e)}", 500)
+
+def process_letter_docx_archive_in_background(
+    letter_content: str,
+    letter_id: str,
+    letter_type: str,
+    recipient: str,
+    title: str,
+    is_first: bool,
+    sheet_id: str,
+    user_email: str,
+    google_drive_id: str
+) -> None:
+    """
+    Process letter archiving to DOCX in background thread.
+
+    Args:
+        letter_content: Content of the letter
+        letter_id: Unique letter ID
+        letter_type: Type/category of letter
+        recipient: Letter recipient
+        title: Letter title
+        is_first: Whether this is first communication
+        sheet_id: Google Sheet ID for logging (from JWT token)
+        user_email: User email from JWT token (for Created_by field)
+        google_drive_id: Google Drive folder ID for upload (from JWT token)
+    """
+    temp_docx_path = None
+    try:
+        logger.info(f"[DOCX BACKGROUND] Starting background DOCX archiving for letter ID: {letter_id}")
+        logger.debug(f"[DOCX BACKGROUND] DEBUG: sheet_id: {sheet_id}")
+        logger.debug(f"[DOCX BACKGROUND] DEBUG: google_drive_id: {google_drive_id}")
+        logger.debug(f"[DOCX BACKGROUND] DEBUG: user_email: {user_email}")
+
+        # Get drive logger service
+        logger.debug(f"[DOCX BACKGROUND] DEBUG: Getting drive logger service...")
+        drive_logger = get_drive_logger_service()
+        logger.debug(f"[DOCX BACKGROUND] DEBUG: Drive logger service obtained")
+
+        # Create DOCX document
+        logger.info(f"[DOCX BACKGROUND] Creating DOCX document for letter ID: {letter_id}")
+
+        try:
+            doc_service = CreateDocument()
+
+            # Parse the raw letter content using GPT-4o
+            parsed_data = doc_service._parse_raw_letter_content(letter_content)
+
+            # Create document with parsed data and letter_id
+            doc = doc_service.create_from_json(parsed_data, letter_id=letter_id)
+
+            # Save to temporary location
+            import tempfile
+            temp_dir = tempfile.gettempdir()
+            safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
+            if not safe_title:
+                safe_title = f"letter_{letter_id}"
+            temp_docx_path = os.path.join(temp_dir, f"{safe_title}_{letter_id}.docx")
+
+            saved_path = doc_service.save(temp_docx_path)
+            logger.info(f"[DOCX BACKGROUND] DOCX generated successfully: {saved_path}")
+            logger.debug(f"[DOCX BACKGROUND] DEBUG: DOCX file path: {saved_path}")
+
+        except Exception as docx_error:
+            logger.error(f"[DOCX BACKGROUND] ERROR during DOCX generation: {str(docx_error)}", exc_info=True)
+            raise
+
+        # Archive to Drive and log to sheets
+        logger.info(f"[DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: {letter_id}")
+        logger.debug(f"[DOCX BACKGROUND] DEBUG: Calling save_letter_to_drive_and_log...")
+
+        try:
+            archive_result = drive_logger.save_letter_to_drive_and_log_docx(
+                letter_file_path=temp_docx_path,
+                letter_content=letter_content,
+                letter_type=letter_type,
+                recipient=recipient,
+                title=title,
+                is_first=is_first,
+                sheet_id=sheet_id,
+                letter_id=letter_id,
+                user_email=user_email,
+                folder_id=google_drive_id
+            )
+            logger.debug(f"[DOCX BACKGROUND] DEBUG: Archive result: {archive_result}")
+        except Exception as archive_error:
+            logger.error(f"[DOCX BACKGROUND] ERROR during archive/upload: {str(archive_error)}", exc_info=True)
+            raise
+
+        # Clean up temporary DOCX file
+        try:
+            logger.debug(f"[DOCX BACKGROUND] DEBUG: Cleaning up temporary file: {temp_docx_path}")
+            drive_logger.cleanup_temp_file(temp_docx_path)
+            logger.debug(f"[DOCX BACKGROUND] DEBUG: Cleanup completed")
+        except Exception as cleanup_error:
+            logger.warning(f"[DOCX BACKGROUND] Warning: Error cleaning up temporary file for {letter_id}: {cleanup_error}")
+
+        if archive_result.get("status") == "success":
+            logger.info(f"[DOCX BACKGROUND] ✅ Background DOCX archiving completed successfully for letter ID: {letter_id}")
+            logger.info(f"[DOCX BACKGROUND] Drive URL: {archive_result.get('file_url', 'N/A')}")
+            logger.debug(f"[DOCX BACKGROUND] DEBUG: Full result: {archive_result}")
+        else:
+            logger.error(f"[DOCX BACKGROUND] ❌ Background DOCX archiving failed for letter ID: {letter_id}: {archive_result.get('message', 'Unknown error')}")
+            logger.debug(f"[DOCX BACKGROUND] DEBUG: Full result: {archive_result}")
+
+    except Exception as e:
+        logger.error(f"[DOCX BACKGROUND] ❌ CRITICAL ERROR in background DOCX archiving for letter ID {letter_id}: {str(e)}", exc_info=True)
+        logger.debug(f"[DOCX BACKGROUND] DEBUG: Exception type: {type(e).__name__}")
 
 @archive_bp.route('/status/<letter_id>', methods=['GET'])
 def get_archive_status(letter_id: str):

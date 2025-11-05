@@ -30,15 +30,16 @@ class DriveLoggerService:
         self.sheets_service = GoogleSheetsService()
         logger.info("Drive Logger service initialized")
     
-    def upload_file_to_drive(self, file_path: str, folder_id: str, filename: Optional[str] = None) -> Tuple[str, str]:
+    def upload_file_to_drive(self, file_path: str, folder_id: str, filename: Optional[str] = None, mimetype: str = 'application/pdf') -> Tuple[str, str]:
         """
         Upload a file to Google Drive and return its ID and web view link.
-        
+
         Args:
             file_path: Path to the file to upload
             folder_id: Google Drive folder ID
             filename: Custom filename (optional)
-            
+            mimetype: MIME type of the file (default: 'application/pdf')
+
         Returns:
             Tuple of (file_id, web_view_link)
         """
@@ -48,21 +49,21 @@ class DriveLoggerService:
                 self.service_account_file, scopes=self.scopes
             )
             drive_service = build('drive', 'v3', credentials=creds)
-            
+
             # Use provided filename or extract from path
             if filename is None:
                 filename = os.path.basename(file_path)
-            
+
             # Prepare file metadata
             file_metadata = {
                 'name': filename,
                 'parents': [folder_id]
             }
-            
+
             # Create media upload
             media = MediaFileUpload(
                 file_path,
-                mimetype='application/pdf',
+                mimetype=mimetype,
                 resumable=True
             )
             
@@ -173,9 +174,9 @@ class DriveLoggerService:
             
             # Upload to Drive
             filename = f"{title}_{letter_id}.pdf" if title != 'undefined' else f"letter_{letter_id}.pdf"
-            
+
             try:
-                file_id, file_url = self.upload_file_to_drive(letter_file_path, folder_id, filename)
+                file_id, file_url = self.upload_file_to_drive(letter_file_path, folder_id, filename, mimetype='application/pdf')
             except Exception as upload_error:
                 logger.error(f"Failed to upload letter {letter_id} to Drive: {upload_error}")
                 return {
@@ -226,7 +227,111 @@ class DriveLoggerService:
                 "status": "error",
                 "message": error_message
             }
-    
+
+    def save_letter_to_drive_and_log_docx(self,
+                                          letter_file_path: str,
+                                          letter_content: str,
+                                          letter_type: str,
+                                          recipient: str,
+                                          title: str,
+                                          is_first: bool,
+                                          sheet_id: str,
+                                          letter_id: str,
+                                          user_email: str,
+                                          folder_id: str = None) -> Dict[str, Any]:
+        """
+        Complete workflow: Upload DOCX to Drive and log to sheets.
+        Similar to save_letter_to_drive_and_log but for DOCX files.
+
+        Args:
+            letter_file_path: Path to the DOCX file
+            letter_content: Text content of the letter
+            letter_type: Category/type of letter
+            recipient: Letter recipient
+            title: Letter title
+            is_first: Whether this is first communication
+            sheet_id: Google Sheet ID for logging (from JWT token)
+            letter_id: Unique letter ID
+            user_email: User email from JWT token (for Created_by field)
+            folder_id: Optional Google Drive folder ID (if None, use from environment)
+
+        Returns:
+            Result dictionary with file info and log result
+        """
+        try:
+            # Validate folder_id is provided (required for Drive upload)
+            if folder_id is None:
+                error_msg = "folder_id (google_drive_id from JWT token) is required for Drive upload"
+                logger.error(error_msg)
+                return {
+                    "status": "error",
+                    "message": error_msg,
+                    "file_id": None,
+                    "file_url": None,
+                    "letter_id": letter_id
+                }
+
+            # Upload to Drive with DOCX mimetype
+            filename = f"{title}_{letter_id}.docx" if title != 'undefined' else f"letter_{letter_id}.docx"
+
+            try:
+                file_id, file_url = self.upload_file_to_drive(
+                    letter_file_path,
+                    folder_id,
+                    filename,
+                    mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                )
+            except Exception as upload_error:
+                logger.error(f"Failed to upload DOCX letter {letter_id} to Drive: {upload_error}")
+                return {
+                    "status": "error",
+                    "message": f"Drive upload failed: {str(upload_error)}",
+                    "file_id": None,
+                    "file_url": None,
+                    "letter_id": letter_id
+                }
+
+            # Prepare log entry matching Submissions sheet columns
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            log_entry = {
+                "ID": letter_id,
+                "Timestamp": timestamp,
+                "Created_by": user_email,
+                "Letter_type": letter_type,
+                "Recipient_name": recipient,
+                "Subject": title,
+                "Letter_content": letter_content,
+                "Is_new_letter": "Yes" if is_first else "No",
+                "Review_status": "Pending",
+                "Review_notes": "",
+                "Reviewer_email": "",
+                "Final_letter_url": file_url,
+                "Send_status": "Not Sent",
+                "Token_usage": "",
+                "Cost_usd": ""
+            }
+
+            # Log to sheet using sheet_id
+            log_result = self.log_to_sheet_by_id(sheet_id, log_entry)
+
+            logger.info(f"Successfully archived DOCX letter {letter_id} to Drive and logged to sheet {sheet_id}")
+
+            return {
+                "status": "success",
+                "file_id": file_id,
+                "file_url": file_url,
+                "log_result": log_result,
+                "filename": filename
+            }
+
+        except Exception as e:
+            error_message = f"Error saving DOCX letter to Drive and logging: {str(e)}"
+            logger.error(error_message)
+            return {
+                "status": "error",
+                "message": error_message
+            }
+
     def update_letter_pdf_and_log(self,
                                   letter_id: str,
                                   new_content: str,
