@@ -398,56 +398,63 @@ class GoogleDriveService:
     @retry_with_backoff(max_retries=3, base_delay=1.0)
     @measure_performance
     def upload_file(
-        self, 
-        file_path: str, 
-        folder_id: str, 
-        filename: Optional[str] = None
+        self,
+        file_path: str,
+        folder_id: str,
+        filename: Optional[str] = None,
+        make_public: bool = False
     ) -> Tuple[str, str]:
         """
         Upload a file to Google Drive with retry logic.
-        
+
         Args:
             file_path: Local file path to upload
             folder_id: Target Google Drive folder ID
             filename: Custom filename (optional)
-            
+            make_public: If True, set public edit permissions (default: False)
+
         Returns:
             Tuple of (file_id, web_view_link)
         """
         with ErrorContext("drive_upload", {"file_path": file_path, "folder_id": folder_id}):
             if not os.path.exists(file_path):
                 raise StorageServiceError(f"File not found: {file_path}")
-            
+
             try:
                 actual_filename = filename or os.path.basename(file_path)
-                
+
                 file_metadata = {
                     'name': actual_filename,
                     'parents': [folder_id]
                 }
-                
+
                 media = MediaFileUpload(
                     file_path,
                     mimetype='application/pdf',
                     resumable=True
                 )
-                
+
                 uploaded = self.service.files().create(
                     body=file_metadata,
                     media_body=media,
                     fields='id, webViewLink'
                 ).execute()
-                
+
                 file_id = uploaded.get('id')
                 web_view_link = uploaded.get('webViewLink')
-                
+
                 logger.info(f"File uploaded successfully: {actual_filename} (ID: {file_id})")
-                
+
+                # Set public permissions if requested
+                if make_public:
+                    self.set_public_permissions(file_id)
+                    logger.info(f"File {actual_filename} is now publicly editable")
+
                 # Small delay to ensure file is properly processed
                 time.sleep(0.5)
-                
+
                 return file_id, web_view_link
-                
+
             except Exception as e:
                 raise StorageServiceError(f"Failed to upload file to Google Drive: {e}")
     
@@ -456,11 +463,11 @@ class GoogleDriveService:
     def create_folder(self, folder_name: str, parent_folder_id: Optional[str] = None) -> str:
         """
         Create a folder in Google Drive.
-        
+
         Args:
             folder_name: Name of the folder to create
             parent_folder_id: Parent folder ID (optional)
-            
+
         Returns:
             Created folder ID
         """
@@ -469,22 +476,75 @@ class GoogleDriveService:
                 'name': folder_name,
                 'mimeType': 'application/vnd.google-apps.folder'
             }
-            
+
             if parent_folder_id:
                 file_metadata['parents'] = [parent_folder_id]
-            
+
             folder = self.service.files().create(
                 body=file_metadata,
                 fields='id'
             ).execute()
-            
+
             folder_id = folder.get('id')
             logger.info(f"Folder created successfully: {folder_name} (ID: {folder_id})")
-            
+
             return folder_id
-            
+
         except Exception as e:
             raise StorageServiceError(f"Failed to create folder in Google Drive: {e}")
+
+    @handle_storage_errors
+    @measure_performance
+    def set_public_permissions(self, file_id: str, role: str = 'writer') -> Dict[str, Any]:
+        """
+        Set public permissions for a file in Google Drive.
+        Makes the file accessible to anyone with the link.
+
+        Args:
+            file_id: Google Drive file ID
+            role: 'writer' (anyone can edit) or 'reader' (anyone can view only)
+                  Default: 'writer'
+
+        Returns:
+            Dictionary with permission status
+        """
+        try:
+            permission = {
+                'type': 'anyone',
+                'role': role
+            }
+
+            self.service.permissions().create(
+                fileId=file_id,
+                body=permission,
+                fields='id',
+                supportsAllDrives=True  # Support shared drives
+            ).execute()
+
+            perm_text = "anyone can edit" if role == 'writer' else "anyone can view"
+            logger.info(f"Public permissions set for file {file_id}: {perm_text}")
+
+            return {
+                "status": "success",
+                "file_id": file_id,
+                "permission": perm_text,
+                "requires_confirmation": False
+            }
+
+        except Exception as e:
+            error_msg = str(e)
+            # Check if it's a permission issue
+            if "Permission denied" in error_msg or "forbidden" in error_msg.lower():
+                logger.warning(f"Service account may not have permission to share file {file_id}. "
+                             f"You may need to manually share the file or ensure service account has owner access.")
+                return {
+                    "status": "warning",
+                    "file_id": file_id,
+                    "message": "File uploaded but automatic sharing failed. Manual sharing may be required.",
+                    "requires_confirmation": True,
+                    "error": error_msg
+                }
+            raise StorageServiceError(f"Failed to set public permissions: {e}")
 
 # Service instances
 _sheets_service = None
@@ -524,9 +584,21 @@ def log(
 
 @handle_storage_errors
 def upload_file_path_to_drive(
-    file_path: str, 
-    folder_id: str, 
-    filename: Optional[str] = None
+    file_path: str,
+    folder_id: str,
+    filename: Optional[str] = None,
+    make_public: bool = False
 ) -> Tuple[str, str]:
     """Upload file to Google Drive (backward compatibility)."""
-    return get_drive_service().upload_file(file_path, folder_id, filename)
+    return get_drive_service().upload_file(file_path, folder_id, filename, make_public)
+
+@handle_storage_errors
+def set_file_public_permissions(file_id: str, role: str = 'writer') -> Dict[str, Any]:
+    """
+    Set public permissions for a file (backward compatibility).
+
+    Args:
+        file_id: Google Drive file ID
+        role: 'writer' (anyone can edit) or 'reader' (anyone can view only)
+    """
+    return get_drive_service().set_public_permissions(file_id, role)

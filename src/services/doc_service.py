@@ -321,8 +321,8 @@ class CreateDocument:
         para1 = self.document.add_paragraph()
         para1.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
         run1 = para1.add_run(f"التاريخ: {gregorian_arabic} ميلادي")
-        run1.font.size = Pt(11)
-        run1.font.name = 'Arabic Typesetting'
+        run1.font.size = Pt(8)
+        run1.font.name = 'Tajawal'
         para1.paragraph_format.space_before = Pt(0)
         para1.paragraph_format.space_after = Pt(0)
         para1.paragraph_format.line_spacing = 1.0
@@ -331,8 +331,8 @@ class CreateDocument:
         para2 = self.document.add_paragraph()
         para2.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
         run2 = para2.add_run(f"الموافق: {hijri_arabic} هجري")
-        run2.font.size = Pt(11)
-        run2.font.name = 'Arabic Typesetting'
+        run2.font.size = Pt(8)
+        run2.font.name = 'Tajawal'
         para2.paragraph_format.space_before = Pt(0)
         para2.paragraph_format.space_after = Pt(0)
         para2.paragraph_format.line_spacing = 1.0
@@ -342,8 +342,8 @@ class CreateDocument:
         para3.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
         # Format: put letter_id first, then the label (RTL order)
         run3 = para3.add_run(f"{letter_id} : الرقم")
-        run3.font.size = Pt(11)
-        run3.font.name = 'Arabic Typesetting'
+        run3.font.size = Pt(8)
+        run3.font.name = 'Tajawal'
         para3.paragraph_format.space_before = Pt(0)
         para3.paragraph_format.space_after = Pt(6)
         para3.paragraph_format.line_spacing = 1.0
@@ -361,9 +361,9 @@ class CreateDocument:
         paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
         run = paragraph.add_run(text)
-        run.font.size = Pt(26)
+        run.font.size = Pt(20)
         run.font.bold = True
-        run.font.name = 'Arabic Typesetting'
+        run.font.name = 'Tajawal'
 
         logger.debug("Besmallah added to document")
 
@@ -379,11 +379,11 @@ class CreateDocument:
         paragraph.style = 'Heading 1'
 
         run = paragraph.add_run(title)
-        run.font.size = Pt(23)
+        run.font.size = Pt(19)
         run.font.bold = True
         # underline
         run.font.underline = True
-        run.font.name = 'Arabic Typesetting'
+        run.font.name = 'Tajawal'
         color = RGBColor(0, 0, 0)  # Black color
         run.font.color.rgb = color
         logger.debug(f"Title added: {title}")
@@ -416,9 +416,13 @@ class CreateDocument:
                 paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 
                 run = paragraph.add_run(line)
-                run.font.size = Pt(18)
-                run.font.name = 'Arabic Typesetting'
+                run.font.size = Pt(15)
 
+                run.font.rtl = True 
+                run.font.name = 'Tajawal'
+                # r = run._r
+                # r.get_or_add_rPr().rFonts.set(qn('w:cs'), 'Tajawal') # Sets font for Arabic
+                
                 # Add spacing between paragraphs
                 paragraph.paragraph_format.line_spacing = 1
 
@@ -441,7 +445,8 @@ class CreateDocument:
 
         run = para.add_run(footer)
         run.font.size = Pt(15)
-        run.font.name = 'Arabic Typesetting'
+        run.font.rtl = True 
+        run.font.name = 'Tajawal'
         run.font.italic = True
 
         logger.debug("Footer added to document")

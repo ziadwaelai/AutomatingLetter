@@ -4,8 +4,8 @@
       "id": "instr_20250821_123432",
       "text": "الحفاظ على الطابع الجاد في الكتابة وعدم استخدام الفكاهة",
       "created_at": "2025-08-21T12:34:32.460284",
-      "usage_count": 4,
-      "last_used": "2025-08-21T16:09:45.464346",
+      "usage_count": 5,
+      "last_used": "2025-11-05T15:24:07.527245",
       "category": "general",
       "keywords": [
         "الكتابة",
@@ -22,8 +22,8 @@
       "id": "instr_20250821_160908",
       "text": "وضع اسم زياد وائل في نهاية كل خطاب",
       "created_at": "2025-08-21T16:09:08.944669",
-      "usage_count": 2,
-      "last_used": "2025-08-21T16:09:45.464346",
+      "usage_count": 3,
+      "last_used": "2025-11-05T15:24:07.527245",
       "category": "general",
       "keywords": [
         "خطاب",
@@ -36,7 +36,7 @@
       "effectiveness_score": 1.0
     }
   ],
-  "last_updated": "2025-08-21T16:09:45.464346",
+  "last_updated": "2025-11-05T15:24:07.527245",
   "stats": {
     "total_instructions": 2
   }
