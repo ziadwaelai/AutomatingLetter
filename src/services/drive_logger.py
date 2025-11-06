@@ -30,7 +30,7 @@ class DriveLoggerService:
         self.sheets_service = GoogleSheetsService()
         logger.info("Drive Logger service initialized")
     
-    def upload_file_to_drive(self, file_path: str, folder_id: str, filename: Optional[str] = None) -> Tuple[str, str]:
+    def upload_file_to_drive(self, file_path: str, folder_id: str, filename: Optional[str] = None, make_public: bool = False) -> Tuple[str, str]:
         """
         Upload a file to Google Drive and return its ID and web view link.
 
@@ -38,6 +38,7 @@ class DriveLoggerService:
             file_path: Path to the file to upload
             folder_id: Google Drive folder ID
             filename: Custom filename (optional)
+            make_public: If True, set public edit permissions (default: False)
 
         Returns:
             Tuple of (file_id, web_view_link)
@@ -79,20 +80,46 @@ class DriveLoggerService:
                 mimetype=mimetype,
                 resumable=True
             )
-            
+
             # Upload file
             uploaded = drive_service.files().create(
                 body=file_metadata,
                 media_body=media,
                 fields='id, webViewLink'
             ).execute()
-            
+
+            file_id = uploaded['id']
+            web_view_link = uploaded['webViewLink']
+
+            # Set public permissions if requested
+            if make_public:
+                try:
+                    permission = {
+                        'type': 'anyone',
+                        'role': 'writer'  # 'writer' allows editing, 'reader' allows viewing only
+                    }
+                    drive_service.permissions().create(
+                        fileId=file_id,
+                        body=permission,
+                        fields='id',
+                        supportsAllDrives=True  # Support shared drives
+                    ).execute()
+                    logger.info(f"File {filename} is now publicly editable (ID: {file_id})")
+                except Exception as perm_error:
+                    error_msg = str(perm_error)
+                    if "Permission denied" in error_msg or "forbidden" in error_msg.lower():
+                        logger.warning(f"Could not automatically share {filename}. "
+                                     f"You may need to manually share this file from Google Drive. "
+                                     f"File ID: {file_id}")
+                    else:
+                        logger.warning(f"Could not set public permissions for {filename}: {perm_error}")
+
             # Small delay to ensure file is ready
             time.sleep(0.5)
-            
-            logger.info(f"File uploaded to Drive: {filename} (ID: {uploaded['id']})")
-            return uploaded['id'], uploaded['webViewLink']
-            
+
+            logger.info(f"File uploaded to Drive: {filename} (ID: {file_id})")
+            return file_id, web_view_link
+
         except Exception as e:
             logger.error(f"Error uploading file to Drive: {e}")
             raise
@@ -120,7 +147,7 @@ class DriveLoggerService:
             logger.error(f"Error logging to sheet: {e}")
             raise
     
-    def save_letter_to_drive_and_log(self, 
+    def save_letter_to_drive_and_log(self,
                                      letter_file_path: str,
                                      letter_content: str,
                                      letter_type: str,
@@ -129,10 +156,11 @@ class DriveLoggerService:
                                      is_first: bool,
                                      folder_id: str,
                                      letter_id: str,
-                                     username: str) -> Dict[str, Any]:
+                                     username: str,
+                                     make_public: bool = False) -> Dict[str, Any]:
         """
         Complete workflow: Upload PDF to Drive and log to sheets.
-        
+
         Args:
             letter_file_path: Path to the PDF file
             letter_content: Text content of the letter
@@ -143,7 +171,8 @@ class DriveLoggerService:
             folder_id: Google Drive folder ID
             letter_id: Unique letter ID
             username: Username of creator
-            
+            make_public: If True, make the file publicly editable (default: False)
+
         Returns:
             Result dictionary with file info and log result
         """
@@ -158,7 +187,7 @@ class DriveLoggerService:
                 filename = f"letter_{letter_id}{file_ext}"
 
             # Upload to Drive
-            file_id, file_url = self.upload_file_to_drive(letter_file_path, folder_id, filename)
+            file_id, file_url = self.upload_file_to_drive(letter_file_path, folder_id, filename, make_public)
             
             # Prepare log entry
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -293,7 +322,7 @@ class DriveLoggerService:
             
             # Upload new PDF with original filename (or generate one if not found)
             filename = original_filename if original_filename else f"letter_{letter_id}.pdf"
-            file_id, file_url = self.upload_file_to_drive(pdf_result.file_path, folder_id, filename)
+            file_id, file_url = self.upload_file_to_drive(pdf_result.file_path, folder_id, filename, make_public=False)
             
             # Update the row in Google Sheets with new content and URL
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
