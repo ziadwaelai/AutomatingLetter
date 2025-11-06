@@ -7497,3 +7497,5 @@ TypeError: DriveLoggerService.save_letter_to_drive_and_log() got an unexpected k
 2025-11-06 12:43:10,910 - src.api.archive_routes - INFO - DOCX archiving completed for letter ID: LET-202510sdfsd23
 2025-11-06 13:03:52,923 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_service.py', reloading
 2025-11-06 13:03:53,722 - werkzeug - INFO -  * Restarting with stat
+2025-11-06 13:03:57,020 - werkzeug - WARNING -  * Debugger is active!
+2025-11-06 13:03:57,024 - werkzeug - INFO -  * Debugger PIN: 129-536-069
