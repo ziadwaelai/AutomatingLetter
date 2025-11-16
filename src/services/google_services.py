@@ -79,30 +79,30 @@ class GoogleSheetsService:
     def get_data_by_key(self, key: str, sheet_name: str, concatenate_multiple: bool = False) -> Optional[str]:
         """
         Fetch data by key from a specified sheet with caching.
-        
+
         Args:
             key: The key/category to search for
             sheet_name: The worksheet name
             concatenate_multiple: If True, concatenate multiple matches
-            
+
         Returns:
             Found data or None
         """
         with ErrorContext("get_data_by_key", {"key": key, "sheet": sheet_name}):
             try:
-                worksheet = self.client.open(self.config.database.letters_spreadsheet).worksheet(sheet_name)
+                worksheet = self.client.open(self.config.database.spreadsheet_name).worksheet(sheet_name)
                 rows = worksheet.get_all_values()
-                
+
                 matches = [
                     row[1] for row in rows
                     if row and len(row) > 1 and row[0].strip().lower() == key.strip().lower()
                 ]
-                
+
                 if concatenate_multiple and len(matches) > 1:
                     return "\n\n".join(matches[:2])  # Limit to 2 matches
-                
+
                 return matches[0] if matches else None
-                
+
             except gspread.WorksheetNotFound:
                 raise StorageServiceError(f"Worksheet '{sheet_name}' not found")
             except Exception as e:
@@ -113,11 +113,11 @@ class GoogleSheetsService:
     def get_letter_config_by_category(self, category: str, member_name: str = "") -> Dict[str, str]:
         """
         Fetch letter configuration with parallel execution for better performance.
-        
+
         Args:
             category: Letter category
             member_name: Member name for personalization
-            
+
         Returns:
             Dictionary with letter, instruction, and member_info
         """
@@ -137,30 +137,61 @@ class GoogleSheetsService:
                     member_info_future = executor.submit(
                         self.get_data_by_key, member_name, self.config.database.info_worksheet
                     )
-                    
+
                     # Get results
                     letter = letter_future.result() or ""
                     instruction = instruction_future.result() or ""
                     all_instructions = all_instructions_future.result() or ""
                     member_info = member_info_future.result() or ""
-                
+
                 # Combine instructions
                 instructions = "\n".join(
                     filter(None, [all_instructions.strip(), instruction.strip()])
                 )
-                
+
                 result = {
                     "letter": letter,
                     "instruction": instructions,
                     "member_info": member_info
                 }
-                
+
                 logger.debug(f"Letter config retrieved for category: {category}")
                 return result
-                
+
             except Exception as e:
                 logger.error(f"Failed to get letter config for category {category}: {e}")
                 raise StorageServiceError(f"Error fetching letter configuration: {e}")
+
+    @handle_storage_errors
+    @measure_performance
+    def get_intro_text(self) -> str:
+        """
+        Fetch intro text from the Intro worksheet (first value in A2).
+
+        Returns:
+            Introduction text for first contact letters
+        """
+        with ErrorContext("get_intro_text", {}):
+            try:
+                worksheet = self.client.open(self.config.database.spreadsheet_name).worksheet(
+                    self.config.database.intro_worksheet
+                )
+                values = worksheet.get_all_values()
+
+                # Get value from A2 (first row is headers, so we need row index 1)
+                if len(values) > 1 and len(values[1]) > 0:
+                    intro_text = values[1][0].strip()
+                    if intro_text:
+                        logger.debug(f"Intro text retrieved from Intro worksheet")
+                        return intro_text
+
+                logger.warning("No intro text found in Intro worksheet (A2)")
+                return ""
+
+            except gspread.WorksheetNotFound:
+                raise StorageServiceError(f"Worksheet '{self.config.database.intro_worksheet}' not found")
+            except Exception as e:
+                raise StorageServiceError(f"Error fetching intro text from Google Sheets: {e}")
     
     @handle_storage_errors
     @measure_performance

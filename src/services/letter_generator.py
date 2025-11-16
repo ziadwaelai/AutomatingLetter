@@ -166,7 +166,7 @@ class ArabicLetterGenerationService:
     def _build_context_string(self, context: LetterGenerationContext) -> str:
         """Build additional context string from generation context."""
         context_parts = []
-        
+
         if context.recipient:
             context_parts.append(f"المرسل إليه: {context.recipient}")
         if context.recipient_title:
@@ -188,11 +188,21 @@ class ArabicLetterGenerationService:
         # if context.organization_name:
         #     context_parts.append(f"اسم المؤسسة: {context.organization_name}")
 
-        if context.is_first_contact: 
-            context_parts.append("""هذا هو الاتصال الأول مع المستلم.
-تعليمات مهمة: هذا أول خطاب للمستلم، لذا يجب بعد التحية الرسمية مباشرة إضافة فقرة تعريفية واضحة وكاملة عن شركة "نت زيرو" توضح طبيعتها وأهدافها.
-يجب أن تكون المقدمة مفصلة وتتضمن: (1) تعريف الشركة كمشروع اجتماعي وطني، (2) ارتباطها ببرنامج سدرة التابع لوزارة البيئة والمياه والزراعة، (3) أهدافها الرئيسية.
-مثال توضيحي: "وانطلاقًا من هذا النهج الطموح، نود أن نقدم لسعادتكم "نت زيرو"، وهو مشروع اجتماعي وطني، أحد مخرجات برنامج (سدرة) التابع لوزارة البيئة والمياه والزراعة، يهدف إلى تعزيز الاستدامة البيئية وتحقيق أهداف الحياد الكربوني في المملكة...".""")
+        if context.is_first_contact:
+            try:
+                from .google_services import get_sheets_service
+                sheets_service = get_sheets_service()
+                intro_text = sheets_service.get_intro_text()
+
+                if intro_text:
+                    context_parts.append(intro_text)
+                    logger.debug("Intro text loaded from Intro worksheet")
+                else:
+                    logger.warning("No intro text found in Intro worksheet, using fallback text")
+                    context_parts.append("هذا هو الاتصال الأول مع المستلم.")
+            except Exception as e:
+                logger.error(f"Failed to fetch intro text from sheet: {e}, using fallback text")
+                context_parts.append("هذا هو الاتصال الأول مع المستلم.")
         else:
             context_parts.append("توجد مراسلات سابقة مع الجهة المذكورة")
         
