@@ -18,10 +18,10 @@ class DatabaseConfig:
     spreadsheet_name: str = "AI Letter Generating"
     submissions_worksheet: str = "Submissions"
     logs_worksheet: str = "Logs"
-    letters_spreadsheet: str = "Letters"
     instructions_worksheet: str = "Instructions"
     ideal_worksheet: str = "Ideal"
     info_worksheet: str = "Info"
+    intro_worksheet: str = "Intro"
 
 @dataclass
 class AIConfig:
