@@ -7499,3 +7499,17 @@ TypeError: DriveLoggerService.save_letter_to_drive_and_log() got an unexpected k
 2025-11-06 13:03:53,722 - werkzeug - INFO -  * Restarting with stat
 2025-11-06 13:03:57,020 - werkzeug - WARNING -  * Debugger is active!
 2025-11-06 13:03:57,024 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-20 09:32:43,646 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.100.56:5000
+2025-11-20 09:32:43,657 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-20 09:32:43,659 - werkzeug - INFO -  * Restarting with stat
+2025-11-20 09:32:49,806 - werkzeug - WARNING -  * Debugger is active!
+2025-11-20 09:32:49,810 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-20 09:32:57,047 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/whatsapp/users - 127.0.0.1
+2025-11-20 09:32:57,047 - src.api.whatsapp_routes - INFO - Fetching all users from WhatsApp sheet
+2025-11-20 09:33:01,004 - src.api.whatsapp_routes - INFO - Successfully retrieved 1 users from WhatsApp sheet
+2025-11-20 09:33:01,005 - src.utils.helpers - INFO - list_whatsapp_users executed in 3.959s
+2025-11-20 09:33:01,005 - __main__ - INFO - Response: 200 - whatsapp.list_whatsapp_users
+2025-11-20 09:33:01,005 - werkzeug - INFO - 127.0.0.1 - - [20/Nov/2025 09:33:01] "GET /api/v1/whatsapp/users HTTP/1.1" 200 -
