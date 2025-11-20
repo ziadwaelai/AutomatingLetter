@@ -32,6 +32,7 @@ class WhatsAppStatusUpdateRequest(BaseModel):
     """Request model for WhatsApp status update."""
     phone_number: str = Field(..., min_length=10, max_length=20, description="Phone number used")
     status: str = Field(..., min_length=1, max_length=50, description="New status")
+    clear_assignment: bool = Field(default=True, description="Whether to clear the letter assignment from WhatsApp sheet")
 
 class GetLetterRequest(BaseModel):
     """Request model for getting letter data."""
@@ -276,34 +277,47 @@ def update_whatsapp_status():
                     "message": str(e)
                 }), 500
             
-            # Step 3: Clear letter_id from WhatsApp sheet
-            logger.info(f"Clearing letter_id for phone number {status_request.phone_number}")
-            
-            try:
-                # Clear the letter_id (column C)
-                whatsapp_worksheet.update_cell(target_row, 3, "")
-                logger.info(f"Successfully cleared letter_id for phone number {status_request.phone_number}")
-                
+            # Step 3: Clear letter_id from WhatsApp sheet (if flag is True)
+            if status_request.clear_assignment:
+                logger.info(f"Clearing letter_id for phone number {status_request.phone_number}")
+
+                try:
+                    # Clear the letter_id (column C)
+                    whatsapp_worksheet.update_cell(target_row, 3, "")
+                    logger.info(f"Successfully cleared letter_id for phone number {status_request.phone_number}")
+
+                    return jsonify({
+                        "message": "Status updated and WhatsApp assignment cleared successfully",
+                        "letter_id": letter_id,
+                        "phone_number": status_request.phone_number,
+                        "new_status": status_request.status,
+                        "submissions_updated": True,
+                        "whatsapp_cleared": True
+                    }), 200
+
+                except Exception as e:
+                    logger.error(f"Failed to clear WhatsApp assignment: {e}")
+                    # Main update was successful, so return partial success
+                    return jsonify({
+                        "message": "Status updated but failed to clear WhatsApp assignment",
+                        "letter_id": letter_id,
+                        "phone_number": status_request.phone_number,
+                        "new_status": status_request.status,
+                        "submissions_updated": True,
+                        "whatsapp_cleared": False,
+                        "warning": str(e)
+                    }), 200
+            else:
+                # Don't clear assignment, just return success
+                logger.info(f"Status updated without clearing assignment (clear_assignment=False)")
+
                 return jsonify({
-                    "message": "Status updated and WhatsApp assignment cleared successfully",
+                    "message": "Status updated successfully (assignment not cleared)",
                     "letter_id": letter_id,
                     "phone_number": status_request.phone_number,
                     "new_status": status_request.status,
                     "submissions_updated": True,
-                    "whatsapp_cleared": True
-                }), 200
-                
-            except Exception as e:
-                logger.error(f"Failed to clear WhatsApp assignment: {e}")
-                # Main update was successful, so return partial success
-                return jsonify({
-                    "message": "Status updated but failed to clear WhatsApp assignment",
-                    "letter_id": letter_id,
-                    "phone_number": status_request.phone_number,
-                    "new_status": status_request.status,
-                    "submissions_updated": True,
-                    "whatsapp_cleared": False,
-                    "warning": str(e)
+                    "whatsapp_cleared": False
                 }), 200
                 
         except Exception as e:
