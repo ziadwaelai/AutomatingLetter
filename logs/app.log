@@ -7513,3 +7513,55 @@ TypeError: DriveLoggerService.save_letter_to_drive_and_log() got an unexpected k
 2025-11-20 09:33:01,005 - src.utils.helpers - INFO - list_whatsapp_users executed in 3.959s
 2025-11-20 09:33:01,005 - __main__ - INFO - Response: 200 - whatsapp.list_whatsapp_users
 2025-11-20 09:33:01,005 - werkzeug - INFO - 127.0.0.1 - - [20/Nov/2025 09:33:01] "GET /api/v1/whatsapp/users HTTP/1.1" 200 -
+2025-11-23 23:51:01,236 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-11-23 23:51:01,236 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-23 23:51:01,236 - werkzeug - INFO -  * Restarting with stat
+2025-11-23 23:51:03,025 - werkzeug - WARNING -  * Debugger is active!
+2025-11-23 23:51:03,041 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-23 23:51:36,862 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/letter/validate - 127.0.0.1
+2025-11-23 23:51:36,862 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
+2025-11-23 23:51:37,237 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
+2025-11-23 23:51:49,562 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-23 23:51:49,573 - src.api.letter_routes - INFO - Generated AI validation suggestions: 1994 characters
+2025-11-23 23:51:49,573 - src.utils.helpers - INFO - validate_letter executed in 12.712s
+2025-11-23 23:51:49,573 - __main__ - INFO - Response: 200 - letter.validate_letter
+2025-11-23 23:51:49,574 - werkzeug - INFO - 127.0.0.1 - - [23/Nov/2025 23:51:49] "POST /api/v1/letter/validate HTTP/1.1" 200 -
+2025-11-23 23:53:40,224 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\api\\letter_routes.py', reloading
+2025-11-23 23:53:40,557 - werkzeug - INFO -  * Restarting with stat
+2025-11-23 23:54:18,531 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-11-23 23:54:18,531 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-23 23:54:18,532 - werkzeug - INFO -  * Restarting with stat
+2025-11-23 23:54:20,278 - werkzeug - WARNING -  * Debugger is active!
+2025-11-23 23:54:20,293 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-23 23:54:51,557 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/letter/validate - 127.0.0.1
+2025-11-23 23:54:51,557 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
+2025-11-23 23:54:51,811 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
+2025-11-23 23:55:07,532 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-23 23:55:07,554 - src.api.letter_routes - INFO - Generated AI validation suggestions: 2567 characters
+2025-11-23 23:55:07,555 - src.utils.helpers - INFO - validate_letter executed in 15.998s
+2025-11-23 23:55:07,556 - __main__ - INFO - Response: 200 - letter.validate_letter
+2025-11-23 23:55:07,556 - werkzeug - INFO - 127.0.0.1 - - [23/Nov/2025 23:55:07] "POST /api/v1/letter/validate HTTP/1.1" 200 -
+2025-11-23 23:57:23,208 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\api\\letter_routes.py', reloading
+2025-11-23 23:57:23,545 - werkzeug - INFO -  * Restarting with stat
+2025-11-23 23:57:35,229 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-11-23 23:57:35,229 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-23 23:57:35,229 - werkzeug - INFO -  * Restarting with stat
+2025-11-23 23:57:36,930 - werkzeug - WARNING -  * Debugger is active!
+2025-11-23 23:57:36,935 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-23 23:58:50,522 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/letter/validate - 127.0.0.1
+2025-11-23 23:58:50,523 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
+2025-11-23 23:58:50,830 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
+2025-11-23 23:58:54,216 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-23 23:58:54,223 - src.api.letter_routes - INFO - Generated AI validation suggestions: 197 characters
+2025-11-23 23:58:54,224 - src.utils.helpers - INFO - validate_letter executed in 3.702s
+2025-11-23 23:58:54,224 - __main__ - INFO - Response: 200 - letter.validate_letter
+2025-11-23 23:58:54,225 - werkzeug - INFO - 127.0.0.1 - - [23/Nov/2025 23:58:54] "POST /api/v1/letter/validate HTTP/1.1" 200 -
