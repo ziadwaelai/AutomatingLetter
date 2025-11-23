@@ -110,24 +110,24 @@ def generate_letter():
 @measure_performance
 def validate_letter():
     """
-    Validate letter content for quality and structure.
-    
+    Validate letter content for quality and structure with AI-powered intelligent suggestions.
+
     Request Body:
         letter: str - Letter content to validate
-        
+
     Returns:
-        Validation results and suggestions
+        Validation results and AI-powered suggestions
     """
     with ErrorContext("validate_letter_api"):
         try:
             data = request.get_json()
             if not data or 'letter' not in data:
                 return jsonify({"error": "محتوى الخطاب مطلوب"}), 400
-            
+
             letter_content = data['letter']
             if not letter_content or not letter_content.strip():
                 return jsonify({"error": "محتوى الخطاب لا يمكن أن يكون فارغاً"}), 400
-            
+
             # Create a mock LetterOutput for validation
             mock_letter = LetterOutput(
                 ID="validation",
@@ -135,16 +135,16 @@ def validate_letter():
                 Letter=letter_content,
                 Date="validation"
             )
-            
+
             letter_service = get_letter_service()
             is_valid = letter_service.validate_letter_content(mock_letter)
-            
+
             # Additional checks
             word_count = len(letter_content.split())
             has_arabic = any('\u0600' <= char <= '\u06FF' for char in letter_content)
             has_bismillah = "بسم الله الرحمن الرحيم" in letter_content
             has_greeting = any(greeting in letter_content for greeting in ["السلام عليكم", "تحية طيبة"])
-            
+
             validation_results = {
                 "is_valid": is_valid,
                 "checks": {
@@ -160,8 +160,8 @@ def validate_letter():
                 },
                 "suggestions": []
             }
-            
-            # Generate suggestions
+
+            # Generate basic suggestions
             if not has_arabic:
                 validation_results["suggestions"].append("الخطاب يجب أن يحتوي على نص عربي")
             if not has_bismillah:
@@ -170,15 +170,86 @@ def validate_letter():
                 validation_results["suggestions"].append("يُنصح بإضافة التحية المناسبة")
             if word_count < 20:
                 validation_results["suggestions"].append("الخطاب قصير جداً، يُنصح بإضافة المزيد من التفاصيل")
-            
+
+            # Get AI-powered intelligent suggestions
+            try:
+                ai_suggestions = _get_ai_validation_suggestions(letter_content)
+                validation_results["ai_suggestions"] = ai_suggestions
+            except Exception as e:
+                logger.warning(f"Failed to get AI suggestions: {e}")
+                validation_results["ai_suggestions"] = "فشل في الحصول على اقتراحات الذكاء الاصطناعي"
+
             return jsonify({
                 "status": "success",
                 "validation": validation_results
             }), 200
-            
+
         except Exception as e:
             logger.error(f"Letter validation failed: {e}")
             return jsonify(build_error_response(e)), 500
+
+def _get_ai_validation_suggestions(letter_content: str) -> str:
+    """
+    Get AI-powered intelligent suggestions for letter improvement.
+
+    Args:
+        letter_content: The letter content to analyze
+
+    Returns:
+        AI-generated suggestions as text
+    """
+    try:
+        from langchain_openai import ChatOpenAI
+        from ..config import get_config
+
+        config = get_config()
+
+        llm = ChatOpenAI(
+            model=config.ai.model_name,
+            temperature=0.3,
+            api_key=config.openai_api_key,
+            timeout=config.ai.timeout
+        )
+
+        # Create intelligent validation prompt
+        system_prompt ="""
+أنت خبير في تحليل الخطابات العربية الرسمية.
+
+راجع الخطاب المقدم وقدّم فقط:
+- 3 إلى 6 اقتراحات مختصرة جداً.
+- كل اقتراح جملة قصيرة لا تتجاوز 10 كلمات.
+- بدون شرح إضافي.
+- بدون إعادة كتابة الخطاب.
+- بدون نماذج.
+- استخدم نقاط فقط في الإخراج.
+
+صيغة الإخراج المطلوبة:
+
+الاقتراحات:
+- <نقطة قصيرة>
+- <نقطة قصيرة>
+- <نقطة قصيرة>
+"""
+        user_prompt = f"""قم بتحليل الخطاب التالي وقدم اقتراحات محددة لتحسينه:
+{letter_content}
+اقتراحاتك:"""
+
+        # Get AI response
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+
+        response = llm.invoke(messages)
+        suggestions_text = response.content.strip()
+
+        logger.info(f"Generated AI validation suggestions: {len(suggestions_text)} characters")
+
+        return suggestions_text
+
+    except Exception as e:
+        logger.error(f"Error generating AI suggestions: {e}")
+        raise
 
 @letter_bp.route('/categories', methods=['GET'])
 def get_letter_categories():
