@@ -945,6 +945,23 @@ def admin_create_user(user_info):
                         timestamp,
                         hashed_password
                     ])
+
+                # Check if email needs EmailMappings entry (public email domain)
+                if user_service.check_if_email_needs_mapping(email):
+                    # Add email mapping for gmail/yahoo/etc. users
+                    mapping_added = user_service.add_email_mapping(
+                        email=email,
+                        sheet_id=admin_client.sheet_id,
+                        google_drive_id=admin_client.google_drive_id,
+                        display_name=admin_client.display_name,
+                        letter_template=admin_client.letter_template,
+                        letter_type=admin_client.letter_type
+                    )
+                    if mapping_added:
+                        logger.info(f"Added EmailMapping for public email domain: {email}")
+                    else:
+                        logger.warning(f"Failed to add EmailMapping for {email}, but user was created")
+
             except Exception as e:
                 logger.error(f"Error adding user to sheet: {e}")
                 return jsonify({
@@ -1225,6 +1242,16 @@ def admin_delete_user(user_info):
                             # gspread uses 1-based indexing, so idx is already correct
                             worksheet.delete_rows(idx)  # Delete the row at idx
                             break
+
+                # Check if email needs EmailMappings cleanup (public email domain)
+                if user_service.check_if_email_needs_mapping(target_email):
+                    # Remove email mapping for gmail/yahoo/etc. users
+                    mapping_removed = user_service.remove_email_mapping(target_email)
+                    if mapping_removed:
+                        logger.info(f"Removed EmailMapping for public email domain: {target_email}")
+                    else:
+                        logger.warning(f"Failed to remove EmailMapping for {target_email}, but user was deleted")
+
             except Exception as e:
                 logger.error(f"Error deleting user from sheet: {e}")
                 return jsonify({

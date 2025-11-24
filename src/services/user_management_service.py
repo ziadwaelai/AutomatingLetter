@@ -28,8 +28,12 @@ logger = logging.getLogger(__name__)
 # Master sheet ID (hardcoded as per requirements)
 MASTER_SHEET_ID = "11eCtNuW4cl03TX0G20alx3_6B5DI7IbpQPnPDeRGKlI"
 
-# Cache TTL in seconds (5 minutes)
-CACHE_TTL = 300
+# Worksheet names
+EMAIL_MAPPINGS_WORKSHEET = "EmailMappings"
+CLIENTS_WORKSHEET = "ClientRegistry"  # Default worksheet name for clients
+
+# Cache TTL in seconds (1 minute)
+CACHE_TTL = 60
 
 
 @dataclass
@@ -112,9 +116,13 @@ class UserManagementService:
             max_connection_idle_time=300  # 5 minutes
         )
 
+        # Master sheet configuration
+        self.master_sheet_id = MASTER_SHEET_ID
+
         # Cache for client data
         self._client_cache: Dict[str, tuple[ClientInfo, float]] = {}
         self._master_data_cache: Optional[tuple[List[List[str]], float]] = None
+        self._email_mappings_cache: Optional[tuple[List[List[str]], float]] = None
 
     def _validate_configuration(self):
         """Validate configuration."""
@@ -251,8 +259,11 @@ class UserManagementService:
     @measure_performance
     def get_client_by_email(self, email: str) -> Optional[ClientInfo]:
         """
-        Get client information by user email.
-        Matches email domain against primary domain and extra domains.
+        Get client information by user email using two-tier lookup.
+
+        Priority:
+        1. Check EmailMappings worksheet first (for explicit email → sheet mappings)
+        2. Fall back to domain matching (for organizational domains)
 
         Args:
             email: User email address
@@ -275,65 +286,203 @@ class UserManagementService:
                         logger.debug(f"Using cached client info for email: {email}")
                         return cached_client
 
-                # Extract domain from email
+                # ===================================================
+                # TIER 1: Check EmailMappings worksheet first
+                # ===================================================
+                client_info = self._get_client_from_email_mappings(email)
+                if client_info:
+                    logger.info(f"Client found via EmailMappings for {email}: {client_info.display_name}")
+                    # Cache the result
+                    self._client_cache[email] = (client_info, current_time)
+                    return client_info
+
+                # ===================================================
+                # TIER 2: Fall back to domain matching
+                # ===================================================
                 email_domain = self._extract_domain_from_email(email)
+                client_info = self._get_client_by_domain(email_domain)
 
-                # Get master sheet data
-                all_values = self._get_master_sheet_data()
+                if client_info:
+                    logger.info(f"Client found via domain matching for {email}: {client_info.display_name}")
+                    # Cache the result
+                    self._client_cache[email] = (client_info, current_time)
+                    return client_info
 
-                if not all_values or len(all_values) < 2:
-                    raise StorageServiceError("Master sheet is empty or has no data rows")
-
-                # Parse headers (first row)
-                headers = [h.strip() for h in all_values[0]]
-
-                # Find column indices
-                try:
-                    client_id_idx = headers.index("clientId")
-                    display_name_idx = headers.index("displayName")
-                    primary_domain_idx = headers.index("primaryDomain")
-                    extra_domains_idx = headers.index("extraDomains")
-                    sheet_id_idx = headers.index("sheetId")
-                    drive_id_idx = headers.index("GoogleDriveId")
-                    sheet_url_idx = headers.index("sheeturl")
-                    admin_email_idx = headers.index("admin email")
-                    created_at_idx = headers.index("createdAt")
-                    letter_template_idx = headers.index("letter template")
-                    letter_type_idx = headers.index("letter type")
-                except ValueError as e:
-                    raise StorageServiceError(f"Master sheet missing required column: {e}")
-
-                # Search for matching client
-                for row in all_values[1:]:  # Skip header row
-                    if len(row) <= max(client_id_idx, primary_domain_idx, extra_domains_idx):
-                        continue  # Skip incomplete rows
-
-                    primary_domain = row[primary_domain_idx].strip().lower() if primary_domain_idx < len(row) else ""
-                    extra_domains_str = row[extra_domains_idx].strip() if extra_domains_idx < len(row) else ""
-
-                    # Check if email domain matches primary domain
-                    if email_domain == primary_domain:
-                        client_info = self._create_client_info(row, headers)
-                        # Cache the result
-                        self._client_cache[email] = (client_info, current_time)
-                        logger.info(f"Client found for email {email}: {client_info.display_name}")
-                        return client_info
-
-                    # Check if email domain matches any extra domain
-                    extra_domains = self._parse_extra_domains(extra_domains_str)
-                    if email_domain in extra_domains:
-                        client_info = self._create_client_info(row, headers)
-                        # Cache the result
-                        self._client_cache[email] = (client_info, current_time)
-                        logger.info(f"Client found for email {email}: {client_info.display_name}")
-                        return client_info
-
+                # No client found
                 logger.warning(f"No client found for email: {email} (domain: {email_domain})")
                 return None
 
             except Exception as e:
                 logger.error(f"Error getting client by email {email}: {e}")
                 raise
+
+    def _get_client_from_email_mappings(self, email: str) -> Optional[ClientInfo]:
+        """
+        Check if email exists in EmailMappings worksheet.
+        This allows multiple users with public email domains (gmail, yahoo, etc.)
+        to be explicitly mapped to specific client sheets.
+
+        Args:
+            email: User email address (already normalized)
+
+        Returns:
+            ClientInfo if email is mapped, None otherwise
+        """
+        try:
+            # Check cache first
+            current_time = time.time()
+            if self._email_mappings_cache:
+                cached_data, cache_time = self._email_mappings_cache
+                if current_time - cache_time < CACHE_TTL:
+                    logger.debug("Using cached EmailMappings data")
+                    return self._search_email_in_mappings(email, cached_data)
+
+            # Fetch fresh data
+            with self.get_client_context() as client:
+                try:
+                    master_sheet = client.open_by_key(self.master_sheet_id)
+                    email_mappings_ws = master_sheet.worksheet(EMAIL_MAPPINGS_WORKSHEET)
+                    all_mappings = email_mappings_ws.get_all_values()
+
+                    # Cache the mappings data
+                    self._email_mappings_cache = (all_mappings, current_time)
+                    logger.debug(f"Fetched EmailMappings data: {len(all_mappings)} rows")
+
+                    return self._search_email_in_mappings(email, all_mappings)
+
+                except gspread.exceptions.WorksheetNotFound:
+                    logger.debug(f"EmailMappings worksheet not found in master sheet")
+                    return None
+
+        except Exception as e:
+            logger.warning(f"Error checking email mappings for {email}: {e}")
+            return None
+
+    def _search_email_in_mappings(self, email: str, mappings_data: List[List[str]]) -> Optional[ClientInfo]:
+        """
+        Search for email in mappings data and create ClientInfo if found.
+
+        Args:
+            email: User email address (normalized)
+            mappings_data: EmailMappings worksheet data
+
+        Returns:
+            ClientInfo if found, None otherwise
+        """
+        if not mappings_data or len(mappings_data) < 2:
+            return None  # No data or only headers
+
+        try:
+            # Parse headers (first row)
+            headers = [h.strip().lower() for h in mappings_data[0]]
+
+            # Find required column indices
+            try:
+                email_idx = headers.index("email")
+                sheet_id_idx = headers.index("sheetid")
+            except ValueError as e:
+                logger.warning(f"EmailMappings sheet missing required column: {e}")
+                return None
+
+            # Optional columns with defaults
+            drive_id_idx = headers.index("googledriveid") if "googledriveid" in headers else None
+            display_name_idx = headers.index("displayname") if "displayname" in headers else None
+            letter_template_idx = headers.index("lettertemplate") if "lettertemplate" in headers else None
+            letter_type_idx = headers.index("lettertype") if "lettertype" in headers else None
+
+            # Search for matching email
+            for row in mappings_data[1:]:  # Skip header row
+                if len(row) <= email_idx:
+                    continue
+
+                row_email = row[email_idx].strip().lower()
+
+                if row_email == email:
+                    # Found! Extract data with safe defaults
+                    sheet_id = row[sheet_id_idx].strip() if sheet_id_idx < len(row) else ""
+
+                    if not sheet_id:
+                        logger.warning(f"Email mapping for {email} has no sheet_id")
+                        continue
+
+                    # Create ClientInfo from mapping
+                    client_info = ClientInfo(
+                        client_id=f"EMAIL-MAP-{email.split('@')[0]}",  # Generate unique ID
+                        display_name=row[display_name_idx].strip() if display_name_idx and display_name_idx < len(row) else email.split('@')[0].title(),
+                        primary_domain="",  # Not applicable for email mappings
+                        extra_domains=[],
+                        sheet_id=sheet_id,
+                        google_drive_id=row[drive_id_idx].strip() if drive_id_idx and drive_id_idx < len(row) else "",
+                        sheet_url=f"https://docs.google.com/spreadsheets/d/{sheet_id}",
+                        admin_email=email,  # User is their own admin
+                        created_at="",
+                        letter_template=row[letter_template_idx].strip() if letter_template_idx and letter_template_idx < len(row) else "default",
+                        letter_type=row[letter_type_idx].strip() if letter_type_idx and letter_type_idx < len(row) else "formal"
+                    )
+
+                    logger.info(f"Found email mapping: {email} → Sheet: {client_info.sheet_id}, Display: {client_info.display_name}")
+                    return client_info
+
+            # Email not found in mappings
+            return None
+
+        except Exception as e:
+            logger.error(f"Error searching email in mappings for {email}: {e}")
+            return None
+
+    def _get_client_by_domain(self, domain: str) -> Optional[ClientInfo]:
+        """
+        Get client by domain matching (existing logic).
+        Searches the Clients worksheet for matching primary or extra domains.
+
+        Args:
+            domain: Email domain (e.g., "moe.gov.sa")
+
+        Returns:
+            ClientInfo if domain matches, None otherwise
+        """
+        try:
+            # Get master sheet data (uses cache)
+            all_values = self._get_master_sheet_data()
+
+            if not all_values or len(all_values) < 2:
+                return None
+
+            # Parse headers (first row)
+            headers = [h.strip() for h in all_values[0]]
+
+            # Find required column indices
+            try:
+                primary_domain_idx = headers.index("primaryDomain")
+                extra_domains_idx = headers.index("extraDomains")
+            except ValueError:
+                logger.error("Master sheet missing required domain columns")
+                return None
+
+            # Search for matching domain
+            for row in all_values[1:]:  # Skip header row
+                if len(row) <= max(primary_domain_idx, extra_domains_idx):
+                    continue
+
+                primary_domain = row[primary_domain_idx].strip().lower() if primary_domain_idx < len(row) else ""
+                extra_domains_str = row[extra_domains_idx].strip() if extra_domains_idx < len(row) else ""
+
+                # Check primary domain match
+                if domain == primary_domain:
+                    logger.debug(f"Domain {domain} matched primary domain")
+                    return self._create_client_info(row, headers)
+
+                # Check extra domains match
+                extra_domains = self._parse_extra_domains(extra_domains_str)
+                if domain in extra_domains:
+                    logger.debug(f"Domain {domain} matched extra domains")
+                    return self._create_client_info(row, headers)
+
+            return None
+
+        except Exception as e:
+            logger.error(f"Error getting client by domain {domain}: {e}")
+            return None
 
     def _create_client_info(self, row: List[str], headers: List[str]) -> ClientInfo:
         """
@@ -917,6 +1066,161 @@ class UserManagementService:
             logger.error(f"Error resetting forgotten password for {email}: {e}")
             return False, f"حدث خطأ في تحديث كلمة المرور: {str(e)}"
 
+    @handle_storage_errors
+    @measure_performance
+    def add_email_mapping(self, email: str, sheet_id: str, google_drive_id: str = "",
+                         display_name: str = "", letter_template: str = "default",
+                         letter_type: str = "formal") -> bool:
+        """
+        Add or update an email mapping in the EmailMappings worksheet.
+        This allows a user with a public email domain to be mapped to a specific client sheet.
+
+        Args:
+            email: User email address
+            sheet_id: Client's Google Sheet ID
+            google_drive_id: Client's Google Drive folder ID (optional)
+            display_name: Display name for the client (optional)
+            letter_template: Letter template type (default: "default")
+            letter_type: Letter type (default: "formal")
+
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            email = email.strip().lower()
+
+            with self.get_client_context() as client:
+                master_sheet = client.open_by_key(self.master_sheet_id)
+
+                # Get or create EmailMappings worksheet
+                try:
+                    email_mappings_ws = master_sheet.worksheet(EMAIL_MAPPINGS_WORKSHEET)
+                except gspread.exceptions.WorksheetNotFound:
+                    # Create the worksheet if it doesn't exist
+                    logger.info(f"Creating EmailMappings worksheet in master sheet")
+                    email_mappings_ws = master_sheet.add_worksheet(
+                        title=EMAIL_MAPPINGS_WORKSHEET,
+                        rows=100,
+                        cols=10
+                    )
+                    # Add headers
+                    email_mappings_ws.append_row([
+                        "email", "sheetId", "GoogleDriveId",
+                        "displayName", "letterTemplate", "letterType"
+                    ])
+
+                # Check if email already exists
+                all_mappings = email_mappings_ws.get_all_values()
+                email_exists = False
+                row_index = None
+
+                for idx, row in enumerate(all_mappings[1:], start=2):  # Skip header
+                    if len(row) > 0 and row[0].strip().lower() == email:
+                        email_exists = True
+                        row_index = idx
+                        break
+
+                # Prepare row data
+                row_data = [
+                    email,
+                    sheet_id,
+                    google_drive_id,
+                    display_name or email.split('@')[0].title(),
+                    letter_template,
+                    letter_type
+                ]
+
+                if email_exists:
+                    # Update existing mapping
+                    email_mappings_ws.update(f'A{row_index}:F{row_index}', [row_data])
+                    logger.info(f"Updated email mapping: {email} → {sheet_id}")
+                else:
+                    # Add new mapping
+                    email_mappings_ws.append_row(row_data)
+                    logger.info(f"Added email mapping: {email} → {sheet_id}")
+
+                # Invalidate cache
+                self._email_mappings_cache = None
+                if email in self._client_cache:
+                    del self._client_cache[email]
+
+                return True
+
+        except Exception as e:
+            logger.error(f"Error adding email mapping for {email}: {e}")
+            return False
+
+    @handle_storage_errors
+    @measure_performance
+    def remove_email_mapping(self, email: str) -> bool:
+        """
+        Remove an email mapping from the EmailMappings worksheet.
+
+        Args:
+            email: User email address to remove
+
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            email = email.strip().lower()
+
+            with self.get_client_context() as client:
+                master_sheet = client.open_by_key(self.master_sheet_id)
+
+                try:
+                    email_mappings_ws = master_sheet.worksheet(EMAIL_MAPPINGS_WORKSHEET)
+                except gspread.exceptions.WorksheetNotFound:
+                    logger.warning(f"EmailMappings worksheet not found when trying to remove {email}")
+                    return False
+
+                # Find and delete the email mapping
+                all_mappings = email_mappings_ws.get_all_values()
+
+                for idx, row in enumerate(all_mappings[1:], start=2):  # Skip header
+                    if len(row) > 0 and row[0].strip().lower() == email:
+                        email_mappings_ws.delete_rows(idx)
+                        logger.info(f"Removed email mapping: {email}")
+
+                        # Invalidate cache
+                        self._email_mappings_cache = None
+                        if email in self._client_cache:
+                            del self._client_cache[email]
+
+                        return True
+
+                logger.warning(f"Email mapping not found for removal: {email}")
+                return False
+
+        except Exception as e:
+            logger.error(f"Error removing email mapping for {email}: {e}")
+            return False
+
+    @handle_storage_errors
+    @measure_performance
+    def check_if_email_needs_mapping(self, email: str) -> bool:
+        """
+        Check if an email address requires an EmailMappings entry.
+        Public email domains (gmail, yahoo, outlook, etc.) need explicit mapping.
+
+        Args:
+            email: User email address
+
+        Returns:
+            True if email needs mapping (public domain), False if organizational domain
+        """
+        PUBLIC_EMAIL_DOMAINS = {
+            'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com',
+            'aol.com', 'icloud.com', 'live.com', 'msn.com',
+            'mail.com', 'protonmail.com', 'zoho.com'
+        }
+
+        try:
+            domain = self._extract_domain_from_email(email.strip().lower())
+            return domain in PUBLIC_EMAIL_DOMAINS
+        except Exception:
+            return False
+
     def get_service_stats(self) -> Dict[str, Any]:
         """
         Get service statistics and status information.
@@ -930,6 +1234,7 @@ class UserManagementService:
             "pool_stats": pool_stats,
             "cache_size": len(self._client_cache),
             "master_data_cached": self._master_data_cache is not None,
+            "email_mappings_cached": self._email_mappings_cache is not None,
             "connection_lifetime": 3600,
             "max_idle_time": 300,
             "cache_ttl": CACHE_TTL

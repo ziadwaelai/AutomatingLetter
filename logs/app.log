@@ -662,3 +662,513 @@ TypeError: DriveLoggerService.save_letter_to_drive_and_log() got an unexpected k
 2025-11-05 14:59:34,557 - src.services.drive_logger - INFO - Successfully archived DOCX letter LET-202510sdfsd23 to Drive and logged to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
 2025-11-05 14:59:34,558 - src.api.archive_routes - INFO - [DOCX BACKGROUND] ✅ Background DOCX archiving completed successfully for letter ID: LET-202510sdfsd23
 2025-11-05 14:59:34,558 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Drive URL: https://docs.google.com/document/d/1oyBmvkWYrdTP7K1JvHh0LMBpp4k-Q9k7/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
+2025-11-24 17:53:01,907 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-24 17:53:01,921 - root - INFO - Archived log file: app.log.2025-10-29 -> app.log.2025-10-29.20251030.gz
+2025-11-24 17:53:01,921 - root - INFO - Initial log archiving: archived 1 old log file(s)
+2025-11-24 17:53:01,997 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-11-24 17:53:01,997 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-24 17:53:02,002 - werkzeug - INFO -  * Restarting with stat
+2025-11-24 17:53:04,248 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-24 17:53:04,270 - werkzeug - WARNING -  * Debugger is active!
+2025-11-24 17:53:04,274 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-24 17:53:56,209 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:01,817 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:01,818 - src.utils.helpers - INFO - get_client_by_email executed in 5.608s
+2025-11-24 17:54:01,818 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:01,819 - src.utils.helpers - INFO - validate_user_credentials executed in 5.609s
+2025-11-24 17:54:01,819 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:01,820 - src.utils.helpers - INFO - validate_user executed in 5.611s
+2025-11-24 17:54:01,820 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:01,822 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:01] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:34,321 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:34,321 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:34,322 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:34,322 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:34,323 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
+2025-11-24 17:54:34,323 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:34,323 - src.utils.helpers - INFO - validate_user executed in 0.002s
+2025-11-24 17:54:34,323 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:34,323 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:34] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:36,135 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:36,137 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:36,137 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:36,137 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:36,137 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
+2025-11-24 17:54:36,138 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:36,138 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-11-24 17:54:36,138 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:36,138 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:36] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:36,940 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:36,940 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:36,941 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
+2025-11-24 17:54:36,941 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:36,941 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
+2025-11-24 17:54:36,941 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:36,941 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-11-24 17:54:36,941 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:36,942 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:36] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:38,423 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:38,423 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:38,423 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
+2025-11-24 17:54:38,423 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:38,423 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
+2025-11-24 17:54:38,423 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:38,424 - src.utils.helpers - INFO - validate_user executed in 0.002s
+2025-11-24 17:54:38,424 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:38,424 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:38] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:39,101 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:39,102 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:39,102 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:39,102 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:39,102 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
+2025-11-24 17:54:39,103 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:39,103 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-11-24 17:54:39,103 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:39,104 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:39] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:39,850 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:39,850 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:39,851 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
+2025-11-24 17:54:39,851 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:39,852 - src.utils.helpers - INFO - validate_user_credentials executed in 0.002s
+2025-11-24 17:54:39,852 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:39,853 - src.utils.helpers - INFO - validate_user executed in 0.003s
+2025-11-24 17:54:39,853 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:39,853 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:39] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:40,598 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:40,598 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:40,598 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:40,599 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:40,599 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
+2025-11-24 17:54:40,599 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:40,599 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-11-24 17:54:40,599 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:40,600 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:40] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:41,370 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:41,371 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:41,371 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:41,371 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:41,371 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
+2025-11-24 17:54:41,371 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:41,372 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-11-24 17:54:41,372 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:41,372 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:41] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:42,187 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:42,187 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:42,188 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
+2025-11-24 17:54:42,188 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:42,188 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
+2025-11-24 17:54:42,188 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:42,189 - src.utils.helpers - INFO - validate_user executed in 0.002s
+2025-11-24 17:54:42,189 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:42,189 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:42] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:43,098 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:43,098 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:43,098 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:43,098 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:43,099 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
+2025-11-24 17:54:43,099 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:43,099 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-11-24 17:54:43,099 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:43,100 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:43] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:43,863 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:43,863 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:43,863 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:43,863 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:43,863 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
+2025-11-24 17:54:43,863 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:43,864 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-11-24 17:54:43,864 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:43,864 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:43] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:44,563 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:44,563 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:44,563 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:44,563 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:44,564 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
+2025-11-24 17:54:44,564 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:44,564 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-11-24 17:54:44,564 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:44,565 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:44] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:45,234 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:45,234 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:45,234 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:45,235 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:45,235 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
+2025-11-24 17:54:45,236 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:45,236 - src.utils.helpers - INFO - validate_user executed in 0.002s
+2025-11-24 17:54:45,236 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:45,237 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:45] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:45,918 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:45,919 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:45,919 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:45,919 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:45,919 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
+2025-11-24 17:54:45,919 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:45,920 - src.utils.helpers - INFO - validate_user executed in 0.002s
+2025-11-24 17:54:45,920 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:45,920 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:45] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:46,620 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:46,621 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:46,621 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:46,621 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:46,621 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
+2025-11-24 17:54:46,621 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:46,622 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-11-24 17:54:46,622 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:46,623 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:46] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:47,309 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:47,311 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:47,312 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
+2025-11-24 17:54:47,313 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:47,313 - src.utils.helpers - INFO - validate_user_credentials executed in 0.002s
+2025-11-24 17:54:47,313 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:47,313 - src.utils.helpers - INFO - validate_user executed in 0.002s
+2025-11-24 17:54:47,314 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:47,314 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:47] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:47,881 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:47,881 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:47,881 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:47,881 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:47,881 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
+2025-11-24 17:54:47,881 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:47,881 - src.utils.helpers - INFO - validate_user executed in 0.000s
+2025-11-24 17:54:47,882 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:47,882 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:47] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:48,555 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:48,555 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:48,555 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
+2025-11-24 17:54:48,555 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:48,555 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
+2025-11-24 17:54:48,555 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:48,556 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-11-24 17:54:48,556 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:48,557 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:48] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:49,120 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:49,121 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:49,121 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
+2025-11-24 17:54:49,121 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:49,121 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
+2025-11-24 17:54:49,121 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:49,121 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-11-24 17:54:49,121 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:49,121 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:49] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:49,915 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:49,915 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:49,917 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
+2025-11-24 17:54:49,917 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:49,917 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
+2025-11-24 17:54:49,917 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:49,917 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-11-24 17:54:49,917 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:49,918 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:49] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:50,264 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:50,264 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:50,265 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
+2025-11-24 17:54:50,265 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:50,266 - src.utils.helpers - INFO - validate_user_credentials executed in 0.002s
+2025-11-24 17:54:50,266 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:50,266 - src.utils.helpers - INFO - validate_user executed in 0.002s
+2025-11-24 17:54:50,267 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:50,267 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:50] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:50,613 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:50,613 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:50,613 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:50,613 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:50,613 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
+2025-11-24 17:54:50,613 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:50,614 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-11-24 17:54:50,614 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:50,614 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:50] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:51,328 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:51,329 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:51,329 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:51,329 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:51,329 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
+2025-11-24 17:54:51,329 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:51,329 - src.utils.helpers - INFO - validate_user executed in 0.001s
+2025-11-24 17:54:51,329 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:51,329 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:51] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:54:52,181 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:54:52,182 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:54:52,182 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:54:52,182 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:54:52,182 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
+2025-11-24 17:54:52,182 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:54:52,182 - src.utils.helpers - INFO - validate_user executed in 0.000s
+2025-11-24 17:54:52,183 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:54:52,183 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:52] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:55:06,139 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-24 17:55:06,184 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-11-24 17:55:06,186 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-24 17:55:06,188 - werkzeug - INFO -  * Restarting with stat
+2025-11-24 17:55:08,640 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-24 17:55:08,660 - werkzeug - WARNING -  * Debugger is active!
+2025-11-24 17:55:08,665 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-24 17:55:12,157 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:55:15,009 - src.services.user_management_service - WARNING - Email mapping for ziad@gmail.com has no sheet_id
+2025-11-24 17:55:16,822 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:55:16,824 - src.utils.helpers - INFO - get_client_by_email executed in 4.667s
+2025-11-24 17:55:16,825 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:55:16,825 - src.utils.helpers - INFO - validate_user_credentials executed in 4.668s
+2025-11-24 17:55:16,825 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:55:16,826 - src.utils.helpers - INFO - validate_user executed in 4.669s
+2025-11-24 17:55:16,826 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:55:16,827 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:55:16] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:55:55,764 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:55:55,764 - src.services.user_management_service - WARNING - Email mapping for ziad@gmail.com has no sheet_id
+2025-11-24 17:55:55,765 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:55:55,766 - src.utils.helpers - INFO - get_client_by_email executed in 0.002s
+2025-11-24 17:55:55,766 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:55:55,767 - src.utils.helpers - INFO - validate_user_credentials executed in 0.003s
+2025-11-24 17:55:55,767 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:55:55,768 - src.utils.helpers - INFO - validate_user executed in 0.004s
+2025-11-24 17:55:55,769 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:55:55,770 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:55:55] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:55:56,704 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:55:56,705 - src.services.user_management_service - WARNING - Email mapping for ziad@gmail.com has no sheet_id
+2025-11-24 17:55:56,705 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:55:56,705 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:55:56,705 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:55:56,705 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
+2025-11-24 17:55:56,705 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:55:56,705 - src.utils.helpers - INFO - validate_user executed in 0.000s
+2025-11-24 17:55:56,705 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:55:56,706 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:55:56] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:55:57,604 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:55:57,605 - src.services.user_management_service - WARNING - Email mapping for ziad@gmail.com has no sheet_id
+2025-11-24 17:55:57,605 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:55:57,605 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:55:57,605 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:55:57,605 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
+2025-11-24 17:55:57,605 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:55:57,605 - src.utils.helpers - INFO - validate_user executed in 0.000s
+2025-11-24 17:55:57,605 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:55:57,606 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:55:57] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:56:12,379 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\user_management_service.py', reloading
+2025-11-24 17:56:12,659 - werkzeug - INFO -  * Restarting with stat
+2025-11-24 17:56:42,668 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-24 17:56:42,705 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-11-24 17:56:42,705 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-24 17:56:42,708 - werkzeug - INFO -  * Restarting with stat
+2025-11-24 17:56:45,520 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-24 17:56:45,540 - werkzeug - WARNING -  * Debugger is active!
+2025-11-24 17:56:45,545 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-24 17:56:45,673 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:57:00,743 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:57:04,804 - src.services.user_management_service - WARNING - Error checking email mappings for ziad@gmail.com: HTTPSConnectionPool(host='sheets.googleapis.com', port=443): Max retries exceeded with url: /v4/spreadsheets/11eCtNuW4cl03TX0G20alx3_6B5DI7IbpQPnPDeRGKlI?includeGridData=false (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000154C45E3310>: Failed to resolve 'sheets.googleapis.com' ([Errno 11001] getaddrinfo failed)"))
+2025-11-24 17:57:15,921 - src.services.user_management_service - WARNING - Error checking email mappings for ziad@gmail.com: HTTPSConnectionPool(host='sheets.googleapis.com', port=443): Max retries exceeded with url: /v4/spreadsheets/11eCtNuW4cl03TX0G20alx3_6B5DI7IbpQPnPDeRGKlI?includeGridData=false (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000154C45E78D0>: Failed to resolve 'sheets.googleapis.com' ([Errno 11001] getaddrinfo failed)"))
+2025-11-24 17:57:15,921 - src.services.user_management_service - ERROR - Failed to fetch master sheet data: HTTPSConnectionPool(host='sheets.googleapis.com', port=443): Max retries exceeded with url: /v4/spreadsheets/11eCtNuW4cl03TX0G20alx3_6B5DI7IbpQPnPDeRGKlI?includeGridData=false (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000154C45FA350>: Failed to resolve 'sheets.googleapis.com' ([Errno 11001] getaddrinfo failed)"))
+2025-11-24 17:57:15,927 - src.services.user_management_service - ERROR - Error getting client by domain gmail.com: Cannot access master sheet: HTTPSConnectionPool(host='sheets.googleapis.com', port=443): Max retries exceeded with url: /v4/spreadsheets/11eCtNuW4cl03TX0G20alx3_6B5DI7IbpQPnPDeRGKlI?includeGridData=false (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000154C45FA350>: Failed to resolve 'sheets.googleapis.com' ([Errno 11001] getaddrinfo failed)"))
+2025-11-24 17:57:15,927 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:57:15,927 - src.utils.helpers - INFO - get_client_by_email executed in 30.253s
+2025-11-24 17:57:15,927 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:57:15,927 - src.utils.helpers - INFO - validate_user_credentials executed in 30.253s
+2025-11-24 17:57:15,927 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:57:15,927 - src.utils.helpers - INFO - validate_user executed in 30.253s
+2025-11-24 17:57:15,927 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:57:15,931 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:57:15] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:57:21,217 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
+2025-11-24 17:57:21,218 - src.utils.helpers - INFO - get_client_by_email executed in 20.474s
+2025-11-24 17:57:21,218 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
+2025-11-24 17:57:21,218 - src.utils.helpers - INFO - validate_user_credentials executed in 20.474s
+2025-11-24 17:57:21,218 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
+2025-11-24 17:57:21,219 - src.utils.helpers - INFO - validate_user executed in 20.475s
+2025-11-24 17:57:21,219 - __main__ - INFO - Response: 400 - user.validate_user
+2025-11-24 17:57:21,219 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:57:21] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
+2025-11-24 17:57:25,755 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:57:28,289 - src.services.user_management_service - INFO - Found email mapping: ziad@gmail.com → Sheet: test021465461321, Display: mmk
+2025-11-24 17:57:28,290 - src.services.user_management_service - INFO - Client found via EmailMappings for ziad@gmail.com: mmk
+2025-11-24 17:57:28,290 - src.utils.helpers - INFO - get_client_by_email executed in 2.534s
+2025-11-24 17:57:28,546 - src.services.user_management_service - ERROR - Error getting user info for ziad@gmail.com: <Response [404]>
+2025-11-24 17:57:28,547 - src.utils.helpers - INFO - get_user_info executed in 0.258s
+2025-11-24 17:57:28,547 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: user not found in client mmk
+2025-11-24 17:57:28,547 - src.utils.helpers - INFO - validate_user_credentials executed in 2.792s
+2025-11-24 17:57:28,547 - src.api.user_routes - WARNING - User validation failed - user not found: ziad@gmail.com
+2025-11-24 17:57:28,548 - src.utils.helpers - INFO - validate_user executed in 2.792s
+2025-11-24 17:57:28,548 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-24 17:57:28,548 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:57:28] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-24 17:57:46,936 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:57:46,937 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:57:47,194 - src.services.user_management_service - ERROR - Error getting user info for ziad@gmail.com: <Response [404]>
+2025-11-24 17:57:47,194 - src.utils.helpers - INFO - get_user_info executed in 0.256s
+2025-11-24 17:57:47,195 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: user not found in client mmk
+2025-11-24 17:57:47,195 - src.utils.helpers - INFO - validate_user_credentials executed in 0.258s
+2025-11-24 17:57:47,195 - src.api.user_routes - WARNING - User validation failed - user not found: ziad@gmail.com
+2025-11-24 17:57:47,195 - src.utils.helpers - INFO - validate_user executed in 0.258s
+2025-11-24 17:57:47,196 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-24 17:57:47,196 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:57:47] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-24 17:58:23,144 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 17:58:23,144 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 17:58:26,044 - src.services.user_management_service - ERROR - Error getting user info for ziad@gmail.com: <Response [404]>
+2025-11-24 17:58:26,044 - src.utils.helpers - INFO - get_user_info executed in 2.901s
+2025-11-24 17:58:26,044 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: user not found in client mmk
+2025-11-24 17:58:26,044 - src.utils.helpers - INFO - validate_user_credentials executed in 2.901s
+2025-11-24 17:58:26,044 - src.api.user_routes - WARNING - User validation failed - user not found: ziad@gmail.com
+2025-11-24 17:58:26,044 - src.utils.helpers - INFO - validate_user executed in 2.901s
+2025-11-24 17:58:26,044 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-24 17:58:26,044 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:58:26] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-24 18:04:12,483 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 18:04:23,668 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000154C45C77D0>: Failed to resolve 'oauth2.googleapis.com' ([Errno 11001] getaddrinfo failed)")': /token
+2025-11-24 18:04:34,732 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000154C45C6B10>: Failed to resolve 'oauth2.googleapis.com' ([Errno 11001] getaddrinfo failed)")': /token
+2025-11-24 18:04:45,810 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000154C461D350>: Failed to resolve 'oauth2.googleapis.com' ([Errno 11001] getaddrinfo failed)")': /token
+2025-11-24 18:04:49,437 - src.services.user_management_service - INFO - Found email mapping: ziad@gmail.com → Sheet: test021465461321, Display: mmk
+2025-11-24 18:04:49,438 - src.services.user_management_service - INFO - Client found via EmailMappings for ziad@gmail.com: mmk
+2025-11-24 18:04:49,438 - src.utils.helpers - INFO - get_client_by_email executed in 36.955s
+2025-11-24 18:04:49,892 - src.services.user_management_service - ERROR - Error getting user info for ziad@gmail.com: <Response [404]>
+2025-11-24 18:04:49,892 - src.utils.helpers - INFO - get_user_info executed in 0.453s
+2025-11-24 18:04:49,893 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: user not found in client mmk
+2025-11-24 18:04:49,893 - src.utils.helpers - INFO - validate_user_credentials executed in 37.409s
+2025-11-24 18:04:49,893 - src.api.user_routes - WARNING - User validation failed - user not found: ziad@gmail.com
+2025-11-24 18:04:49,894 - src.utils.helpers - INFO - validate_user executed in 37.410s
+2025-11-24 18:04:49,894 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-24 18:04:49,895 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:04:49] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-24 18:05:09,563 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 18:05:09,632 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 18:05:09,951 - src.services.user_management_service - ERROR - Error getting user info for ziad@gmail.com: <Response [404]>
+2025-11-24 18:05:09,951 - src.utils.helpers - INFO - get_user_info executed in 0.306s
+2025-11-24 18:05:09,951 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: user not found in client mmk
+2025-11-24 18:05:09,951 - src.utils.helpers - INFO - validate_user_credentials executed in 0.319s
+2025-11-24 18:05:09,951 - src.api.user_routes - WARNING - User validation failed - user not found: ziad@gmail.com
+2025-11-24 18:05:09,952 - src.utils.helpers - INFO - validate_user executed in 0.320s
+2025-11-24 18:05:09,953 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-24 18:05:09,953 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:05:09] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-24 18:05:11,182 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 18:05:11,183 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 18:05:11,472 - src.services.user_management_service - ERROR - Error getting user info for ziad@gmail.com: <Response [404]>
+2025-11-24 18:05:11,473 - src.utils.helpers - INFO - get_user_info executed in 0.290s
+2025-11-24 18:05:11,473 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: user not found in client mmk
+2025-11-24 18:05:11,473 - src.utils.helpers - INFO - validate_user_credentials executed in 0.290s
+2025-11-24 18:05:11,473 - src.api.user_routes - WARNING - User validation failed - user not found: ziad@gmail.com
+2025-11-24 18:05:11,474 - src.utils.helpers - INFO - validate_user executed in 0.291s
+2025-11-24 18:05:11,474 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-24 18:05:11,474 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:05:11] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-24 18:05:12,283 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 18:05:12,284 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 18:05:12,820 - src.services.user_management_service - ERROR - Error getting user info for ziad@gmail.com: <Response [404]>
+2025-11-24 18:05:12,820 - src.utils.helpers - INFO - get_user_info executed in 0.536s
+2025-11-24 18:05:12,820 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: user not found in client mmk
+2025-11-24 18:05:12,820 - src.utils.helpers - INFO - validate_user_credentials executed in 0.537s
+2025-11-24 18:05:12,820 - src.api.user_routes - WARNING - User validation failed - user not found: ziad@gmail.com
+2025-11-24 18:05:12,820 - src.utils.helpers - INFO - validate_user executed in 0.537s
+2025-11-24 18:05:12,820 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-24 18:05:12,821 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:05:12] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-24 18:05:13,723 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 18:05:15,661 - src.services.user_management_service - INFO - Found email mapping: ziad@gmail.com → Sheet: 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk, Display: mmk
+2025-11-24 18:05:15,661 - src.services.user_management_service - INFO - Client found via EmailMappings for ziad@gmail.com: mmk
+2025-11-24 18:05:15,663 - src.utils.helpers - INFO - get_client_by_email executed in 1.938s
+2025-11-24 18:05:18,070 - src.services.user_management_service - INFO - User found: ziad@gmail.com in client sheet 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk
+2025-11-24 18:05:18,071 - src.utils.helpers - INFO - get_user_info executed in 2.409s
+2025-11-24 18:05:18,072 - src.services.user_management_service - WARNING - Empty password for user ziad@gmail.com
+2025-11-24 18:05:18,073 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: invalid password
+2025-11-24 18:05:18,074 - src.utils.helpers - INFO - validate_user_credentials executed in 4.351s
+2025-11-24 18:05:18,074 - src.api.user_routes - WARNING - User validation failed - invalid password: ziad@gmail.com
+2025-11-24 18:05:18,074 - src.utils.helpers - INFO - validate_user executed in 4.351s
+2025-11-24 18:05:18,075 - __main__ - INFO - Response: 401 - user.validate_user
+2025-11-24 18:05:18,075 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:05:18] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 401 -
+2025-11-24 18:09:06,745 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 18:09:16,110 - src.services.user_management_service - INFO - Found email mapping: ziad@gmail.com → Sheet: 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk, Display: mmk
+2025-11-24 18:09:16,111 - src.services.user_management_service - INFO - Client found via EmailMappings for ziad@gmail.com: mmk
+2025-11-24 18:09:16,111 - src.utils.helpers - INFO - get_client_by_email executed in 9.366s
+2025-11-24 18:09:25,250 - src.services.user_management_service - INFO - User found: ziad@gmail.com in client sheet 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk
+2025-11-24 18:09:25,250 - src.utils.helpers - INFO - get_user_info executed in 9.139s
+2025-11-24 18:09:25,319 - src.services.user_management_service - INFO - User credentials validated successfully: ziad@gmail.com for client mmk
+2025-11-24 18:09:25,319 - src.utils.helpers - INFO - validate_user_credentials executed in 18.573s
+2025-11-24 18:09:25,320 - src.api.user_routes - INFO - User validated successfully: ziad@gmail.com
+2025-11-24 18:09:25,323 - src.utils.helpers - INFO - validate_user executed in 18.578s
+2025-11-24 18:09:25,324 - __main__ - INFO - Response: 200 - user.validate_user
+2025-11-24 18:09:25,324 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:09:25] "POST /api/v1/user/validate HTTP/1.1" 200 -
+2025-11-24 18:11:34,950 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/user/admin/users/create - 127.0.0.1
+2025-11-24 18:11:34,953 - __main__ - INFO - Response: 405 - None
+2025-11-24 18:11:34,954 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:11:34] "[31m[1mGET /api/v1/user/admin/users/create HTTP/1.1[0m" 405 -
+2025-11-24 18:11:40,666 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/user/admin/users/create - 127.0.0.1
+2025-11-24 18:11:40,667 - __main__ - INFO - Response: 405 - None
+2025-11-24 18:11:40,667 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:11:40] "[31m[1mGET /api/v1/user/admin/users/create HTTP/1.1[0m" 405 -
+2025-11-24 18:12:01,894 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/create-user - 127.0.0.1
+2025-11-24 18:12:06,519 - src.services.user_management_service - INFO - Client found via domain matching for ziad2@moe.gov.sa: Ministry of Education
+2025-11-24 18:12:06,520 - src.utils.helpers - INFO - get_client_by_email executed in 4.623s
+2025-11-24 18:12:08,970 - src.services.user_management_service - INFO - User found: ziad2@moe.gov.sa in client sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
+2025-11-24 18:12:08,971 - src.utils.helpers - INFO - get_user_info executed in 2.451s
+2025-11-24 18:12:08,973 - src.services.user_management_service - WARNING - User ziad2@moe.gov.sa already exists in client Ministry of Education
+2025-11-24 18:12:08,974 - src.utils.helpers - INFO - create_user executed in 7.077s
+2025-11-24 18:12:08,975 - src.api.user_routes - WARNING - User creation failed - user already exists: ziad2@moe.gov.sa
+2025-11-24 18:12:08,975 - src.utils.helpers - INFO - create_user executed in 7.080s
+2025-11-24 18:12:08,976 - __main__ - INFO - Response: 409 - user.create_user
+2025-11-24 18:12:08,977 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:12:08] "[31m[1mPOST /api/v1/user/create-user HTTP/1.1[0m" 409 -
+2025-11-24 18:12:44,684 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/create-user - 127.0.0.1
+2025-11-24 18:12:44,684 - src.services.user_management_service - WARNING - No client found for email: ziad2@gmail.com (domain: gmail.com)
+2025-11-24 18:12:44,684 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 18:12:44,684 - src.services.user_management_service - WARNING - Cannot create user ziad2@gmail.com: no matching client found
+2025-11-24 18:12:44,684 - src.utils.helpers - INFO - create_user executed in 0.000s
+2025-11-24 18:12:44,686 - src.api.user_routes - WARNING - User creation failed - no matching client: ziad2@gmail.com
+2025-11-24 18:12:44,686 - src.utils.helpers - INFO - create_user executed in 0.002s
+2025-11-24 18:12:44,686 - __main__ - INFO - Response: 400 - user.create_user
+2025-11-24 18:12:44,686 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:12:44] "[31m[1mPOST /api/v1/user/create-user HTTP/1.1[0m" 400 -
+2025-11-24 18:12:47,781 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/create-user - 127.0.0.1
+2025-11-24 18:12:47,781 - src.services.user_management_service - WARNING - No client found for email: ziad2@gmail.com (domain: gmail.com)
+2025-11-24 18:12:47,781 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 18:12:47,781 - src.services.user_management_service - WARNING - Cannot create user ziad2@gmail.com: no matching client found
+2025-11-24 18:12:47,783 - src.utils.helpers - INFO - create_user executed in 0.002s
+2025-11-24 18:12:47,783 - src.api.user_routes - WARNING - User creation failed - no matching client: ziad2@gmail.com
+2025-11-24 18:12:47,784 - src.utils.helpers - INFO - create_user executed in 0.003s
+2025-11-24 18:12:47,785 - __main__ - INFO - Response: 400 - user.create_user
+2025-11-24 18:12:47,785 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:12:47] "[31m[1mPOST /api/v1/user/create-user HTTP/1.1[0m" 400 -
+2025-11-24 18:12:48,568 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/create-user - 127.0.0.1
+2025-11-24 18:12:48,568 - src.services.user_management_service - WARNING - No client found for email: ziad2@gmail.com (domain: gmail.com)
+2025-11-24 18:12:48,568 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 18:12:48,569 - src.services.user_management_service - WARNING - Cannot create user ziad2@gmail.com: no matching client found
+2025-11-24 18:12:48,569 - src.utils.helpers - INFO - create_user executed in 0.001s
+2025-11-24 18:12:48,569 - src.api.user_routes - WARNING - User creation failed - no matching client: ziad2@gmail.com
+2025-11-24 18:12:48,569 - src.utils.helpers - INFO - create_user executed in 0.001s
+2025-11-24 18:12:48,570 - __main__ - INFO - Response: 400 - user.create_user
+2025-11-24 18:12:48,570 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:12:48] "[31m[1mPOST /api/v1/user/create-user HTTP/1.1[0m" 400 -
+2025-11-24 18:12:49,274 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/create-user - 127.0.0.1
+2025-11-24 18:12:49,274 - src.services.user_management_service - WARNING - No client found for email: ziad2@gmail.com (domain: gmail.com)
+2025-11-24 18:12:49,274 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 18:12:49,276 - src.services.user_management_service - WARNING - Cannot create user ziad2@gmail.com: no matching client found
+2025-11-24 18:12:49,276 - src.utils.helpers - INFO - create_user executed in 0.002s
+2025-11-24 18:12:49,276 - src.api.user_routes - WARNING - User creation failed - no matching client: ziad2@gmail.com
+2025-11-24 18:12:49,276 - src.utils.helpers - INFO - create_user executed in 0.002s
+2025-11-24 18:12:49,276 - __main__ - INFO - Response: 400 - user.create_user
+2025-11-24 18:12:49,276 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:12:49] "[31m[1mPOST /api/v1/user/create-user HTTP/1.1[0m" 400 -
+2025-11-24 18:13:33,392 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-24 18:13:42,775 - src.services.user_management_service - INFO - Found email mapping: ziad@gmail.com → Sheet: 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk, Display: mmk
+2025-11-24 18:13:42,775 - src.services.user_management_service - INFO - Client found via EmailMappings for ziad@gmail.com: mmk
+2025-11-24 18:13:42,776 - src.utils.helpers - INFO - get_client_by_email executed in 9.384s
+2025-11-24 18:13:52,042 - src.services.user_management_service - INFO - User found: ziad@gmail.com in client sheet 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk
+2025-11-24 18:13:52,043 - src.utils.helpers - INFO - get_user_info executed in 9.267s
+2025-11-24 18:13:52,130 - src.services.user_management_service - INFO - User credentials validated successfully: ziad@gmail.com for client mmk
+2025-11-24 18:13:52,131 - src.utils.helpers - INFO - validate_user_credentials executed in 18.739s
+2025-11-24 18:13:52,131 - src.api.user_routes - INFO - User validated successfully: ziad@gmail.com
+2025-11-24 18:13:52,131 - src.utils.helpers - INFO - validate_user executed in 18.739s
+2025-11-24 18:13:52,131 - __main__ - INFO - Response: 200 - user.validate_user
+2025-11-24 18:13:52,132 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:13:52] "POST /api/v1/user/validate HTTP/1.1" 200 -
+2025-11-24 18:16:14,334 - __main__ - INFO - POST http://localhost:5000/api/v1/user/admin/users/create - 127.0.0.1
+2025-11-24 18:16:19,413 - src.services.user_management_service - INFO - Found email mapping: ziad@gmail.com → Sheet: 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk, Display: mmk
+2025-11-24 18:16:19,414 - src.services.user_management_service - INFO - Client found via EmailMappings for ziad@gmail.com: mmk
+2025-11-24 18:16:19,414 - src.utils.helpers - INFO - get_client_by_email executed in 5.074s
+2025-11-24 18:16:24,170 - src.services.user_management_service - INFO - User details found for ziad@gmail.com in sheet 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk
+2025-11-24 18:16:24,170 - src.utils.helpers - INFO - get_user_details_from_client_sheet executed in 4.755s
+2025-11-24 18:16:24,170 - src.api.user_routes - WARNING - Admin create user failed - user already exists: ziad@gmail.com
+2025-11-24 18:16:24,171 - src.utils.helpers - INFO - admin_create_user executed in 9.836s
+2025-11-24 18:16:24,172 - __main__ - INFO - Response: 409 - user.admin_create_user
+2025-11-24 18:16:24,173 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:16:24] "[31m[1mPOST /api/v1/user/admin/users/create HTTP/1.1[0m" 409 -
+2025-11-24 18:16:29,556 - __main__ - INFO - POST http://localhost:5000/api/v1/user/admin/users/create - 127.0.0.1
+2025-11-24 18:16:29,557 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-24 18:16:30,389 - src.services.user_management_service - WARNING - User ziad2@gmail.com not found in Users worksheet of sheet 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk
+2025-11-24 18:16:30,390 - src.utils.helpers - INFO - get_user_details_from_client_sheet executed in 0.833s
+2025-11-24 18:16:33,316 - src.utils.helpers - INFO - check_if_email_needs_mapping executed in 0.001s
+2025-11-24 18:16:36,451 - src.services.user_management_service - INFO - Added email mapping: ziad2@gmail.com → 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk
+2025-11-24 18:16:36,451 - src.utils.helpers - INFO - add_email_mapping executed in 3.134s
+2025-11-24 18:16:36,451 - src.api.user_routes - INFO - Added EmailMapping for public email domain: ziad2@gmail.com
+2025-11-24 18:16:36,451 - src.api.user_routes - INFO - Admin 'ziad@gmail.com' created user: ziad2@gmail.com with role: admin
+2025-11-24 18:16:36,453 - src.utils.helpers - INFO - admin_create_user executed in 6.894s
+2025-11-24 18:16:36,453 - __main__ - INFO - Response: 201 - user.admin_create_user
+2025-11-24 18:16:36,453 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:16:36] "[35m[1mPOST /api/v1/user/admin/users/create HTTP/1.1[0m" 201 -

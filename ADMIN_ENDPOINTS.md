@@ -2,6 +2,16 @@
 
 All endpoints require **JWT Token** with **admin role**.
 
+## 🆕 EmailMappings Auto-Management
+
+**NEW**: Admin endpoints now automatically manage EmailMappings for public email domains (gmail.com, yahoo.com, outlook.com, etc.)
+
+- ✅ **Create User**: Automatically adds EmailMapping if user has public email domain
+- ✅ **Delete User**: Automatically removes EmailMapping if user has public email domain
+- ✅ **Transparent**: No extra steps required by admin
+
+**Supported Public Domains**: gmail.com, yahoo.com, outlook.com, hotmail.com, aol.com, icloud.com, live.com, msn.com, mail.com, protonmail.com, zoho.com
+
 ---
 
 ## 1. List All Users
@@ -70,6 +80,31 @@ Content-Type: application/json
 }
 ```
 
+### 🆕 Public Email Domain Support
+
+When creating a user with a public email domain (gmail.com, yahoo.com, etc.), the system will:
+
+1. Create the user in the admin's client sheet (Users worksheet)
+2. **Automatically add EmailMapping** entry in Master Sheet
+3. User can immediately login with their gmail/yahoo email
+
+**Example**:
+```json
+{
+  "email": "alice@gmail.com",
+  "username": "Alice Smith",
+  "password": "SecurePass123",
+  "role": "admin",
+  "status": "active"
+}
+```
+
+**Behind the scenes**:
+- User added to admin's client sheet → Users worksheet
+- EmailMapping added → Master Sheet → EmailMappings worksheet
+  - `alice@gmail.com` → `admin's sheet_id` → `admin's drive_id`
+- Alice can now login with `alice@gmail.com`
+
 ---
 
 ## 3. Update User
@@ -127,6 +162,26 @@ X-User-Email: user@moe.gov.sa
   "admin": "ziad2@moe.gov.sa"
 }
 ```
+
+### 🆕 Public Email Domain Cleanup
+
+When deleting a user with a public email domain (gmail.com, yahoo.com, etc.), the system will:
+
+1. Delete the user from the admin's client sheet (Users worksheet)
+2. **Automatically remove EmailMapping** entry from Master Sheet
+3. User can no longer login
+
+**Example**:
+```
+DELETE /api/v1/user/admin/users/delete
+X-User-Email: alice@gmail.com
+```
+
+**Behind the scenes**:
+- User deleted from admin's client sheet → Users worksheet
+- EmailMapping removed → Master Sheet → EmailMappings worksheet
+- `alice@gmail.com` entry is removed
+- Alice can no longer login
 
 ---
 
