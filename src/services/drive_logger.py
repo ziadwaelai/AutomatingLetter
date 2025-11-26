@@ -73,12 +73,28 @@ class DriveLoggerService:
                 media_body=media,
                 fields='id, webViewLink'
             ).execute()
-            
+
+            file_id = uploaded['id']
+
+            # Make file publicly accessible (anyone with link can view)
+            try:
+                permission = {
+                    'type': 'anyone',
+                    'role': 'writer'
+                }
+                drive_service.permissions().create(
+                    fileId=file_id,
+                    body=permission
+                ).execute()
+                logger.info(f"File made public: {filename} (ID: {file_id})")
+            except Exception as perm_error:
+                logger.warning(f"Could not make file public (file still uploaded): {perm_error}")
+
             # Small delay to ensure file is ready
             time.sleep(0.5)
-            
-            logger.info(f"File uploaded to Drive: {filename} (ID: {uploaded['id']})")
-            return uploaded['id'], uploaded['webViewLink']
+
+            logger.info(f"File uploaded to Drive: {filename} (ID: {file_id})")
+            return file_id, uploaded['webViewLink']
             
         except Exception as e:
             logger.error(f"Error uploading file to Drive: {e}")

@@ -25,37 +25,57 @@ class CreateDocument:
     and generates a formatted Word document based on the Netzero template.
     """
 
-    def __init__(self, template_path: Optional[str] = None):
+    def __init__(self, template_path: Optional[str] = None, template_name: Optional[str] = None):
         """
         Initialize the CreateDocument service.
 
         Args:
-            template_path: Path to the Netzero.docx template.
-                          If None, tries environment variable or relative path.
+            template_path: Full path to a template file. Takes precedence over template_name.
+            template_name: Name of template file (without .docx extension) to load from templates folder.
+                          If None or not found, falls back to 'default.docx'.
+                          Examples: 'Netzero', 'custom', 'formal'
         """
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        templates_dir = os.path.join(base_dir, "LetterToPdf", "templates")
+
         if template_path is None:
-            # Try to get template path from environment variable
+            # Try to get template path from environment variable first
             env_template_path = os.getenv("DOCX_TEMPLATE_PATH")
 
-            if env_template_path:
+            if env_template_path and os.path.exists(env_template_path):
                 self.template_path = env_template_path
-                logger.info(f"Using template path from DOCX_TEMPLATE_PATH env var: {self.template_path}")
-            else:
-                # Use relative path from current directory (server-safe)
-                # This will work on any server regardless of location
-                base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-                self.template_path = os.path.join(base_dir, "LetterToPdf", "templates", "Netzero.docx")
-                logger.info(f"Using default template path: {self.template_path}")
+                logger.info(f"Using template from DOCX_TEMPLATE_PATH env: {self.template_path}")
+            elif template_name:
+                # Try to use specified template_name
+                template_filename = f"{template_name}.docx" if not template_name.endswith('.docx') else template_name
+                template_path_from_name = os.path.join(templates_dir, template_filename)
 
-            # If template doesn't exist, log warning and set to None (will create blank document)
-            if not os.path.exists(self.template_path):
-                logger.warning(f"Template file not found at: {self.template_path}, will create blank document")
-                self.template_path = None
+                if os.path.exists(template_path_from_name):
+                    self.template_path = template_path_from_name
+                    logger.info(f"Using template '{template_name}': {self.template_path}")
+                else:
+                    # Fallback to default.docx
+                    default_path = os.path.join(templates_dir, "default.docx")
+                    if os.path.exists(default_path):
+                        self.template_path = default_path
+                        logger.warning(f"Template '{template_name}' not found, using default.docx")
+                    else:
+                        self.template_path = None
+                        logger.warning(f"No templates found, will create blank document")
+            else:
+                # No template_name specified, use default.docx or Netzero.docx
+                default_path = os.path.join(templates_dir, "default.docx")
+                if os.path.exists(default_path):
+                    self.template_path = default_path
+                    logger.info(f"Using default.docx: {self.template_path}")
+                else:
+                    self.template_path = None
+                    logger.warning(f"No templates found in {templates_dir}")
         else:
+            # Custom path provided directly
             self.template_path = template_path
-            # If custom path doesn't exist, log warning but allow blank document creation
             if not os.path.exists(self.template_path):
-                logger.warning(f"Custom template path not found: {self.template_path}, will create blank document")
+                logger.warning(f"Custom template not found: {self.template_path}")
                 self.template_path = None
 
         self.document = None

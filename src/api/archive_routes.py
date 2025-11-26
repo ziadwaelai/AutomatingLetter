@@ -101,7 +101,15 @@ def archive_letter(user_info):
         title = data.get('title', 'undefined')
         is_first = data.get('is_first', False)
         letter_id = data.get('ID', '')
-        template = data.get('template', 'default_template')
+
+        # Get template from JWT token (letter_template field), fallback to request data
+        jwt_template = user_info.get('letter_template', '').strip()
+        request_template = data.get('template', '').strip()
+
+        # Priority: JWT template > Request template > 'default'
+        template_name = jwt_template or request_template or 'default'
+
+        logger.debug(f"DEBUG: Template selection: JWT='{jwt_template}', Request='{request_template}', Selected='{template_name}'")
 
         # Debug log for extracted fields
         logger.debug(f"DEBUG: Extracted letter_id: '{letter_id}'")
@@ -109,17 +117,16 @@ def archive_letter(user_info):
         logger.debug(f"DEBUG: Extracted recipient: '{recipient}'")
         logger.debug(f"DEBUG: Extracted title: '{title}'")
         logger.debug(f"DEBUG: Extracted is_first: {is_first}")
-        logger.debug(f"DEBUG: Extracted template: '{template}'")
         logger.debug(f"DEBUG: Letter content length: {len(letter_content)} characters")
         logger.debug(f"DEBUG: Letter content preview (first 200 chars): {letter_content[:200]}")
-        
+
         # Use user_email from JWT token for Created_by field
         # The sheet_id and google_drive_id will be used to log and store the letter
-        
+
         # Start background processing
         background_thread = threading.Thread(
             target=process_letter_archive_in_background,
-            args=(template, letter_content, letter_id, letter_type, recipient, title, is_first, sheet_id, user_email, google_drive_id),
+            args=(template_name, letter_content, letter_id, letter_type, recipient, title, is_first, sheet_id, user_email, google_drive_id),
             name=f"ArchiveThread-{letter_id}"
         )
         background_thread.daemon = False  # Changed from True - ensure thread completes before app shutdown
@@ -316,6 +323,14 @@ def archive_letter_docx(user_info):
         is_first = data.get('is_first', False)
         letter_id = data.get('ID', '')
 
+        # Get template from JWT token (letter_template field), fallback to request data
+        jwt_template = user_info.get('letter_template', '').strip()
+        request_template = data.get('template', '').strip()
+
+        # Priority: JWT template > Request template > 'default'
+        template_name = jwt_template or request_template or 'default'
+
+        logger.debug(f"DEBUG: Template selection: JWT='{jwt_template}', Request='{request_template}', Selected='{template_name}'")
         logger.debug(f"DEBUG: Extracted letter_id: '{letter_id}'")
         logger.debug(f"DEBUG: Extracted letter_type: '{letter_type}'")
         logger.debug(f"DEBUG: Extracted recipient: '{recipient}'")
@@ -326,7 +341,7 @@ def archive_letter_docx(user_info):
         # Start background processing
         background_thread = threading.Thread(
             target=process_letter_docx_archive_in_background,
-            args=(letter_content, letter_id, letter_type, recipient, title, is_first, sheet_id, user_email, google_drive_id),
+            args=(template_name, letter_content, letter_id, letter_type, recipient, title, is_first, sheet_id, user_email, google_drive_id),
             name=f"DocxArchiveThread-{letter_id}"
         )
         background_thread.daemon = False
@@ -352,6 +367,7 @@ def archive_letter_docx(user_info):
         return build_error_response(f"خطأ في الأرشفة: {str(e)}", 500)
 
 def process_letter_docx_archive_in_background(
+    template: str,
     letter_content: str,
     letter_id: str,
     letter_type: str,
@@ -389,10 +405,10 @@ def process_letter_docx_archive_in_background(
         logger.debug(f"[DOCX BACKGROUND] DEBUG: Drive logger service obtained")
 
         # Create DOCX document
-        logger.info(f"[DOCX BACKGROUND] Creating DOCX document for letter ID: {letter_id}")
+        logger.info(f"[DOCX BACKGROUND] Creating DOCX document for letter ID: {letter_id} with template: {template}")
 
         try:
-            doc_service = CreateDocument()
+            doc_service = CreateDocument(template_name=template)
 
             # Parse the raw letter content using GPT-4o
             parsed_data = doc_service._parse_raw_letter_content(letter_content)

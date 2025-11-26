@@ -1,1174 +1,368 @@
-2025-10-29 09:45:19,673 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-10-29 09:45:19,748 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-11-26 09:27:50,149 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 09:27:50,324 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:5000
  * Running on http://192.168.1.11:5000
-2025-10-29 09:45:19,748 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
-2025-10-29 09:45:19,749 - werkzeug - INFO -  * Restarting with stat
-2025-10-29 09:45:25,002 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-10-29 09:45:25,030 - werkzeug - WARNING -  * Debugger is active!
-2025-10-29 09:45:25,035 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-10-29 09:45:36,883 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\api\\whatsapp_routes.py', reloading
-2025-10-29 09:45:37,120 - werkzeug - INFO -  * Restarting with stat
-2025-10-29 09:45:41,074 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-10-29 09:45:41,143 - werkzeug - WARNING -  * Debugger is active!
-2025-10-29 09:45:41,146 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-10-29 09:45:44,821 - __main__ - INFO - GET http://localhost:5000/api/v1/submissions?page=1&page_size=10&sort_by=ID&sort_order=desc - 127.0.0.1
-2025-10-29 09:45:44,824 - src.api.submissions_routes - INFO - Submissions query request from user: ziad@moe.gov.sa, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-10-29 09:45:47,939 - src.api.submissions_routes - INFO - Found 2 submissions in sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-10-29 09:45:47,939 - src.api.submissions_routes - INFO - Returning page 1 of 1 with 2 submissions
-2025-10-29 09:45:47,940 - src.utils.helpers - INFO - get_submissions executed in 3.118s
-2025-10-29 09:45:47,941 - __main__ - INFO - Response: 200 - submissions.get_submissions
-2025-10-29 09:45:47,942 - werkzeug - INFO - 127.0.0.1 - - [29/Oct/2025 09:45:47] "GET /api/v1/submissions?page=1&page_size=10&sort_by=ID&sort_order=desc HTTP/1.1" 200 -
-2025-10-29 09:46:41,931 - __main__ - INFO - GET http://localhost:5000/api/v1/letter/LET-20251028-12345 - 127.0.0.1
-2025-10-29 09:46:41,932 - src.api.letter_routes - INFO - Letter retrieval request: LET-20251028-12345 by user: ziad@moe.gov.sa, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-10-29 09:46:44,405 - actions.letter.retrieval - INFO - Get letter successful | User: ziad@moe.gov.sa | {"letter_id": "LET-20251028-12345", "letter_type": "\u062f\u0639\u0648\u0629", "recipient": "\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f"}
-2025-10-29 09:46:44,405 - src.api.letter_routes - INFO - Letter retrieved successfully: LET-20251028-12345
-2025-10-29 09:46:44,406 - src.utils.helpers - INFO - get_letter_by_id executed in 2.475s
-2025-10-29 09:46:44,407 - __main__ - INFO - Response: 200 - letter.get_letter_by_id
-2025-10-29 09:46:44,407 - werkzeug - INFO - 127.0.0.1 - - [29/Oct/2025 09:46:44] "GET /api/v1/letter/LET-20251028-12345 HTTP/1.1" 200 -
-2025-10-29 11:51:02,799 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-10-29 11:51:03,028 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-11-26 09:27:50,324 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-26 09:27:50,329 - werkzeug - INFO -  * Restarting with stat
+2025-11-26 09:27:52,789 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 09:27:52,811 - werkzeug - WARNING -  * Debugger is active!
+2025-11-26 09:27:52,816 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-26 09:28:26,422 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-26 09:28:28,897 - src.services.user_management_service - INFO - Found email mapping: mahmoud@fekry.design → Sheet: 1lpiJxvbNMpfsGxCPeP3ubseCGfUwJhZo8-pbLpUyPwA, Display: 
+2025-11-26 09:28:28,899 - src.services.user_management_service - INFO - Client found via EmailMappings for mahmoud@fekry.design: 
+2025-11-26 09:28:28,899 - src.utils.helpers - INFO - get_client_by_email executed in 2.476s
+2025-11-26 09:28:29,754 - src.services.user_management_service - ERROR - Error getting user info for mahmoud@fekry.design: 
+2025-11-26 09:28:29,754 - src.utils.helpers - INFO - get_user_info executed in 0.854s
+2025-11-26 09:28:29,755 - src.services.user_management_service - WARNING - Validation failed mahmoud@fekry.design: user not found in client 
+2025-11-26 09:28:29,755 - src.utils.helpers - INFO - validate_user_credentials executed in 3.333s
+2025-11-26 09:28:29,756 - src.api.user_routes - WARNING - User validation failed - user not found: mahmoud@fekry.design
+2025-11-26 09:28:29,756 - src.utils.helpers - INFO - validate_user executed in 3.334s
+2025-11-26 09:28:29,756 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-26 09:28:29,757 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 09:28:29] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-26 09:29:04,286 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-26 09:29:04,286 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-26 09:29:05,125 - src.services.user_management_service - ERROR - Error getting user info for mahmoud@fekry.design: 
+2025-11-26 09:29:05,125 - src.utils.helpers - INFO - get_user_info executed in 0.839s
+2025-11-26 09:29:05,126 - src.services.user_management_service - WARNING - Validation failed mahmoud@fekry.design: user not found in client 
+2025-11-26 09:29:05,126 - src.utils.helpers - INFO - validate_user_credentials executed in 0.840s
+2025-11-26 09:29:05,126 - src.api.user_routes - WARNING - User validation failed - user not found: mahmoud@fekry.design
+2025-11-26 09:29:05,126 - src.utils.helpers - INFO - validate_user executed in 0.840s
+2025-11-26 09:29:05,126 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-26 09:29:05,127 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 09:29:05] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-26 09:29:34,863 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 09:29:34,930 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:5000
  * Running on http://192.168.1.11:5000
-2025-10-29 11:51:03,030 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
-2025-10-29 11:51:03,035 - werkzeug - INFO -  * Restarting with stat
-2025-10-29 11:51:07,208 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-10-29 11:51:07,242 - werkzeug - WARNING -  * Debugger is active!
-2025-10-29 11:51:07,248 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-10-29 11:51:53,173 - __main__ - INFO - PUT http://localhost:5000/api/v1/submissions/<submission_id>/review - 127.0.0.1
-2025-10-29 11:51:53,175 - src.utils.helpers - WARNING - No authorization token found in request
-2025-10-29 11:51:53,175 - src.utils.helpers - INFO - review_submission executed in 0.000s
-2025-10-29 11:51:53,175 - __main__ - INFO - Response: 401 - submissions.review_submission
-2025-10-29 11:51:53,176 - werkzeug - INFO - 127.0.0.1 - - [29/Oct/2025 11:51:53] "[31m[1mPUT /api/v1/submissions/<submission_id>/review HTTP/1.1[0m" 401 -
-2025-10-29 11:51:59,526 - __main__ - INFO - PUT http://localhost:5000/api/v1/submissions/<submission_id>/review - 127.0.0.1
-2025-10-29 11:51:59,528 - src.api.submissions_routes - INFO - Review request for submission: <submission_id> by reviewer: ziad@moe.gov.sa, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-10-29 11:52:03,113 - src.api.submissions_routes - WARNING - Submission with ID '<submission_id>' not found
-2025-10-29 11:52:03,115 - src.utils.helpers - INFO - review_submission executed in 3.588s
-2025-10-29 11:52:03,120 - __main__ - INFO - Response: 200 - submissions.review_submission
-2025-10-29 11:52:03,121 - werkzeug - INFO - 127.0.0.1 - - [29/Oct/2025 11:52:03] "PUT /api/v1/submissions/<submission_id>/review HTTP/1.1" 200 -
-2025-10-29 11:52:34,488 - __main__ - INFO - PUT http://localhost:5000/api/v1/submissions/LET-20251023-1231245/review - 127.0.0.1
-2025-10-29 11:52:34,488 - src.api.submissions_routes - INFO - Review request for submission: LET-20251023-1231245 by reviewer: ziad@moe.gov.sa, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-10-29 11:52:39,825 - src.api.submissions_routes - INFO - Successfully updated review for submission LET-20251023-1231245: status=Approved, reviewer=ziad@moe.gov.sa
-2025-10-29 11:52:39,826 - src.utils.helpers - INFO - review_submission executed in 5.338s
-2025-10-29 11:52:39,826 - __main__ - INFO - Response: 200 - submissions.review_submission
-2025-10-29 11:52:39,827 - werkzeug - INFO - 127.0.0.1 - - [29/Oct/2025 11:52:39] "PUT /api/v1/submissions/LET-20251023-1231245/review HTTP/1.1" 200 -
-2025-10-29 11:54:09,166 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\api\\submissions_routes.py', reloading
-2025-10-29 11:54:09,519 - werkzeug - INFO -  * Restarting with stat
-2025-10-29 11:54:15,831 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-10-29 11:54:15,877 - werkzeug - WARNING -  * Debugger is active!
-2025-10-29 11:54:15,882 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-10-29 11:54:30,511 - __main__ - INFO - PUT http://localhost:5000/api/v1/submissions/LET-20251023-1231245/review - 127.0.0.1
-2025-10-29 11:54:30,512 - __main__ - INFO - Response: 404 - None
-2025-10-29 11:54:30,513 - werkzeug - INFO - 127.0.0.1 - - [29/Oct/2025 11:54:30] "[33mPUT /api/v1/submissions/LET-20251023-1231245/review HTTP/1.1[0m" 404 -
-2025-10-29 11:54:42,518 - __main__ - INFO - PUT http://localhost:5000/api/v1/submissions/review/LET-20251023-1231245 - 127.0.0.1
-2025-10-29 11:54:42,519 - src.api.submissions_routes - INFO - Review request for submission: LET-20251023-1231245 by reviewer: ziad@moe.gov.sa, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-10-29 11:54:48,379 - src.api.submissions_routes - INFO - Successfully updated review for submission LET-20251023-1231245: status=Approved, reviewer=ziad@moe.gov.sa
-2025-10-29 11:54:48,380 - src.utils.helpers - INFO - review_submission executed in 5.860s
-2025-10-29 11:54:48,381 - __main__ - INFO - Response: 200 - submissions.review_submission
-2025-10-29 11:54:48,382 - werkzeug - INFO - 127.0.0.1 - - [29/Oct/2025 11:54:48] "PUT /api/v1/submissions/review/LET-20251023-1231245 HTTP/1.1" 200 -
-2025-11-05 10:34:11,067 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 10:34:11,184 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-11-26 09:29:34,931 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-26 09:29:34,933 - werkzeug - INFO -  * Restarting with stat
+2025-11-26 09:29:37,087 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 09:29:37,106 - werkzeug - WARNING -  * Debugger is active!
+2025-11-26 09:29:37,109 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-26 09:29:38,265 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-26 09:29:40,972 - src.services.user_management_service - INFO - Found email mapping: mahmoud@fekry.design → Sheet: 1lpiJxvbNMpfsGxCPeP3ubseCGfUwJhZo8-pbLpUyPwA, Display: 
+2025-11-26 09:29:40,973 - src.services.user_management_service - INFO - Client found via EmailMappings for mahmoud@fekry.design: 
+2025-11-26 09:29:40,973 - src.utils.helpers - INFO - get_client_by_email executed in 2.706s
+2025-11-26 09:29:42,052 - src.services.user_management_service - ERROR - Error getting user info for mahmoud@fekry.design: 
+2025-11-26 09:29:42,052 - src.utils.helpers - INFO - get_user_info executed in 1.079s
+2025-11-26 09:29:42,052 - src.services.user_management_service - WARNING - Validation failed mahmoud@fekry.design: user not found in client 
+2025-11-26 09:29:42,053 - src.utils.helpers - INFO - validate_user_credentials executed in 3.786s
+2025-11-26 09:29:42,053 - src.api.user_routes - WARNING - User validation failed - user not found: mahmoud@fekry.design
+2025-11-26 09:29:42,053 - src.utils.helpers - INFO - validate_user executed in 3.787s
+2025-11-26 09:29:42,053 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-26 09:29:42,054 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 09:29:42] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-26 09:31:22,494 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-26 09:31:24,256 - src.services.user_management_service - INFO - Found email mapping: lamya.ithra@gmail.com → Sheet: 1TZitoB65fuD-K8vEI-M7Z2tCOWs2D9clMhGvyW__gR4, Display: lamya
+2025-11-26 09:31:24,257 - src.services.user_management_service - INFO - Client found via EmailMappings for lamya.ithra@gmail.com: lamya
+2025-11-26 09:31:24,257 - src.utils.helpers - INFO - get_client_by_email executed in 1.764s
+2025-11-26 09:31:26,397 - src.services.user_management_service - INFO - User found: Lamya.ithra@gmail.com in client sheet 1TZitoB65fuD-K8vEI-M7Z2tCOWs2D9clMhGvyW__gR4
+2025-11-26 09:31:26,397 - src.utils.helpers - INFO - get_user_info executed in 2.139s
+2025-11-26 09:31:26,462 - src.services.user_management_service - INFO - User credentials validated successfully: Lamya.ithra@gmail.com for client lamya
+2025-11-26 09:31:26,462 - src.utils.helpers - INFO - validate_user_credentials executed in 3.969s
+2025-11-26 09:31:26,462 - src.api.user_routes - INFO - User validated successfully: Lamya.ithra@gmail.com
+2025-11-26 09:31:26,463 - src.utils.helpers - INFO - validate_user executed in 3.970s
+2025-11-26 09:31:26,463 - __main__ - INFO - Response: 200 - user.validate_user
+2025-11-26 09:31:26,464 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 09:31:26] "POST /api/v1/user/validate HTTP/1.1" 200 -
+2025-11-26 09:32:45,264 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-26 09:32:47,589 - src.services.user_management_service - INFO - Found email mapping: mahmoud@fekry.design → Sheet: 1lpiJxvbNMpfsGxCPeP3ubseCGfUwJhZo8-pbLpUyPwA, Display: 
+2025-11-26 09:32:47,590 - src.services.user_management_service - INFO - Client found via EmailMappings for mahmoud@fekry.design: 
+2025-11-26 09:32:47,590 - src.utils.helpers - INFO - get_client_by_email executed in 2.326s
+2025-11-26 09:32:48,405 - src.services.user_management_service - ERROR - Error getting user info for mahmoud@fekry.design: 
+2025-11-26 09:32:48,406 - src.utils.helpers - INFO - get_user_info executed in 0.816s
+2025-11-26 09:32:48,406 - src.services.user_management_service - WARNING - Validation failed mahmoud@fekry.design: user not found in client 
+2025-11-26 09:32:48,406 - src.utils.helpers - INFO - validate_user_credentials executed in 3.142s
+2025-11-26 09:32:48,406 - src.api.user_routes - WARNING - User validation failed - user not found: mahmoud@fekry.design
+2025-11-26 09:32:48,406 - src.utils.helpers - INFO - validate_user executed in 3.142s
+2025-11-26 09:32:48,407 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-26 09:32:48,407 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 09:32:48] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-26 09:33:36,134 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-26 09:33:36,135 - src.services.user_management_service - INFO - Found email mapping: aljabre.haya@gmail.com → Sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI, Display: aliabre
+2025-11-26 09:33:36,135 - src.services.user_management_service - INFO - Client found via EmailMappings for aljabre.haya@gmail.com: aliabre
+2025-11-26 09:33:36,136 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
+2025-11-26 09:33:37,022 - src.services.user_management_service - ERROR - Error getting user info for Aljabre.haya@gmail.com: 
+2025-11-26 09:33:37,024 - src.utils.helpers - INFO - get_user_info executed in 0.887s
+2025-11-26 09:33:37,024 - src.services.user_management_service - WARNING - Validation failed Aljabre.haya@gmail.com: user not found in client aliabre
+2025-11-26 09:33:37,024 - src.utils.helpers - INFO - validate_user_credentials executed in 0.889s
+2025-11-26 09:33:37,024 - src.api.user_routes - WARNING - User validation failed - user not found: Aljabre.haya@gmail.com
+2025-11-26 09:33:37,025 - src.utils.helpers - INFO - validate_user executed in 0.891s
+2025-11-26 09:33:37,025 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-26 09:33:37,025 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 09:33:37] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-26 09:33:43,599 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-26 09:33:43,600 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-26 09:33:44,360 - src.services.user_management_service - ERROR - Error getting user info for Aljabre.haya@gmail.com: 
+2025-11-26 09:33:44,362 - src.utils.helpers - INFO - get_user_info executed in 0.761s
+2025-11-26 09:33:44,362 - src.services.user_management_service - WARNING - Validation failed Aljabre.haya@gmail.com: user not found in client aliabre
+2025-11-26 09:33:44,362 - src.utils.helpers - INFO - validate_user_credentials executed in 0.761s
+2025-11-26 09:33:44,362 - src.api.user_routes - WARNING - User validation failed - user not found: Aljabre.haya@gmail.com
+2025-11-26 09:33:44,362 - src.utils.helpers - INFO - validate_user executed in 0.762s
+2025-11-26 09:33:44,362 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-26 09:33:44,363 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 09:33:44] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-26 09:33:58,983 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-26 09:33:59,825 - src.services.user_management_service - INFO - Found email mapping: ziad2@gmail.com → Sheet: 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk, Display: mmk
+2025-11-26 09:33:59,826 - src.services.user_management_service - INFO - Client found via EmailMappings for ziad2@gmail.com: mmk
+2025-11-26 09:33:59,826 - src.utils.helpers - INFO - get_client_by_email executed in 0.844s
+2025-11-26 09:34:01,578 - src.services.user_management_service - INFO - User found: ziad2@gmail.com in client sheet 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk
+2025-11-26 09:34:01,578 - src.utils.helpers - INFO - get_user_info executed in 1.751s
+2025-11-26 09:34:01,649 - src.services.user_management_service - WARNING - Validation failed ziad2@gmail.com: invalid password
+2025-11-26 09:34:01,649 - src.utils.helpers - INFO - validate_user_credentials executed in 2.666s
+2025-11-26 09:34:01,649 - src.api.user_routes - WARNING - User validation failed - invalid password: ziad2@gmail.com
+2025-11-26 09:34:01,650 - src.utils.helpers - INFO - validate_user executed in 2.667s
+2025-11-26 09:34:01,650 - __main__ - INFO - Response: 401 - user.validate_user
+2025-11-26 09:34:01,650 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 09:34:01] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 401 -
+2025-11-26 09:34:20,340 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-26 09:34:20,341 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
+2025-11-26 09:34:21,125 - src.services.user_management_service - ERROR - Error getting user info for Aljabre.haya@gmail.com: 
+2025-11-26 09:34:21,126 - src.utils.helpers - INFO - get_user_info executed in 0.785s
+2025-11-26 09:34:21,126 - src.services.user_management_service - WARNING - Validation failed Aljabre.haya@gmail.com: user not found in client aliabre
+2025-11-26 09:34:21,126 - src.utils.helpers - INFO - validate_user_credentials executed in 0.785s
+2025-11-26 09:34:21,127 - src.api.user_routes - WARNING - User validation failed - user not found: Aljabre.haya@gmail.com
+2025-11-26 09:34:21,127 - src.utils.helpers - INFO - validate_user executed in 0.786s
+2025-11-26 09:34:21,127 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-26 09:34:21,127 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 09:34:21] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-26 09:35:11,512 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 09:35:11,575 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:5000
  * Running on http://192.168.1.11:5000
-2025-11-05 10:34:11,186 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
-2025-11-05 10:34:11,195 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 10:34:16,329 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 10:34:16,363 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 10:34:16,370 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 10:34:54,903 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/letter/generate - 127.0.0.1
-2025-11-05 10:34:54,905 - src.utils.helpers - WARNING - JWT token has expired
-2025-11-05 10:34:54,905 - src.utils.helpers - WARNING - Request made with expired JWT token
-2025-11-05 10:34:54,905 - src.utils.helpers - INFO - generate_letter executed in 0.001s
-2025-11-05 10:34:54,906 - __main__ - INFO - Response: 401 - letter.generate_letter
-2025-11-05 10:34:54,908 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 10:34:54] "[31m[1mPOST /api/v1/letter/generate HTTP/1.1[0m" 401 -
-2025-11-05 10:35:02,667 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-05 10:35:05,947 - src.services.user_management_service - INFO - Client found for email ziad@moe.gov.sa: Ministry of Education
-2025-11-05 10:35:05,947 - src.utils.helpers - INFO - get_client_by_email executed in 3.279s
-2025-11-05 10:35:08,839 - src.services.user_management_service - INFO - User found: ziad@moe.gov.sa in client sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 10:35:08,841 - src.utils.helpers - INFO - get_user_info executed in 2.892s
-2025-11-05 10:35:08,904 - src.services.user_management_service - INFO - User credentials validated successfully: ziad@moe.gov.sa for client Ministry of Education
-2025-11-05 10:35:08,904 - src.utils.helpers - INFO - validate_user_credentials executed in 6.236s
-2025-11-05 10:35:08,904 - src.api.user_routes - INFO - User validated successfully: ziad@moe.gov.sa
-2025-11-05 10:35:08,905 - src.utils.helpers - INFO - validate_user executed in 6.237s
-2025-11-05 10:35:08,905 - __main__ - INFO - Response: 200 - user.validate_user
-2025-11-05 10:35:08,905 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 10:35:08] "POST /api/v1/user/validate HTTP/1.1" 200 -
-2025-11-05 10:35:25,323 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/letter/generate - 127.0.0.1
-2025-11-05 10:35:25,323 - src.api.letter_routes - INFO - Letter generation request from user: ziad@moe.gov.sa, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 10:35:27,385 - src.services.usage_tracking_service - INFO - Usage Tracking Service initialized
-2025-11-05 10:35:29,586 - src.services.usage_tracking_service - INFO - Found quota_month limit: 100
-2025-11-05 10:35:29,586 - src.utils.helpers - INFO - get_quota_limit executed in 2.201s
-2025-11-05 10:35:31,506 - src.services.usage_tracking_service - INFO - Found existing usage row for 2025_11 at row 3: {'yyyy_mm': '2025_11', 'letters_count': 3, 'tokens_sum': 8361, 'cost_sum_usd': 0.054525}
-2025-11-05 10:35:31,507 - src.utils.helpers - INFO - get_or_create_usage_row executed in 1.920s
-2025-11-05 10:35:31,508 - src.services.usage_tracking_service - INFO - Quota check passed: 3/100 (97 remaining)
-2025-11-05 10:35:31,508 - src.utils.helpers - INFO - check_quota executed in 4.122s
-2025-11-05 10:35:31,508 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-05 10:35:35,265 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 1.800s
-2025-11-05 10:35:35,269 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 1.804s
-2025-11-05 10:35:35,766 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 2.301s
-2025-11-05 10:35:35,827 - src.services.google_services - WARNING - No user found with full_name: 
-2025-11-05 10:35:35,828 - src.utils.helpers - INFO - get_user_info_from_sheet_id executed in 2.362s
-2025-11-05 10:35:35,829 - src.utils.helpers - INFO - get_letter_config_by_category_from_sheet_id executed in 2.364s
-2025-11-05 10:35:35,829 - src.api.letter_routes - INFO - Loaded letter config from sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg for category: طلب
-2025-11-05 10:35:35,830 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
-2025-11-05 10:35:35,830 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
-2025-11-05 10:35:35,830 - src.services.letter_generator - INFO - Attempting to load prompt template from Settings sheet for sheet_id: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 10:35:37,772 - src.services.usage_tracking_service - INFO - Found prompt template from Settings sheet (length: 7472 chars)
-2025-11-05 10:35:37,773 - src.utils.helpers - INFO - get_prompt_template executed in 1.943s
-2025-11-05 10:35:37,773 - src.services.letter_generator - INFO - ✅ Successfully loaded custom prompt template from Settings sheet (length: 7472 chars)
-2025-11-05 10:35:40,760 - src.utils.helpers - INFO - get_context_instructions executed in 2.434s
-2025-11-05 10:35:40,796 - src.services.memory_service - INFO - Optimized memory service initialized (sheet_id: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
-2025-11-05 10:35:40,832 - src.services.letter_generator - INFO - Retrieved memory instructions for category='طلب', session_id='None', sheet_id='17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg': 125 chars
-2025-11-05 10:35:40,833 - src.services.letter_generator - INFO - Generating letter with ID: LET-20251105-80254
-2025-11-05 10:35:41,594 - src.services.letter_generator - ERROR - Letter generation failed for ID LET-20251105-80254: "Input to PromptTemplate is missing variables {'recipient_title'}.  Expected: ['additional_context', 'current_date', 'letter_id', 'member_info', 'memory_instructions', 'previous_letter_info', 'recipient_title', 'reference_context', 'user_prompt', 'writing_instructions'] Received: ['user_prompt', 'reference_context', 'additional_context', 'writing_instructions', 'member_info', 'letter_id', 'current_date', 'previous_letter_info', 'memory_instructions']\nNote: if you intended {recipient_title} to be part of the string and not a variable, please escape it with double curly braces like: '{{recipient_title}}'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT "
-2025-11-05 10:35:41,594 - src.utils.exceptions - ERROR - Operation failed: letter_generation
-2025-11-05 10:35:41,594 - src.utils.helpers - ERROR - generate_letter failed after 5.765s: Failed to generate letter: "Input to PromptTemplate is missing variables {'recipient_title'}.  Expected: ['additional_context', 'current_date', 'letter_id', 'member_info', 'memory_instructions', 'previous_letter_info', 'recipient_title', 'reference_context', 'user_prompt', 'writing_instructions'] Received: ['user_prompt', 'reference_context', 'additional_context', 'writing_instructions', 'member_info', 'letter_id', 'current_date', 'previous_letter_info', 'memory_instructions']\nNote: if you intended {recipient_title} to be part of the string and not a variable, please escape it with double curly braces like: '{{recipient_title}}'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT "
-2025-11-05 10:35:41,594 - src.api.letter_routes - ERROR - Letter generation failed: AI service error: Failed to generate letter: "Input to PromptTemplate is missing variables {'recipient_title'}.  Expected: ['additional_context', 'current_date', 'letter_id', 'member_info', 'memory_instructions', 'previous_letter_info', 'recipient_title', 'reference_context', 'user_prompt', 'writing_instructions'] Received: ['user_prompt', 'reference_context', 'additional_context', 'writing_instructions', 'member_info', 'letter_id', 'current_date', 'previous_letter_info', 'memory_instructions']\nNote: if you intended {recipient_title} to be part of the string and not a variable, please escape it with double curly braces like: '{{recipient_title}}'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT "
-2025-11-05 10:35:41,595 - src.utils.helpers - INFO - generate_letter executed in 16.272s
-2025-11-05 10:35:41,595 - __main__ - INFO - Response: 500 - letter.generate_letter
-2025-11-05 10:35:41,596 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 10:35:41] "[35m[1mPOST /api/v1/letter/generate HTTP/1.1[0m" 500 -
-2025-11-05 10:37:27,740 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\api\\__init__.py', reloading
-2025-11-05 10:37:28,099 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 10:39:50,657 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 10:39:50,704 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2025-11-26 09:35:11,576 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-26 09:35:11,578 - werkzeug - INFO -  * Restarting with stat
+2025-11-26 09:35:13,483 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 09:35:13,504 - werkzeug - WARNING -  * Debugger is active!
+2025-11-26 09:35:13,508 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-26 09:35:15,600 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-26 09:35:17,457 - src.services.user_management_service - INFO - Found email mapping: aljabre.haya@gmail.com → Sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI, Display: aliabre
+2025-11-26 09:35:17,457 - src.services.user_management_service - INFO - Client found via EmailMappings for aljabre.haya@gmail.com: aliabre
+2025-11-26 09:35:17,457 - src.utils.helpers - INFO - get_client_by_email executed in 1.855s
+2025-11-26 09:35:17,783 - src.services.user_management_service - ERROR - Error getting user info for Aljabre.haya@gmail.com: 
+2025-11-26 09:35:17,784 - src.utils.helpers - INFO - get_user_info executed in 0.326s
+2025-11-26 09:35:17,784 - src.services.user_management_service - WARNING - Validation failed Aljabre.haya@gmail.com: user not found in client aliabre
+2025-11-26 09:35:17,784 - src.utils.helpers - INFO - validate_user_credentials executed in 2.183s
+2025-11-26 09:35:17,785 - src.api.user_routes - WARNING - User validation failed - user not found: Aljabre.haya@gmail.com
+2025-11-26 09:35:17,785 - src.utils.helpers - INFO - validate_user executed in 2.184s
+2025-11-26 09:35:17,786 - __main__ - INFO - Response: 404 - user.validate_user
+2025-11-26 09:35:17,787 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 09:35:17] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
+2025-11-26 09:36:00,297 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-26 09:36:00,297 - src.services.user_management_service - INFO - Found email mapping: lamya.ithra@gmail.com → Sheet: 1TZitoB65fuD-K8vEI-M7Z2tCOWs2D9clMhGvyW__gR4, Display: lamya
+2025-11-26 09:36:00,298 - src.services.user_management_service - INFO - Client found via EmailMappings for lamya.ithra@gmail.com: lamya
+2025-11-26 09:36:00,300 - src.utils.helpers - INFO - get_client_by_email executed in 0.003s
+2025-11-26 09:36:01,650 - src.services.user_management_service - INFO - User found: Lamya.ithra@gmail.com in client sheet 1TZitoB65fuD-K8vEI-M7Z2tCOWs2D9clMhGvyW__gR4
+2025-11-26 09:36:01,651 - src.utils.helpers - INFO - get_user_info executed in 1.350s
+2025-11-26 09:36:01,718 - src.services.user_management_service - INFO - User credentials validated successfully: Lamya.ithra@gmail.com for client lamya
+2025-11-26 09:36:01,718 - src.utils.helpers - INFO - validate_user_credentials executed in 1.421s
+2025-11-26 09:36:01,718 - src.api.user_routes - INFO - User validated successfully: Lamya.ithra@gmail.com
+2025-11-26 09:36:01,719 - src.utils.helpers - INFO - validate_user executed in 1.422s
+2025-11-26 09:36:01,719 - __main__ - INFO - Response: 200 - user.validate_user
+2025-11-26 09:36:01,720 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 09:36:01] "POST /api/v1/user/validate HTTP/1.1" 200 -
+2025-11-26 09:37:21,198 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
+2025-11-26 09:37:22,295 - src.services.user_management_service - INFO - Found email mapping: aljabre.haya@gmail.com → Sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI, Display: aliabre
+2025-11-26 09:37:22,295 - src.services.user_management_service - INFO - Client found via EmailMappings for aljabre.haya@gmail.com: aliabre
+2025-11-26 09:37:22,296 - src.utils.helpers - INFO - get_client_by_email executed in 1.098s
+2025-11-26 09:37:24,082 - src.services.user_management_service - INFO - User found: Aljabre.haya@gmail.com in client sheet 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI
+2025-11-26 09:37:24,083 - src.utils.helpers - INFO - get_user_info executed in 1.787s
+2025-11-26 09:37:24,157 - src.services.user_management_service - INFO - User credentials validated successfully: Aljabre.haya@gmail.com for client aliabre
+2025-11-26 09:37:24,157 - src.utils.helpers - INFO - validate_user_credentials executed in 2.959s
+2025-11-26 09:37:24,157 - src.api.user_routes - INFO - User validated successfully: Aljabre.haya@gmail.com
+2025-11-26 09:37:24,158 - src.utils.helpers - INFO - validate_user executed in 2.960s
+2025-11-26 09:37:24,158 - __main__ - INFO - Response: 200 - user.validate_user
+2025-11-26 09:37:24,158 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 09:37:24] "POST /api/v1/user/validate HTTP/1.1" 200 -
+2025-11-26 10:09:11,810 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
+2025-11-26 10:09:12,211 - werkzeug - INFO -  * Restarting with stat
+2025-11-26 10:09:17,122 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 10:09:17,146 - werkzeug - WARNING -  * Debugger is active!
+2025-11-26 10:09:17,151 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-26 10:09:49,018 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\api\\archive_routes.py', reloading
+2025-11-26 10:09:49,261 - werkzeug - INFO -  * Restarting with stat
+2025-11-26 10:09:51,749 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 10:09:51,776 - werkzeug - WARNING -  * Debugger is active!
+2025-11-26 10:09:51,781 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-26 10:09:53,090 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
+2025-11-26 10:09:53,314 - werkzeug - INFO -  * Restarting with stat
+2025-11-26 10:09:55,701 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 10:09:55,738 - werkzeug - WARNING -  * Debugger is active!
+2025-11-26 10:09:55,742 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-26 10:09:58,115 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
+2025-11-26 10:09:58,359 - werkzeug - INFO -  * Restarting with stat
+2025-11-26 10:10:00,444 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 10:10:00,468 - werkzeug - WARNING -  * Debugger is active!
+2025-11-26 10:10:00,471 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-26 10:10:16,073 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
+2025-11-26 10:10:16,413 - werkzeug - INFO -  * Restarting with stat
+2025-11-26 10:11:12,171 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 10:11:12,213 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:5000
  * Running on http://192.168.1.11:5000
-2025-11-05 10:39:50,704 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
-2025-11-05 10:39:50,708 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 10:39:53,841 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 10:39:54,041 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 10:39:54,041 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 10:39:54,124 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/letter/generate - 127.0.0.1
-2025-11-05 10:39:54,124 - src.api.letter_routes - INFO - Letter generation request from user: ziad@moe.gov.sa, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 10:39:54,358 - src.services.usage_tracking_service - INFO - Usage Tracking Service initialized
-2025-11-05 10:39:57,698 - src.services.usage_tracking_service - INFO - Found quota_month limit: 100
-2025-11-05 10:39:57,699 - src.utils.helpers - INFO - get_quota_limit executed in 3.341s
-2025-11-05 10:40:00,057 - src.services.usage_tracking_service - INFO - Found existing usage row for 2025_11 at row 3: {'yyyy_mm': '2025_11', 'letters_count': 3, 'tokens_sum': 8361, 'cost_sum_usd': 0.054525}
-2025-11-05 10:40:00,057 - src.utils.helpers - INFO - get_or_create_usage_row executed in 2.359s
-2025-11-05 10:40:00,058 - src.services.usage_tracking_service - INFO - Quota check passed: 3/100 (97 remaining)
-2025-11-05 10:40:00,058 - src.utils.helpers - INFO - check_quota executed in 5.701s
-2025-11-05 10:40:02,938 - src.services.user_management_service - INFO - Client found for email ziad@moe.gov.sa: Ministry of Education
-2025-11-05 10:40:02,939 - src.utils.helpers - INFO - get_client_by_email executed in 2.880s
-2025-11-05 10:40:06,200 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 1.965s
-2025-11-05 10:40:06,689 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 2.452s
-2025-11-05 10:40:06,700 - src.services.google_services - WARNING - No user found with full_name: 
-2025-11-05 10:40:06,700 - src.utils.helpers - INFO - get_user_info_from_sheet_id executed in 2.463s
-2025-11-05 10:40:07,589 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 3.352s
-2025-11-05 10:40:07,591 - src.utils.helpers - INFO - get_letter_config_by_category_from_sheet_id executed in 3.355s
-2025-11-05 10:40:07,591 - src.api.letter_routes - INFO - Loaded letter config from sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg for category: طلب
-2025-11-05 10:40:07,592 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
-2025-11-05 10:40:07,592 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
-2025-11-05 10:40:07,592 - src.services.letter_generator - INFO - Attempting to load prompt template from Settings sheet for sheet_id: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 10:40:08,990 - src.services.usage_tracking_service - INFO - Found prompt template from Settings sheet (length: 7365 chars)
-2025-11-05 10:40:08,992 - src.utils.helpers - INFO - get_prompt_template executed in 1.401s
-2025-11-05 10:40:08,993 - src.services.letter_generator - INFO - ✅ Successfully loaded custom prompt template from Settings sheet (length: 7365 chars)
-2025-11-05 10:40:10,219 - src.utils.helpers - INFO - get_context_instructions executed in 0.878s
-2025-11-05 10:40:10,230 - src.services.memory_service - INFO - Optimized memory service initialized (sheet_id: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
-2025-11-05 10:40:10,241 - src.services.letter_generator - INFO - Retrieved memory instructions for category='طلب', session_id='None', sheet_id='17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg': 125 chars
-2025-11-05 10:40:10,242 - src.services.letter_generator - INFO - Generating letter with ID: LET-20251105-28290
-2025-11-05 10:40:10,360 - src.services.letter_generator - ERROR - Letter generation failed for ID LET-20251105-28290: "Input to PromptTemplate is missing variables {'recipient_title'}.  Expected: ['additional_context', 'current_date', 'letter_id', 'member_info', 'memory_instructions', 'previous_letter_info', 'recipient_title', 'reference_context', 'user_prompt', 'writing_instructions'] Received: ['user_prompt', 'reference_context', 'additional_context', 'writing_instructions', 'member_info', 'letter_id', 'current_date', 'previous_letter_info', 'memory_instructions']\nNote: if you intended {recipient_title} to be part of the string and not a variable, please escape it with double curly braces like: '{{recipient_title}}'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT "
-2025-11-05 10:40:10,360 - src.utils.exceptions - ERROR - Operation failed: letter_generation
-2025-11-05 10:40:10,360 - src.utils.helpers - ERROR - generate_letter failed after 2.768s: Failed to generate letter: "Input to PromptTemplate is missing variables {'recipient_title'}.  Expected: ['additional_context', 'current_date', 'letter_id', 'member_info', 'memory_instructions', 'previous_letter_info', 'recipient_title', 'reference_context', 'user_prompt', 'writing_instructions'] Received: ['user_prompt', 'reference_context', 'additional_context', 'writing_instructions', 'member_info', 'letter_id', 'current_date', 'previous_letter_info', 'memory_instructions']\nNote: if you intended {recipient_title} to be part of the string and not a variable, please escape it with double curly braces like: '{{recipient_title}}'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT "
-2025-11-05 10:40:10,361 - src.api.letter_routes - ERROR - Letter generation failed: AI service error: Failed to generate letter: "Input to PromptTemplate is missing variables {'recipient_title'}.  Expected: ['additional_context', 'current_date', 'letter_id', 'member_info', 'memory_instructions', 'previous_letter_info', 'recipient_title', 'reference_context', 'user_prompt', 'writing_instructions'] Received: ['user_prompt', 'reference_context', 'additional_context', 'writing_instructions', 'member_info', 'letter_id', 'current_date', 'previous_letter_info', 'memory_instructions']\nNote: if you intended {recipient_title} to be part of the string and not a variable, please escape it with double curly braces like: '{{recipient_title}}'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT "
-2025-11-05 10:40:10,361 - src.utils.helpers - INFO - generate_letter executed in 16.237s
-2025-11-05 10:40:10,361 - __main__ - INFO - Response: 500 - letter.generate_letter
-2025-11-05 10:40:10,361 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 10:40:10] "[35m[1mPOST /api/v1/letter/generate HTTP/1.1[0m" 500 -
-2025-11-05 10:42:19,020 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\letter_generator.py', reloading
-2025-11-05 10:42:19,277 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 10:42:21,623 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 10:42:21,649 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 10:42:21,652 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 10:42:27,682 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/letter/generate - 127.0.0.1
-2025-11-05 10:42:27,682 - src.api.letter_routes - INFO - Letter generation request from user: ziad@moe.gov.sa, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 10:42:27,786 - src.services.usage_tracking_service - INFO - Usage Tracking Service initialized
-2025-11-05 10:42:30,914 - src.services.usage_tracking_service - INFO - Found quota_month limit: 100
-2025-11-05 10:42:30,915 - src.utils.helpers - INFO - get_quota_limit executed in 3.128s
-2025-11-05 10:42:32,806 - src.services.usage_tracking_service - INFO - Found existing usage row for 2025_11 at row 3: {'yyyy_mm': '2025_11', 'letters_count': 3, 'tokens_sum': 8361, 'cost_sum_usd': 0.054525}
-2025-11-05 10:42:32,806 - src.utils.helpers - INFO - get_or_create_usage_row executed in 1.891s
-2025-11-05 10:42:32,806 - src.services.usage_tracking_service - INFO - Quota check passed: 3/100 (97 remaining)
-2025-11-05 10:42:32,806 - src.utils.helpers - INFO - check_quota executed in 5.020s
-2025-11-05 10:42:35,573 - src.services.user_management_service - INFO - Client found for email ziad@moe.gov.sa: Ministry of Education
-2025-11-05 10:42:35,574 - src.utils.helpers - INFO - get_client_by_email executed in 2.767s
-2025-11-05 10:42:37,896 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 0.900s
-2025-11-05 10:42:38,800 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 1.803s
-2025-11-05 10:42:38,859 - src.services.google_services - WARNING - No user found with full_name: 
-2025-11-05 10:42:38,859 - src.utils.helpers - INFO - get_user_info_from_sheet_id executed in 1.858s
-2025-11-05 10:42:39,509 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 2.508s
-2025-11-05 10:42:39,509 - src.utils.helpers - INFO - get_letter_config_by_category_from_sheet_id executed in 2.514s
-2025-11-05 10:42:39,509 - src.api.letter_routes - INFO - Loaded letter config from sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg for category: طلب
-2025-11-05 10:42:39,509 - src.services.letter_generator - INFO - Using AI model: gpt-4.1
-2025-11-05 10:42:39,510 - src.services.letter_generator - INFO - Arabic Letter Generation Service initialized
-2025-11-05 10:42:39,510 - src.services.letter_generator - INFO - Attempting to load prompt template from Settings sheet for sheet_id: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 10:42:40,365 - src.services.usage_tracking_service - INFO - Found prompt template from Settings sheet (length: 7341 chars)
-2025-11-05 10:42:40,365 - src.utils.helpers - INFO - get_prompt_template executed in 0.855s
-2025-11-05 10:42:40,366 - src.services.letter_generator - INFO - ✅ Successfully loaded custom prompt template from Settings sheet (length: 7341 chars)
-2025-11-05 10:42:42,725 - src.utils.helpers - INFO - get_context_instructions executed in 2.047s
-2025-11-05 10:42:42,745 - src.services.memory_service - INFO - Optimized memory service initialized (sheet_id: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
-2025-11-05 10:42:42,757 - src.services.letter_generator - INFO - Retrieved memory instructions for category='طلب', session_id='None', sheet_id='17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg': 125 chars
-2025-11-05 10:42:42,757 - src.services.letter_generator - INFO - Generating letter with ID: LET-20251105-07703
-2025-11-05 10:42:52,311 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-11-05 10:42:52,401 - src.services.letter_generator - ERROR - Letter generation failed for ID LET-20251105-07703: Invalid json output: بسم الله الرحمن الرحيم
-
-خطاب شكر وتقدير لجهود إدارة المشاريع في دعم المبادرات البيئية
-
-الأستاذ الفاضل أحمد محمد علي                                                                                   سلمه الله
-
-السلام عليكم ورحمة الله وبركاته،
-
-     نثمن جهودكم المتميزة في تطوير منظومة المشاريع، ونقدر دوركم الفاعل في دعم المبادرات التنموية ذات الأثر المستدام على البيئة والمجتمع.
-
-     وانطلاقًا من هذا النهج الطموح، نود أن نقدم لسعادتكم "نت زيرو"، وهو مشروع اجتماعي وطني، أحد مخرجات برنامج (سدرة) التابع لوزارة البيئة والمياه والزراعة، يهدف إلى تعزيز الاستدامة البيئية وتحقيق أهداف الحياد الكربوني في المملكة، من خلال تطوير حلول تقنية مبتكرة تدعم التشجير الذكي، وتوثيق الغطاء النباتي، ورفع كفاءة إدارة الموارد الطبيعية بما يواكب مستهدفات رؤية المملكة 2030 ومبادرة "السعودية الخضراء".
-
-     نتقدم إلى سعادتكم بجزيل الشكر والتقدير على ما تبذلونه من جهود ملموسة في دعم المبادرات البيئية، وحرصكم الدائم على تسهيل أعمال الفرق المختصة، مما كان له بالغ الأثر في تحقيق نتائج إيجابية على مستوى المشاريع البيئية المشتركة. إن تعاونكم البنّاء وتوجيهاتكم السديدة أسهما في تذليل العقبات وتعزيز جودة التنفيذ، الأمر الذي انعكس إيجابًا على تحقيق الأهداف الوطنية في مجال الاستدامة البيئية.
-
-     ونؤكد اعتزازنا بالشراكة مع إدارتكم الموقرة، ونتطلع إلى استمرار التعاون المثمر في سبيل تحقيق المزيد من الإنجازات النوعية، بما يخدم تطلعات الوطن ويعزز مكانته الريادية في مجال حماية البيئة.
-
-     للاستفسار أو مزيد من المعلومات، يُرجى التواصل مع الأستاذ زياد وائل، عبر البريد الإلكتروني: ziad@moe.gov.sa.
-
-وتفضلوا بقبول فائق الاحترام والتقدير،،،
-For troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/OUTPUT_PARSING_FAILURE 
-2025-11-05 10:42:52,402 - src.utils.exceptions - ERROR - Operation failed: letter_generation
-2025-11-05 10:42:52,402 - src.utils.helpers - ERROR - generate_letter failed after 12.893s: Failed to generate letter: Invalid json output: بسم الله الرحمن الرحيم
-
-خطاب شكر وتقدير لجهود إدارة المشاريع في دعم المبادرات البيئية
-
-الأستاذ الفاضل أحمد محمد علي                                                                                   سلمه الله
-
-السلام عليكم ورحمة الله وبركاته،
-
-     نثمن جهودكم المتميزة في تطوير منظومة المشاريع، ونقدر دوركم الفاعل في دعم المبادرات التنموية ذات الأثر المستدام على البيئة والمجتمع.
-
-     وانطلاقًا من هذا النهج الطموح، نود أن نقدم لسعادتكم "نت زيرو"، وهو مشروع اجتماعي وطني، أحد مخرجات برنامج (سدرة) التابع لوزارة البيئة والمياه والزراعة، يهدف إلى تعزيز الاستدامة البيئية وتحقيق أهداف الحياد الكربوني في المملكة، من خلال تطوير حلول تقنية مبتكرة تدعم التشجير الذكي، وتوثيق الغطاء النباتي، ورفع كفاءة إدارة الموارد الطبيعية بما يواكب مستهدفات رؤية المملكة 2030 ومبادرة "السعودية الخضراء".
-
-     نتقدم إلى سعادتكم بجزيل الشكر والتقدير على ما تبذلونه من جهود ملموسة في دعم المبادرات البيئية، وحرصكم الدائم على تسهيل أعمال الفرق المختصة، مما كان له بالغ الأثر في تحقيق نتائج إيجابية على مستوى المشاريع البيئية المشتركة. إن تعاونكم البنّاء وتوجيهاتكم السديدة أسهما في تذليل العقبات وتعزيز جودة التنفيذ، الأمر الذي انعكس إيجابًا على تحقيق الأهداف الوطنية في مجال الاستدامة البيئية.
-
-     ونؤكد اعتزازنا بالشراكة مع إدارتكم الموقرة، ونتطلع إلى استمرار التعاون المثمر في سبيل تحقيق المزيد من الإنجازات النوعية، بما يخدم تطلعات الوطن ويعزز مكانته الريادية في مجال حماية البيئة.
-
-     للاستفسار أو مزيد من المعلومات، يُرجى التواصل مع الأستاذ زياد وائل، عبر البريد الإلكتروني: ziad@moe.gov.sa.
-
-وتفضلوا بقبول فائق الاحترام والتقدير،،،
-For troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/OUTPUT_PARSING_FAILURE 
-2025-11-05 10:42:52,403 - src.api.letter_routes - ERROR - Letter generation failed: AI service error: Failed to generate letter: Invalid json output: بسم الله الرحمن الرحيم
-
-خطاب شكر وتقدير لجهود إدارة المشاريع في دعم المبادرات البيئية
-
-الأستاذ الفاضل أحمد محمد علي                                                                                   سلمه الله
-
-السلام عليكم ورحمة الله وبركاته،
-
-     نثمن جهودكم المتميزة في تطوير منظومة المشاريع، ونقدر دوركم الفاعل في دعم المبادرات التنموية ذات الأثر المستدام على البيئة والمجتمع.
-
-     وانطلاقًا من هذا النهج الطموح، نود أن نقدم لسعادتكم "نت زيرو"، وهو مشروع اجتماعي وطني، أحد مخرجات برنامج (سدرة) التابع لوزارة البيئة والمياه والزراعة، يهدف إلى تعزيز الاستدامة البيئية وتحقيق أهداف الحياد الكربوني في المملكة، من خلال تطوير حلول تقنية مبتكرة تدعم التشجير الذكي، وتوثيق الغطاء النباتي، ورفع كفاءة إدارة الموارد الطبيعية بما يواكب مستهدفات رؤية المملكة 2030 ومبادرة "السعودية الخضراء".
-
-     نتقدم إلى سعادتكم بجزيل الشكر والتقدير على ما تبذلونه من جهود ملموسة في دعم المبادرات البيئية، وحرصكم الدائم على تسهيل أعمال الفرق المختصة، مما كان له بالغ الأثر في تحقيق نتائج إيجابية على مستوى المشاريع البيئية المشتركة. إن تعاونكم البنّاء وتوجيهاتكم السديدة أسهما في تذليل العقبات وتعزيز جودة التنفيذ، الأمر الذي انعكس إيجابًا على تحقيق الأهداف الوطنية في مجال الاستدامة البيئية.
-
-     ونؤكد اعتزازنا بالشراكة مع إدارتكم الموقرة، ونتطلع إلى استمرار التعاون المثمر في سبيل تحقيق المزيد من الإنجازات النوعية، بما يخدم تطلعات الوطن ويعزز مكانته الريادية في مجال حماية البيئة.
-
-     للاستفسار أو مزيد من المعلومات، يُرجى التواصل مع الأستاذ زياد وائل، عبر البريد الإلكتروني: ziad@moe.gov.sa.
-
-وتفضلوا بقبول فائق الاحترام والتقدير،،،
-For troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/OUTPUT_PARSING_FAILURE 
-2025-11-05 10:42:52,403 - src.utils.helpers - INFO - generate_letter executed in 24.721s
-2025-11-05 10:42:52,404 - __main__ - INFO - Response: 500 - letter.generate_letter
-2025-11-05 10:42:52,404 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 10:42:52] "[35m[1mPOST /api/v1/letter/generate HTTP/1.1[0m" 500 -
-2025-11-05 10:44:49,872 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/letter/generate - 127.0.0.1
-2025-11-05 10:44:49,872 - src.api.letter_routes - INFO - Letter generation request from user: ziad@moe.gov.sa, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 10:44:51,353 - src.services.usage_tracking_service - INFO - Found quota_month limit: 100
-2025-11-05 10:44:51,371 - src.utils.helpers - INFO - get_quota_limit executed in 1.498s
-2025-11-05 10:44:53,855 - src.services.usage_tracking_service - INFO - Found existing usage row for 2025_11 at row 3: {'yyyy_mm': '2025_11', 'letters_count': 3, 'tokens_sum': 8361, 'cost_sum_usd': 0.054525}
-2025-11-05 10:44:53,856 - src.utils.helpers - INFO - get_or_create_usage_row executed in 2.484s
-2025-11-05 10:44:53,856 - src.services.usage_tracking_service - INFO - Quota check passed: 3/100 (97 remaining)
-2025-11-05 10:44:53,856 - src.utils.helpers - INFO - check_quota executed in 3.983s
-2025-11-05 10:44:53,856 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-05 10:44:55,888 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 1.062s
-2025-11-05 10:44:56,264 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 1.435s
-2025-11-05 10:44:56,336 - src.services.google_services - WARNING - No user found with full_name: 
-2025-11-05 10:44:56,347 - src.utils.helpers - INFO - get_data_by_key_from_sheet_id executed in 1.513s
-2025-11-05 10:44:56,579 - src.utils.helpers - INFO - get_user_info_from_sheet_id executed in 1.742s
-2025-11-05 10:44:56,580 - src.utils.helpers - INFO - get_letter_config_by_category_from_sheet_id executed in 1.759s
-2025-11-05 10:44:56,580 - src.api.letter_routes - INFO - Loaded letter config from sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg for category: طلب
-2025-11-05 10:44:56,581 - src.services.letter_generator - INFO - Attempting to load prompt template from Settings sheet for sheet_id: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 10:44:57,520 - src.services.usage_tracking_service - INFO - Found prompt template from Settings sheet (length: 7359 chars)
-2025-11-05 10:44:57,521 - src.utils.helpers - INFO - get_prompt_template executed in 0.940s
-2025-11-05 10:44:57,521 - src.services.letter_generator - INFO - ✅ Successfully loaded custom prompt template from Settings sheet (length: 7359 chars)
-2025-11-05 10:44:58,418 - src.utils.helpers - INFO - get_context_instructions executed in 0.895s
-2025-11-05 10:44:58,442 - src.services.letter_generator - INFO - Retrieved memory instructions for category='طلب', session_id='None', sheet_id='17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg': 125 chars
-2025-11-05 10:44:58,442 - src.services.letter_generator - INFO - Generating letter with ID: LET-20251105-45834
-2025-11-05 10:45:09,125 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-11-05 10:45:09,135 - src.services.letter_generator - INFO - Letter generated successfully: LET-20251105-45834
-2025-11-05 10:45:09,135 - src.utils.helpers - INFO - generate_letter executed in 12.554s
-2025-11-05 10:45:09,135 - src.api.letter_routes - INFO - Letter generated successfully: LET-20251105-45834
-2025-11-05 10:45:09,135 - src.services.letter_generator - INFO - Using default hardcoded prompt template
-2025-11-05 10:45:10,392 - src.utils.helpers - INFO - get_context_instructions executed in 1.256s
-2025-11-05 10:45:10,411 - src.services.letter_generator - INFO - Retrieved memory instructions for category='طلب', session_id='None', sheet_id='17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg': 125 chars
-2025-11-05 10:45:10,418 - src.services.usage_tracking_service - INFO - Usage estimate: 5758 tokens ($0.037070)
-2025-11-05 10:45:11,329 - src.services.usage_tracking_service - INFO - Found existing usage row for 2025_11 at row 3: {'yyyy_mm': '2025_11', 'letters_count': 3, 'tokens_sum': 8361, 'cost_sum_usd': 0.054525}
-2025-11-05 10:45:11,329 - src.utils.helpers - INFO - get_or_create_usage_row executed in 0.911s
-2025-11-05 10:45:14,270 - src.services.usage_tracking_service - INFO - Updated usage for 2025_11: letters=4, tokens=14119, cost=$0.091595
-2025-11-05 10:45:14,270 - src.utils.helpers - INFO - update_usage executed in 3.852s
-2025-11-05 10:45:14,270 - src.api.letter_routes - INFO - Usage tracked for letter LET-20251105-45834: 5758 tokens, $0.037070
-2025-11-05 10:45:14,271 - src.utils.helpers - INFO - generate_letter executed in 24.398s
-2025-11-05 10:45:14,271 - __main__ - INFO - Response: 200 - letter.generate_letter
-2025-11-05 10:45:14,272 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 10:45:14] "POST /api/v1/letter/generate HTTP/1.1" 200 -
-2025-11-05 12:16:32,012 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:16:32,084 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on all addresses (0.0.0.0)
- * Running on http://127.0.0.1:5000
- * Running on http://192.168.1.11:5000
-2025-11-05 12:16:32,085 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
-2025-11-05 12:16:32,086 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:16:34,411 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:16:34,432 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:16:34,435 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:16:52,193 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
-2025-11-05 12:16:52,193 - src.utils.helpers - WARNING - No authorization token found in request
-2025-11-05 12:16:52,194 - src.utils.helpers - INFO - archive_letter_docx executed in 0.001s
-2025-11-05 12:16:52,194 - __main__ - INFO - Response: 401 - archive.archive_letter_docx
-2025-11-05 12:16:52,194 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 12:16:52] "[31m[1mPOST /api/v1/archive/letter/docx HTTP/1.1[0m" 401 -
-2025-11-05 12:17:05,982 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-05 12:17:08,555 - src.services.user_management_service - INFO - Client found for email ziad@moe.gov.sa: Ministry of Education
-2025-11-05 12:17:08,555 - src.utils.helpers - INFO - get_client_by_email executed in 2.572s
-2025-11-05 12:17:09,651 - src.services.user_management_service - INFO - User found: ziad@moe.gov.sa in client sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 12:17:09,652 - src.utils.helpers - INFO - get_user_info executed in 1.097s
-2025-11-05 12:17:09,722 - src.services.user_management_service - INFO - User credentials validated successfully: ziad@moe.gov.sa for client Ministry of Education
-2025-11-05 12:17:09,722 - src.utils.helpers - INFO - validate_user_credentials executed in 3.739s
-2025-11-05 12:17:09,722 - src.api.user_routes - INFO - User validated successfully: ziad@moe.gov.sa
-2025-11-05 12:17:09,723 - src.utils.helpers - INFO - validate_user executed in 3.741s
-2025-11-05 12:17:09,723 - __main__ - INFO - Response: 200 - user.validate_user
-2025-11-05 12:17:09,723 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 12:17:09] "POST /api/v1/user/validate HTTP/1.1" 200 -
-2025-11-05 12:17:29,473 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
-2025-11-05 12:17:29,473 - src.api.archive_routes - INFO - DOCX Archive request from user: ziad@moe.gov.sa, client: CLI-002, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, drive: 1Ckh0fh4qFSZZnNxc57Ads6HDVmHTM1wU
-2025-11-05 12:17:29,473 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd23
-2025-11-05 12:17:29,473 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd23 (sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
-2025-11-05 12:17:29,474 - src.utils.helpers - INFO - archive_letter_docx executed in 0.001s
-2025-11-05 12:17:29,474 - src.services.drive_logger - INFO - Drive Logger service initialized
-2025-11-05 12:17:29,474 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
-2025-11-05 12:17:29,474 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Creating DOCX document for letter ID: LET-202510sdfsd23
-2025-11-05 12:17:29,474 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 12:17:29] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
-2025-11-05 12:17:29,474 - src.services.doc_services - INFO - Using template at: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 12:17:29,876 - src.services.doc_services - INFO - Starting raw letter content parsing with GPT-4o
-2025-11-05 12:17:37,890 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-11-05 12:17:37,920 - src.services.doc_services - INFO - Letter content parsed successfully
-2025-11-05 12:17:37,920 - src.services.doc_services - INFO - Document letter ID set to: LET-202510sdfsd23
-2025-11-05 12:17:37,938 - src.services.doc_services - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 12:17:37,942 - src.services.doc_services - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd23)
-2025-11-05 12:17:37,955 - src.services.doc_services - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 12:17:37,955 - src.api.archive_routes - INFO - [DOCX BACKGROUND] DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 12:17:37,955 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd23
-2025-11-05 12:17:37,955 - src.api.archive_routes - ERROR - [DOCX BACKGROUND] ERROR during archive/upload: DriveLoggerService.save_letter_to_drive_and_log() got an unexpected keyword argument 'file_type'
+2025-11-26 10:11:12,213 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-26 10:11:12,215 - werkzeug - INFO -  * Restarting with stat
+2025-11-26 10:11:14,284 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 10:11:14,308 - werkzeug - WARNING -  * Debugger is active!
+2025-11-26 10:11:14,311 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-26 10:11:57,321 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
+2025-11-26 10:11:57,321 - src.api.archive_routes - INFO - DOCX Archive request from user: Aljabre.haya@gmail.com, client: EMAIL-MAP-aljabre.haya, sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI, drive: 1foNQ0MscYFyNV8veEDGPP6s-TRU2SAP0
+2025-11-26 10:11:57,322 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd5523
+2025-11-26 10:11:57,322 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd5523 (sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI)
+2025-11-26 10:11:57,323 - src.utils.helpers - INFO - archive_letter_docx executed in 0.002s
+2025-11-26 10:11:57,324 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-11-26 10:11:57,324 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
+2025-11-26 10:11:57,324 - src.api.archive_routes - ERROR - [DOCX BACKGROUND] ❌ CRITICAL ERROR in background DOCX archiving for letter ID LET-202510sdfsd5523: name 'template' is not defined
 Traceback (most recent call last):
-  File "D:\shobbak\AutomatingLetter\src\api\archive_routes.py", line 424, in process_letter_docx_archive_in_background
-    archive_result = drive_logger.save_letter_to_drive_and_log(
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-TypeError: DriveLoggerService.save_letter_to_drive_and_log() got an unexpected keyword argument 'file_type'
-2025-11-05 12:17:37,957 - src.api.archive_routes - ERROR - [DOCX BACKGROUND] ❌ CRITICAL ERROR in background DOCX archiving for letter ID LET-202510sdfsd23: DriveLoggerService.save_letter_to_drive_and_log() got an unexpected keyword argument 'file_type'
-Traceback (most recent call last):
-  File "D:\shobbak\AutomatingLetter\src\api\archive_routes.py", line 424, in process_letter_docx_archive_in_background
-    archive_result = drive_logger.save_letter_to_drive_and_log(
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-TypeError: DriveLoggerService.save_letter_to_drive_and_log() got an unexpected keyword argument 'file_type'
-2025-11-05 12:18:28,933 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\api\\archive_routes.py', reloading
-2025-11-05 12:18:29,260 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:18:31,820 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:18:31,843 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:18:31,846 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:18:36,340 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
-2025-11-05 12:18:36,564 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:18:38,594 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:18:38,617 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:18:38,620 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:18:44,224 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
-2025-11-05 12:18:44,422 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:18:46,877 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:18:46,898 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:18:46,901 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:19:04,485 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
-2025-11-05 12:19:04,674 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:19:07,107 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:19:07,128 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:19:07,131 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:19:25,407 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
-2025-11-05 12:19:25,408 - src.api.archive_routes - INFO - DOCX Archive request from user: ziad@moe.gov.sa, client: CLI-002, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, drive: 1Ckh0fh4qFSZZnNxc57Ads6HDVmHTM1wU
-2025-11-05 12:19:25,411 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd23
-2025-11-05 12:19:25,411 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd23 (sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
-2025-11-05 12:19:25,412 - src.utils.helpers - INFO - archive_letter_docx executed in 0.003s
-2025-11-05 12:19:25,412 - src.services.drive_logger - INFO - Drive Logger service initialized
-2025-11-05 12:19:25,412 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
-2025-11-05 12:19:25,412 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Creating DOCX document for letter ID: LET-202510sdfsd23
-2025-11-05 12:19:25,413 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 12:19:25] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
-2025-11-05 12:19:25,413 - src.services.doc_services - INFO - Using template at: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 12:19:25,923 - src.services.doc_services - INFO - Starting raw letter content parsing with GPT-4o
-2025-11-05 12:19:30,967 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-11-05 12:19:30,993 - src.services.doc_services - INFO - Letter content parsed successfully
-2025-11-05 12:19:30,994 - src.services.doc_services - INFO - Document letter ID set to: LET-202510sdfsd23
-2025-11-05 12:19:30,999 - src.services.doc_services - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 12:19:31,004 - src.services.doc_services - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd23)
-2025-11-05 12:19:31,018 - src.services.doc_services - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 12:19:31,019 - src.api.archive_routes - INFO - [DOCX BACKGROUND] DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 12:19:31,019 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd23
-2025-11-05 12:19:31,024 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
-2025-11-05 12:19:34,487 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_LET-202510sdfsd23.docx (ID: 15nIIhufT5g7BotHNB1Cy6lFPkFXZeg7S)
-2025-11-05 12:19:36,866 - src.services.google_services - INFO - Successfully logged 1 entries to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, worksheet 'Submissions'
-2025-11-05 12:19:36,866 - src.utils.helpers - INFO - log_entries_by_id executed in 2.379s
-2025-11-05 12:19:36,866 - src.services.drive_logger - INFO - Successfully archived DOCX letter LET-202510sdfsd23 to Drive and logged to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 12:19:36,867 - src.api.archive_routes - INFO - [DOCX BACKGROUND] ✅ Background DOCX archiving completed successfully for letter ID: LET-202510sdfsd23
-2025-11-05 12:19:36,867 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Drive URL: https://docs.google.com/document/d/15nIIhufT5g7BotHNB1Cy6lFPkFXZeg7S/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
-2025-11-05 12:21:05,904 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:21:07,005 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:21:10,059 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:21:10,090 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:21:10,102 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:21:34,469 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
-2025-11-05 12:21:34,469 - src.api.archive_routes - INFO - DOCX Archive request from user: ziad@moe.gov.sa, client: CLI-002, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, drive: 1Ckh0fh4qFSZZnNxc57Ads6HDVmHTM1wU
-2025-11-05 12:21:34,469 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd23
-2025-11-05 12:21:34,469 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd23 (sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
-2025-11-05 12:21:34,469 - src.utils.helpers - INFO - archive_letter_docx executed in 0.000s
-2025-11-05 12:21:34,469 - src.services.drive_logger - INFO - Drive Logger service initialized
-2025-11-05 12:21:34,469 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
-2025-11-05 12:21:34,469 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Creating DOCX document for letter ID: LET-202510sdfsd23
-2025-11-05 12:21:34,469 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 12:21:34] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
-2025-11-05 12:21:34,469 - src.services.doc_services - INFO - Using template at: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 12:21:34,936 - src.services.doc_services - INFO - Starting raw letter content parsing with GPT-4o
-2025-11-05 12:21:41,943 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-11-05 12:21:41,972 - src.services.doc_services - INFO - Letter content parsed successfully
-2025-11-05 12:21:41,972 - src.services.doc_services - INFO - Document letter ID set to: LET-202510sdfsd23
-2025-11-05 12:21:41,977 - src.services.doc_services - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 12:21:41,983 - src.services.doc_services - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd23)
-2025-11-05 12:21:41,997 - src.services.doc_services - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 12:21:41,997 - src.api.archive_routes - INFO - [DOCX BACKGROUND] DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 12:21:41,998 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd23
-2025-11-05 12:21:42,005 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
-2025-11-05 12:21:45,707 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_LET-202510sdfsd23.docx (ID: 1QM1J4-dlaEU9Ov5SgvpPrc9TAJK-vWme)
-2025-11-05 12:21:48,378 - src.services.google_services - INFO - Successfully logged 1 entries to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, worksheet 'Submissions'
-2025-11-05 12:21:48,378 - src.utils.helpers - INFO - log_entries_by_id executed in 2.671s
-2025-11-05 12:21:48,378 - src.services.drive_logger - INFO - Successfully archived DOCX letter LET-202510sdfsd23 to Drive and logged to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 12:21:48,379 - src.api.archive_routes - INFO - [DOCX BACKGROUND] ✅ Background DOCX archiving completed successfully for letter ID: LET-202510sdfsd23
-2025-11-05 12:21:48,379 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Drive URL: https://docs.google.com/document/d/1QM1J4-dlaEU9Ov5SgvpPrc9TAJK-vWme/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
-2025-11-05 12:23:37,382 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:23:37,781 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:23:40,156 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:23:40,180 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:23:40,183 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:23:46,876 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:23:47,094 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:23:49,806 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:23:49,948 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:23:49,949 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:23:55,541 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:23:55,762 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:23:58,761 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:23:58,790 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:23:58,793 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:24:09,858 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:24:10,048 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:24:12,798 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:24:12,827 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:24:12,830 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:24:17,321 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:24:17,540 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:24:19,841 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:24:19,875 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:24:19,878 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:24:54,579 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
-2025-11-05 12:24:54,579 - src.api.archive_routes - INFO - DOCX Archive request from user: ziad@moe.gov.sa, client: CLI-002, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, drive: 1Ckh0fh4qFSZZnNxc57Ads6HDVmHTM1wU
-2025-11-05 12:24:54,579 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd23
-2025-11-05 12:24:54,579 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd23 (sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
-2025-11-05 12:24:54,579 - src.utils.helpers - INFO - archive_letter_docx executed in 0.000s
-2025-11-05 12:24:54,579 - src.services.drive_logger - INFO - Drive Logger service initialized
-2025-11-05 12:24:54,579 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
-2025-11-05 12:24:54,579 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Creating DOCX document for letter ID: LET-202510sdfsd23
-2025-11-05 12:24:54,579 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 12:24:54] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
-2025-11-05 12:24:54,579 - src.services.doc_services - INFO - Using template at: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 12:24:54,907 - src.services.doc_services - INFO - Starting raw letter content parsing with GPT-4o
-2025-11-05 12:25:01,212 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-11-05 12:25:01,231 - src.services.doc_services - INFO - Letter content parsed successfully
-2025-11-05 12:25:01,231 - src.services.doc_services - INFO - Document letter ID set to: LET-202510sdfsd23
-2025-11-05 12:25:01,237 - src.services.doc_services - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 12:25:05,086 - src.services.doc_services - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd23)
-2025-11-05 12:25:05,098 - src.services.doc_services - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 12:25:05,098 - src.api.archive_routes - INFO - [DOCX BACKGROUND] DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 12:25:05,100 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd23
-2025-11-05 12:25:05,104 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
-2025-11-05 12:25:08,696 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_LET-202510sdfsd23.docx (ID: 11z5ODkyivoNbcdzce51JkqP50M8TtxQy)
-2025-11-05 12:25:10,427 - src.services.google_services - INFO - Successfully logged 1 entries to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, worksheet 'Submissions'
-2025-11-05 12:25:10,427 - src.utils.helpers - INFO - log_entries_by_id executed in 1.731s
-2025-11-05 12:25:10,427 - src.services.drive_logger - INFO - Successfully archived DOCX letter LET-202510sdfsd23 to Drive and logged to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 12:25:10,428 - src.api.archive_routes - INFO - [DOCX BACKGROUND] ✅ Background DOCX archiving completed successfully for letter ID: LET-202510sdfsd23
-2025-11-05 12:25:10,428 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Drive URL: https://docs.google.com/document/d/11z5ODkyivoNbcdzce51JkqP50M8TtxQy/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
-2025-11-05 12:25:48,392 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:25:48,839 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:25:54,770 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:25:54,804 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:25:54,807 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:26:01,530 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:26:01,751 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:26:04,003 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:26:04,025 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:26:04,028 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:26:05,303 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:26:05,508 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:26:07,977 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:26:08,003 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:26:08,003 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:26:15,752 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:26:15,969 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:26:18,845 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:26:18,866 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:26:18,869 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:26:20,468 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
-2025-11-05 12:26:20,468 - src.api.archive_routes - INFO - DOCX Archive request from user: ziad@moe.gov.sa, client: CLI-002, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, drive: 1Ckh0fh4qFSZZnNxc57Ads6HDVmHTM1wU
-2025-11-05 12:26:20,468 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd23
-2025-11-05 12:26:20,468 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd23 (sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
-2025-11-05 12:26:20,473 - src.utils.helpers - INFO - archive_letter_docx executed in 0.005s
-2025-11-05 12:26:20,473 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
-2025-11-05 12:26:20,473 - src.services.drive_logger - INFO - Drive Logger service initialized
-2025-11-05 12:26:20,473 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Creating DOCX document for letter ID: LET-202510sdfsd23
-2025-11-05 12:26:20,473 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 12:26:20] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
-2025-11-05 12:26:20,473 - src.services.doc_services - INFO - Using template at: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 12:26:21,168 - src.services.doc_services - INFO - Starting raw letter content parsing with GPT-4o
-2025-11-05 12:26:28,780 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-11-05 12:26:28,804 - src.services.doc_services - INFO - Letter content parsed successfully
-2025-11-05 12:26:28,804 - src.services.doc_services - INFO - Document letter ID set to: LET-202510sdfsd23
-2025-11-05 12:26:28,823 - src.services.doc_services - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 12:26:33,786 - src.services.doc_services - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd23)
-2025-11-05 12:26:33,792 - src.services.doc_services - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 12:26:33,792 - src.api.archive_routes - INFO - [DOCX BACKGROUND] DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 12:26:33,792 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd23
-2025-11-05 12:26:33,819 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
-2025-11-05 12:26:38,668 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_LET-202510sdfsd23.docx (ID: 13DohbA2RO61ATP70ujUsRnTb2eupZ2ct)
-2025-11-05 12:26:40,351 - src.services.google_services - INFO - Successfully logged 1 entries to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, worksheet 'Submissions'
-2025-11-05 12:26:40,351 - src.utils.helpers - INFO - log_entries_by_id executed in 1.682s
-2025-11-05 12:26:40,351 - src.services.drive_logger - INFO - Successfully archived DOCX letter LET-202510sdfsd23 to Drive and logged to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 12:26:40,353 - src.api.archive_routes - INFO - [DOCX BACKGROUND] ✅ Background DOCX archiving completed successfully for letter ID: LET-202510sdfsd23
-2025-11-05 12:26:40,353 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Drive URL: https://docs.google.com/document/d/13DohbA2RO61ATP70ujUsRnTb2eupZ2ct/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
-2025-11-05 12:28:20,002 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:28:20,859 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:28:23,466 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:28:23,496 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:28:23,496 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:28:44,634 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
-2025-11-05 12:28:44,637 - src.api.archive_routes - INFO - DOCX Archive request from user: ziad@moe.gov.sa, client: CLI-002, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, drive: 1Ckh0fh4qFSZZnNxc57Ads6HDVmHTM1wU
-2025-11-05 12:28:44,638 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd23
-2025-11-05 12:28:44,638 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd23 (sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
-2025-11-05 12:28:44,638 - src.utils.helpers - INFO - archive_letter_docx executed in 0.001s
-2025-11-05 12:28:44,638 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
-2025-11-05 12:28:44,639 - src.services.drive_logger - INFO - Drive Logger service initialized
-2025-11-05 12:28:44,639 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Creating DOCX document for letter ID: LET-202510sdfsd23
-2025-11-05 12:28:44,639 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 12:28:44] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
-2025-11-05 12:28:44,640 - src.services.doc_services - INFO - Using template at: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 12:28:45,001 - src.services.doc_services - INFO - Starting raw letter content parsing with GPT-4o
-2025-11-05 12:28:55,877 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-11-05 12:28:55,903 - src.services.doc_services - INFO - Letter content parsed successfully
-2025-11-05 12:28:55,903 - src.services.doc_services - INFO - Document letter ID set to: LET-202510sdfsd23
-2025-11-05 12:28:55,909 - src.services.doc_services - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 12:28:56,041 - src.services.doc_services - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd23)
-2025-11-05 12:28:56,055 - src.services.doc_services - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 12:28:56,056 - src.api.archive_routes - INFO - [DOCX BACKGROUND] DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 12:28:56,056 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd23
-2025-11-05 12:28:56,061 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
-2025-11-05 12:28:59,752 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_LET-202510sdfsd23.docx (ID: 1_kauPZ24RXxuF7tqRI1ftTadnH4EQpsi)
-2025-11-05 12:29:03,334 - src.services.google_services - INFO - Successfully logged 1 entries to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, worksheet 'Submissions'
-2025-11-05 12:29:03,334 - src.utils.helpers - INFO - log_entries_by_id executed in 3.582s
-2025-11-05 12:29:03,334 - src.services.drive_logger - INFO - Successfully archived DOCX letter LET-202510sdfsd23 to Drive and logged to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 12:29:03,335 - src.api.archive_routes - INFO - [DOCX BACKGROUND] ✅ Background DOCX archiving completed successfully for letter ID: LET-202510sdfsd23
-2025-11-05 12:29:03,335 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Drive URL: https://docs.google.com/document/d/1_kauPZ24RXxuF7tqRI1ftTadnH4EQpsi/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
-2025-11-05 12:33:25,351 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:33:25,694 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:33:28,366 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:33:28,392 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:33:28,397 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:33:42,787 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:33:42,998 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:33:45,485 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:33:45,505 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:33:45,508 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:33:47,862 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:33:48,058 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:33:50,202 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:33:50,225 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:33:50,228 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:33:51,533 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:33:51,753 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:33:53,949 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:33:53,973 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:33:53,976 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 12:33:56,891 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
-2025-11-05 12:33:56,892 - src.api.archive_routes - INFO - DOCX Archive request from user: ziad@moe.gov.sa, client: CLI-002, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, drive: 1Ckh0fh4qFSZZnNxc57Ads6HDVmHTM1wU
-2025-11-05 12:33:56,892 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd23
-2025-11-05 12:33:56,892 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd23 (sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
-2025-11-05 12:33:56,893 - src.utils.helpers - INFO - archive_letter_docx executed in 0.001s
-2025-11-05 12:33:56,893 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
-2025-11-05 12:33:56,893 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 12:33:56] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
-2025-11-05 12:33:56,894 - src.services.drive_logger - INFO - Drive Logger service initialized
-2025-11-05 12:33:56,894 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Creating DOCX document for letter ID: LET-202510sdfsd23
-2025-11-05 12:33:56,894 - src.services.doc_services - INFO - Using template at: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 12:33:57,354 - src.services.doc_services - INFO - Starting raw letter content parsing with GPT-4o
-2025-11-05 12:34:03,557 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-11-05 12:34:03,583 - src.services.doc_services - INFO - Letter content parsed successfully
-2025-11-05 12:34:03,584 - src.services.doc_services - INFO - Document letter ID set to: LET-202510sdfsd23
-2025-11-05 12:34:03,591 - src.services.doc_services - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 12:34:03,711 - src.services.doc_services - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd23)
-2025-11-05 12:34:03,723 - src.services.doc_services - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 12:34:03,723 - src.api.archive_routes - INFO - [DOCX BACKGROUND] DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 12:34:03,726 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd23
-2025-11-05 12:34:03,733 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
-2025-11-05 12:34:07,245 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_LET-202510sdfsd23.docx (ID: 1LEUEj0ihhFw_hGTUw8Yr6blB-gdtr0I7)
-2025-11-05 12:34:09,455 - src.services.google_services - INFO - Successfully logged 1 entries to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, worksheet 'Submissions'
-2025-11-05 12:34:09,455 - src.utils.helpers - INFO - log_entries_by_id executed in 2.209s
-2025-11-05 12:34:09,455 - src.services.drive_logger - INFO - Successfully archived DOCX letter LET-202510sdfsd23 to Drive and logged to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 12:34:09,456 - src.api.archive_routes - INFO - [DOCX BACKGROUND] ✅ Background DOCX archiving completed successfully for letter ID: LET-202510sdfsd23
-2025-11-05 12:34:09,456 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Drive URL: https://docs.google.com/document/d/1LEUEj0ihhFw_hGTUw8Yr6blB-gdtr0I7/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
-2025-11-05 12:35:02,714 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_services.py', reloading
-2025-11-05 12:35:03,083 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 12:35:05,416 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 12:35:05,438 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 12:35:05,443 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 14:59:15,796 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 14:59:15,836 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on all addresses (0.0.0.0)
- * Running on http://127.0.0.1:5000
- * Running on http://192.168.1.11:5000
-2025-11-05 14:59:15,837 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
-2025-11-05 14:59:15,838 - werkzeug - INFO -  * Restarting with stat
-2025-11-05 14:59:18,040 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-05 14:59:18,076 - werkzeug - WARNING -  * Debugger is active!
-2025-11-05 14:59:18,079 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-05 14:59:21,290 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
-2025-11-05 14:59:21,290 - src.api.archive_routes - INFO - DOCX Archive request from user: ziad@moe.gov.sa, client: CLI-002, sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, drive: 1Ckh0fh4qFSZZnNxc57Ads6HDVmHTM1wU
-2025-11-05 14:59:21,291 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd23
-2025-11-05 14:59:21,291 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd23 (sheet: 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg)
-2025-11-05 14:59:21,292 - src.utils.helpers - INFO - archive_letter_docx executed in 0.002s
-2025-11-05 14:59:21,292 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
-2025-11-05 14:59:21,292 - src.services.drive_logger - INFO - Drive Logger service initialized
-2025-11-05 14:59:21,293 - werkzeug - INFO - 127.0.0.1 - - [05/Nov/2025 14:59:21] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
-2025-11-05 14:59:21,293 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Creating DOCX document for letter ID: LET-202510sdfsd23
-2025-11-05 14:59:21,294 - src.services.doc_services - INFO - Using default template path: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 14:59:21,575 - src.services.doc_services - INFO - Starting raw letter content parsing with GPT-4o
-2025-11-05 14:59:27,388 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-11-05 14:59:27,408 - src.services.doc_services - INFO - Letter content parsed successfully
-2025-11-05 14:59:27,408 - src.services.doc_services - INFO - Document letter ID set to: LET-202510sdfsd23
-2025-11-05 14:59:27,414 - src.services.doc_services - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
-2025-11-05 14:59:27,534 - src.services.doc_services - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd23)
-2025-11-05 14:59:27,549 - src.services.doc_services - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 14:59:27,550 - src.api.archive_routes - INFO - [DOCX BACKGROUND] DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd23.docx
-2025-11-05 14:59:27,550 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd23
-2025-11-05 14:59:27,555 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
-2025-11-05 14:59:30,935 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_LET-202510sdfsd23.docx (ID: 1oyBmvkWYrdTP7K1JvHh0LMBpp4k-Q9k7)
-2025-11-05 14:59:34,553 - src.services.google_services - INFO - Successfully logged 1 entries to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg, worksheet 'Submissions'
-2025-11-05 14:59:34,557 - src.utils.helpers - INFO - log_entries_by_id executed in 3.622s
-2025-11-05 14:59:34,557 - src.services.drive_logger - INFO - Successfully archived DOCX letter LET-202510sdfsd23 to Drive and logged to sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-05 14:59:34,558 - src.api.archive_routes - INFO - [DOCX BACKGROUND] ✅ Background DOCX archiving completed successfully for letter ID: LET-202510sdfsd23
-2025-11-05 14:59:34,558 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Drive URL: https://docs.google.com/document/d/1oyBmvkWYrdTP7K1JvHh0LMBpp4k-Q9k7/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
-2025-11-24 17:53:01,907 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-24 17:53:01,921 - root - INFO - Archived log file: app.log.2025-10-29 -> app.log.2025-10-29.20251030.gz
-2025-11-24 17:53:01,921 - root - INFO - Initial log archiving: archived 1 old log file(s)
-2025-11-24 17:53:01,997 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on all addresses (0.0.0.0)
- * Running on http://127.0.0.1:5000
- * Running on http://192.168.1.11:5000
-2025-11-24 17:53:01,997 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
-2025-11-24 17:53:02,002 - werkzeug - INFO -  * Restarting with stat
-2025-11-24 17:53:04,248 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-24 17:53:04,270 - werkzeug - WARNING -  * Debugger is active!
-2025-11-24 17:53:04,274 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-24 17:53:56,209 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:01,817 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:01,818 - src.utils.helpers - INFO - get_client_by_email executed in 5.608s
-2025-11-24 17:54:01,818 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:01,819 - src.utils.helpers - INFO - validate_user_credentials executed in 5.609s
-2025-11-24 17:54:01,819 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:01,820 - src.utils.helpers - INFO - validate_user executed in 5.611s
-2025-11-24 17:54:01,820 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:01,822 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:01] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:34,321 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:34,321 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:34,322 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:34,322 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:34,323 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
-2025-11-24 17:54:34,323 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:34,323 - src.utils.helpers - INFO - validate_user executed in 0.002s
-2025-11-24 17:54:34,323 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:34,323 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:34] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:36,135 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:36,137 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:36,137 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:36,137 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:36,137 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
-2025-11-24 17:54:36,138 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:36,138 - src.utils.helpers - INFO - validate_user executed in 0.001s
-2025-11-24 17:54:36,138 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:36,138 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:36] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:36,940 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:36,940 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:36,941 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
-2025-11-24 17:54:36,941 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:36,941 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
-2025-11-24 17:54:36,941 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:36,941 - src.utils.helpers - INFO - validate_user executed in 0.001s
-2025-11-24 17:54:36,941 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:36,942 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:36] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:38,423 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:38,423 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:38,423 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
-2025-11-24 17:54:38,423 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:38,423 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
-2025-11-24 17:54:38,423 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:38,424 - src.utils.helpers - INFO - validate_user executed in 0.002s
-2025-11-24 17:54:38,424 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:38,424 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:38] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:39,101 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:39,102 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:39,102 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:39,102 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:39,102 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
-2025-11-24 17:54:39,103 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:39,103 - src.utils.helpers - INFO - validate_user executed in 0.001s
-2025-11-24 17:54:39,103 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:39,104 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:39] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:39,850 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:39,850 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:39,851 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
-2025-11-24 17:54:39,851 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:39,852 - src.utils.helpers - INFO - validate_user_credentials executed in 0.002s
-2025-11-24 17:54:39,852 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:39,853 - src.utils.helpers - INFO - validate_user executed in 0.003s
-2025-11-24 17:54:39,853 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:39,853 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:39] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:40,598 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:40,598 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:40,598 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:40,599 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:40,599 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
-2025-11-24 17:54:40,599 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:40,599 - src.utils.helpers - INFO - validate_user executed in 0.001s
-2025-11-24 17:54:40,599 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:40,600 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:40] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:41,370 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:41,371 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:41,371 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:41,371 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:41,371 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
-2025-11-24 17:54:41,371 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:41,372 - src.utils.helpers - INFO - validate_user executed in 0.001s
-2025-11-24 17:54:41,372 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:41,372 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:41] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:42,187 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:42,187 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:42,188 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
-2025-11-24 17:54:42,188 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:42,188 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
-2025-11-24 17:54:42,188 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:42,189 - src.utils.helpers - INFO - validate_user executed in 0.002s
-2025-11-24 17:54:42,189 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:42,189 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:42] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:43,098 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:43,098 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:43,098 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:43,098 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:43,099 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
-2025-11-24 17:54:43,099 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:43,099 - src.utils.helpers - INFO - validate_user executed in 0.001s
-2025-11-24 17:54:43,099 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:43,100 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:43] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:43,863 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:43,863 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:43,863 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:43,863 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:43,863 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
-2025-11-24 17:54:43,863 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:43,864 - src.utils.helpers - INFO - validate_user executed in 0.001s
-2025-11-24 17:54:43,864 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:43,864 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:43] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:44,563 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:44,563 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:44,563 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:44,563 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:44,564 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
-2025-11-24 17:54:44,564 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:44,564 - src.utils.helpers - INFO - validate_user executed in 0.001s
-2025-11-24 17:54:44,564 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:44,565 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:44] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:45,234 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:45,234 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:45,234 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:45,235 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:45,235 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
-2025-11-24 17:54:45,236 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:45,236 - src.utils.helpers - INFO - validate_user executed in 0.002s
-2025-11-24 17:54:45,236 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:45,237 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:45] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:45,918 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:45,919 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:45,919 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:45,919 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:45,919 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
-2025-11-24 17:54:45,919 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:45,920 - src.utils.helpers - INFO - validate_user executed in 0.002s
-2025-11-24 17:54:45,920 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:45,920 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:45] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:46,620 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:46,621 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:46,621 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:46,621 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:46,621 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
-2025-11-24 17:54:46,621 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:46,622 - src.utils.helpers - INFO - validate_user executed in 0.001s
-2025-11-24 17:54:46,622 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:46,623 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:46] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:47,309 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:47,311 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:47,312 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
-2025-11-24 17:54:47,313 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:47,313 - src.utils.helpers - INFO - validate_user_credentials executed in 0.002s
-2025-11-24 17:54:47,313 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:47,313 - src.utils.helpers - INFO - validate_user executed in 0.002s
-2025-11-24 17:54:47,314 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:47,314 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:47] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:47,881 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:47,881 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:47,881 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:47,881 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:47,881 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
-2025-11-24 17:54:47,881 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:47,881 - src.utils.helpers - INFO - validate_user executed in 0.000s
-2025-11-24 17:54:47,882 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:47,882 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:47] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:48,555 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:48,555 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:48,555 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
-2025-11-24 17:54:48,555 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:48,555 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
-2025-11-24 17:54:48,555 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:48,556 - src.utils.helpers - INFO - validate_user executed in 0.001s
-2025-11-24 17:54:48,556 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:48,557 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:48] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:49,120 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:49,121 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:49,121 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
-2025-11-24 17:54:49,121 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:49,121 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
-2025-11-24 17:54:49,121 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:49,121 - src.utils.helpers - INFO - validate_user executed in 0.001s
-2025-11-24 17:54:49,121 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:49,121 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:49] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:49,915 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:49,915 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:49,917 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
-2025-11-24 17:54:49,917 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:49,917 - src.utils.helpers - INFO - validate_user_credentials executed in 0.001s
-2025-11-24 17:54:49,917 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:49,917 - src.utils.helpers - INFO - validate_user executed in 0.001s
-2025-11-24 17:54:49,917 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:49,918 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:49] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:50,264 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:50,264 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:50,265 - src.utils.helpers - INFO - get_client_by_email executed in 0.001s
-2025-11-24 17:54:50,265 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:50,266 - src.utils.helpers - INFO - validate_user_credentials executed in 0.002s
-2025-11-24 17:54:50,266 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:50,266 - src.utils.helpers - INFO - validate_user executed in 0.002s
-2025-11-24 17:54:50,267 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:50,267 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:50] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:50,613 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:50,613 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:50,613 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:50,613 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:50,613 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
-2025-11-24 17:54:50,613 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:50,614 - src.utils.helpers - INFO - validate_user executed in 0.001s
-2025-11-24 17:54:50,614 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:50,614 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:50] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:51,328 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:51,329 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:51,329 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:51,329 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:51,329 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
-2025-11-24 17:54:51,329 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:51,329 - src.utils.helpers - INFO - validate_user executed in 0.001s
-2025-11-24 17:54:51,329 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:51,329 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:51] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:54:52,181 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:54:52,182 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:54:52,182 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:54:52,182 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:54:52,182 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
-2025-11-24 17:54:52,182 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:54:52,182 - src.utils.helpers - INFO - validate_user executed in 0.000s
-2025-11-24 17:54:52,183 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:54:52,183 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:54:52] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:55:06,139 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-24 17:55:06,184 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on all addresses (0.0.0.0)
- * Running on http://127.0.0.1:5000
- * Running on http://192.168.1.11:5000
-2025-11-24 17:55:06,186 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
-2025-11-24 17:55:06,188 - werkzeug - INFO -  * Restarting with stat
-2025-11-24 17:55:08,640 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-24 17:55:08,660 - werkzeug - WARNING -  * Debugger is active!
-2025-11-24 17:55:08,665 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-24 17:55:12,157 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:55:15,009 - src.services.user_management_service - WARNING - Email mapping for ziad@gmail.com has no sheet_id
-2025-11-24 17:55:16,822 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:55:16,824 - src.utils.helpers - INFO - get_client_by_email executed in 4.667s
-2025-11-24 17:55:16,825 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:55:16,825 - src.utils.helpers - INFO - validate_user_credentials executed in 4.668s
-2025-11-24 17:55:16,825 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:55:16,826 - src.utils.helpers - INFO - validate_user executed in 4.669s
-2025-11-24 17:55:16,826 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:55:16,827 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:55:16] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:55:55,764 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:55:55,764 - src.services.user_management_service - WARNING - Email mapping for ziad@gmail.com has no sheet_id
-2025-11-24 17:55:55,765 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:55:55,766 - src.utils.helpers - INFO - get_client_by_email executed in 0.002s
-2025-11-24 17:55:55,766 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:55:55,767 - src.utils.helpers - INFO - validate_user_credentials executed in 0.003s
-2025-11-24 17:55:55,767 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:55:55,768 - src.utils.helpers - INFO - validate_user executed in 0.004s
-2025-11-24 17:55:55,769 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:55:55,770 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:55:55] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:55:56,704 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:55:56,705 - src.services.user_management_service - WARNING - Email mapping for ziad@gmail.com has no sheet_id
-2025-11-24 17:55:56,705 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:55:56,705 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:55:56,705 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:55:56,705 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
-2025-11-24 17:55:56,705 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:55:56,705 - src.utils.helpers - INFO - validate_user executed in 0.000s
-2025-11-24 17:55:56,705 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:55:56,706 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:55:56] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:55:57,604 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:55:57,605 - src.services.user_management_service - WARNING - Email mapping for ziad@gmail.com has no sheet_id
-2025-11-24 17:55:57,605 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:55:57,605 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:55:57,605 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:55:57,605 - src.utils.helpers - INFO - validate_user_credentials executed in 0.000s
-2025-11-24 17:55:57,605 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:55:57,605 - src.utils.helpers - INFO - validate_user executed in 0.000s
-2025-11-24 17:55:57,605 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:55:57,606 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:55:57] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:56:12,379 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\user_management_service.py', reloading
-2025-11-24 17:56:12,659 - werkzeug - INFO -  * Restarting with stat
-2025-11-24 17:56:42,668 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-24 17:56:42,705 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on all addresses (0.0.0.0)
- * Running on http://127.0.0.1:5000
- * Running on http://192.168.1.11:5000
-2025-11-24 17:56:42,705 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
-2025-11-24 17:56:42,708 - werkzeug - INFO -  * Restarting with stat
-2025-11-24 17:56:45,520 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
-2025-11-24 17:56:45,540 - werkzeug - WARNING -  * Debugger is active!
-2025-11-24 17:56:45,545 - werkzeug - INFO -  * Debugger PIN: 129-536-069
-2025-11-24 17:56:45,673 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:57:00,743 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:57:04,804 - src.services.user_management_service - WARNING - Error checking email mappings for ziad@gmail.com: HTTPSConnectionPool(host='sheets.googleapis.com', port=443): Max retries exceeded with url: /v4/spreadsheets/11eCtNuW4cl03TX0G20alx3_6B5DI7IbpQPnPDeRGKlI?includeGridData=false (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000154C45E3310>: Failed to resolve 'sheets.googleapis.com' ([Errno 11001] getaddrinfo failed)"))
-2025-11-24 17:57:15,921 - src.services.user_management_service - WARNING - Error checking email mappings for ziad@gmail.com: HTTPSConnectionPool(host='sheets.googleapis.com', port=443): Max retries exceeded with url: /v4/spreadsheets/11eCtNuW4cl03TX0G20alx3_6B5DI7IbpQPnPDeRGKlI?includeGridData=false (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000154C45E78D0>: Failed to resolve 'sheets.googleapis.com' ([Errno 11001] getaddrinfo failed)"))
-2025-11-24 17:57:15,921 - src.services.user_management_service - ERROR - Failed to fetch master sheet data: HTTPSConnectionPool(host='sheets.googleapis.com', port=443): Max retries exceeded with url: /v4/spreadsheets/11eCtNuW4cl03TX0G20alx3_6B5DI7IbpQPnPDeRGKlI?includeGridData=false (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000154C45FA350>: Failed to resolve 'sheets.googleapis.com' ([Errno 11001] getaddrinfo failed)"))
-2025-11-24 17:57:15,927 - src.services.user_management_service - ERROR - Error getting client by domain gmail.com: Cannot access master sheet: HTTPSConnectionPool(host='sheets.googleapis.com', port=443): Max retries exceeded with url: /v4/spreadsheets/11eCtNuW4cl03TX0G20alx3_6B5DI7IbpQPnPDeRGKlI?includeGridData=false (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000154C45FA350>: Failed to resolve 'sheets.googleapis.com' ([Errno 11001] getaddrinfo failed)"))
-2025-11-24 17:57:15,927 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:57:15,927 - src.utils.helpers - INFO - get_client_by_email executed in 30.253s
-2025-11-24 17:57:15,927 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:57:15,927 - src.utils.helpers - INFO - validate_user_credentials executed in 30.253s
-2025-11-24 17:57:15,927 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:57:15,927 - src.utils.helpers - INFO - validate_user executed in 30.253s
-2025-11-24 17:57:15,927 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:57:15,931 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:57:15] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:57:21,217 - src.services.user_management_service - WARNING - No client found for email: ziad@gmail.com (domain: gmail.com)
-2025-11-24 17:57:21,218 - src.utils.helpers - INFO - get_client_by_email executed in 20.474s
-2025-11-24 17:57:21,218 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: no matching client found
-2025-11-24 17:57:21,218 - src.utils.helpers - INFO - validate_user_credentials executed in 20.474s
-2025-11-24 17:57:21,218 - src.api.user_routes - WARNING - User validation failed - no matching client: ziad@gmail.com
-2025-11-24 17:57:21,219 - src.utils.helpers - INFO - validate_user executed in 20.475s
-2025-11-24 17:57:21,219 - __main__ - INFO - Response: 400 - user.validate_user
-2025-11-24 17:57:21,219 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:57:21] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 400 -
-2025-11-24 17:57:25,755 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:57:28,289 - src.services.user_management_service - INFO - Found email mapping: ziad@gmail.com → Sheet: test021465461321, Display: mmk
-2025-11-24 17:57:28,290 - src.services.user_management_service - INFO - Client found via EmailMappings for ziad@gmail.com: mmk
-2025-11-24 17:57:28,290 - src.utils.helpers - INFO - get_client_by_email executed in 2.534s
-2025-11-24 17:57:28,546 - src.services.user_management_service - ERROR - Error getting user info for ziad@gmail.com: <Response [404]>
-2025-11-24 17:57:28,547 - src.utils.helpers - INFO - get_user_info executed in 0.258s
-2025-11-24 17:57:28,547 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: user not found in client mmk
-2025-11-24 17:57:28,547 - src.utils.helpers - INFO - validate_user_credentials executed in 2.792s
-2025-11-24 17:57:28,547 - src.api.user_routes - WARNING - User validation failed - user not found: ziad@gmail.com
-2025-11-24 17:57:28,548 - src.utils.helpers - INFO - validate_user executed in 2.792s
-2025-11-24 17:57:28,548 - __main__ - INFO - Response: 404 - user.validate_user
-2025-11-24 17:57:28,548 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:57:28] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
-2025-11-24 17:57:46,936 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:57:46,937 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:57:47,194 - src.services.user_management_service - ERROR - Error getting user info for ziad@gmail.com: <Response [404]>
-2025-11-24 17:57:47,194 - src.utils.helpers - INFO - get_user_info executed in 0.256s
-2025-11-24 17:57:47,195 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: user not found in client mmk
-2025-11-24 17:57:47,195 - src.utils.helpers - INFO - validate_user_credentials executed in 0.258s
-2025-11-24 17:57:47,195 - src.api.user_routes - WARNING - User validation failed - user not found: ziad@gmail.com
-2025-11-24 17:57:47,195 - src.utils.helpers - INFO - validate_user executed in 0.258s
-2025-11-24 17:57:47,196 - __main__ - INFO - Response: 404 - user.validate_user
-2025-11-24 17:57:47,196 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:57:47] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
-2025-11-24 17:58:23,144 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 17:58:23,144 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 17:58:26,044 - src.services.user_management_service - ERROR - Error getting user info for ziad@gmail.com: <Response [404]>
-2025-11-24 17:58:26,044 - src.utils.helpers - INFO - get_user_info executed in 2.901s
-2025-11-24 17:58:26,044 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: user not found in client mmk
-2025-11-24 17:58:26,044 - src.utils.helpers - INFO - validate_user_credentials executed in 2.901s
-2025-11-24 17:58:26,044 - src.api.user_routes - WARNING - User validation failed - user not found: ziad@gmail.com
-2025-11-24 17:58:26,044 - src.utils.helpers - INFO - validate_user executed in 2.901s
-2025-11-24 17:58:26,044 - __main__ - INFO - Response: 404 - user.validate_user
-2025-11-24 17:58:26,044 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 17:58:26] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
-2025-11-24 18:04:12,483 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 18:04:23,668 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000154C45C77D0>: Failed to resolve 'oauth2.googleapis.com' ([Errno 11001] getaddrinfo failed)")': /token
-2025-11-24 18:04:34,732 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000154C45C6B10>: Failed to resolve 'oauth2.googleapis.com' ([Errno 11001] getaddrinfo failed)")': /token
-2025-11-24 18:04:45,810 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000154C461D350>: Failed to resolve 'oauth2.googleapis.com' ([Errno 11001] getaddrinfo failed)")': /token
-2025-11-24 18:04:49,437 - src.services.user_management_service - INFO - Found email mapping: ziad@gmail.com → Sheet: test021465461321, Display: mmk
-2025-11-24 18:04:49,438 - src.services.user_management_service - INFO - Client found via EmailMappings for ziad@gmail.com: mmk
-2025-11-24 18:04:49,438 - src.utils.helpers - INFO - get_client_by_email executed in 36.955s
-2025-11-24 18:04:49,892 - src.services.user_management_service - ERROR - Error getting user info for ziad@gmail.com: <Response [404]>
-2025-11-24 18:04:49,892 - src.utils.helpers - INFO - get_user_info executed in 0.453s
-2025-11-24 18:04:49,893 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: user not found in client mmk
-2025-11-24 18:04:49,893 - src.utils.helpers - INFO - validate_user_credentials executed in 37.409s
-2025-11-24 18:04:49,893 - src.api.user_routes - WARNING - User validation failed - user not found: ziad@gmail.com
-2025-11-24 18:04:49,894 - src.utils.helpers - INFO - validate_user executed in 37.410s
-2025-11-24 18:04:49,894 - __main__ - INFO - Response: 404 - user.validate_user
-2025-11-24 18:04:49,895 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:04:49] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
-2025-11-24 18:05:09,563 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 18:05:09,632 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 18:05:09,951 - src.services.user_management_service - ERROR - Error getting user info for ziad@gmail.com: <Response [404]>
-2025-11-24 18:05:09,951 - src.utils.helpers - INFO - get_user_info executed in 0.306s
-2025-11-24 18:05:09,951 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: user not found in client mmk
-2025-11-24 18:05:09,951 - src.utils.helpers - INFO - validate_user_credentials executed in 0.319s
-2025-11-24 18:05:09,951 - src.api.user_routes - WARNING - User validation failed - user not found: ziad@gmail.com
-2025-11-24 18:05:09,952 - src.utils.helpers - INFO - validate_user executed in 0.320s
-2025-11-24 18:05:09,953 - __main__ - INFO - Response: 404 - user.validate_user
-2025-11-24 18:05:09,953 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:05:09] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
-2025-11-24 18:05:11,182 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 18:05:11,183 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 18:05:11,472 - src.services.user_management_service - ERROR - Error getting user info for ziad@gmail.com: <Response [404]>
-2025-11-24 18:05:11,473 - src.utils.helpers - INFO - get_user_info executed in 0.290s
-2025-11-24 18:05:11,473 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: user not found in client mmk
-2025-11-24 18:05:11,473 - src.utils.helpers - INFO - validate_user_credentials executed in 0.290s
-2025-11-24 18:05:11,473 - src.api.user_routes - WARNING - User validation failed - user not found: ziad@gmail.com
-2025-11-24 18:05:11,474 - src.utils.helpers - INFO - validate_user executed in 0.291s
-2025-11-24 18:05:11,474 - __main__ - INFO - Response: 404 - user.validate_user
-2025-11-24 18:05:11,474 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:05:11] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
-2025-11-24 18:05:12,283 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 18:05:12,284 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 18:05:12,820 - src.services.user_management_service - ERROR - Error getting user info for ziad@gmail.com: <Response [404]>
-2025-11-24 18:05:12,820 - src.utils.helpers - INFO - get_user_info executed in 0.536s
-2025-11-24 18:05:12,820 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: user not found in client mmk
-2025-11-24 18:05:12,820 - src.utils.helpers - INFO - validate_user_credentials executed in 0.537s
-2025-11-24 18:05:12,820 - src.api.user_routes - WARNING - User validation failed - user not found: ziad@gmail.com
-2025-11-24 18:05:12,820 - src.utils.helpers - INFO - validate_user executed in 0.537s
-2025-11-24 18:05:12,820 - __main__ - INFO - Response: 404 - user.validate_user
-2025-11-24 18:05:12,821 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:05:12] "[33mPOST /api/v1/user/validate HTTP/1.1[0m" 404 -
-2025-11-24 18:05:13,723 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 18:05:15,661 - src.services.user_management_service - INFO - Found email mapping: ziad@gmail.com → Sheet: 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk, Display: mmk
-2025-11-24 18:05:15,661 - src.services.user_management_service - INFO - Client found via EmailMappings for ziad@gmail.com: mmk
-2025-11-24 18:05:15,663 - src.utils.helpers - INFO - get_client_by_email executed in 1.938s
-2025-11-24 18:05:18,070 - src.services.user_management_service - INFO - User found: ziad@gmail.com in client sheet 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk
-2025-11-24 18:05:18,071 - src.utils.helpers - INFO - get_user_info executed in 2.409s
-2025-11-24 18:05:18,072 - src.services.user_management_service - WARNING - Empty password for user ziad@gmail.com
-2025-11-24 18:05:18,073 - src.services.user_management_service - WARNING - Validation failed ziad@gmail.com: invalid password
-2025-11-24 18:05:18,074 - src.utils.helpers - INFO - validate_user_credentials executed in 4.351s
-2025-11-24 18:05:18,074 - src.api.user_routes - WARNING - User validation failed - invalid password: ziad@gmail.com
-2025-11-24 18:05:18,074 - src.utils.helpers - INFO - validate_user executed in 4.351s
-2025-11-24 18:05:18,075 - __main__ - INFO - Response: 401 - user.validate_user
-2025-11-24 18:05:18,075 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:05:18] "[31m[1mPOST /api/v1/user/validate HTTP/1.1[0m" 401 -
-2025-11-24 18:09:06,745 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 18:09:16,110 - src.services.user_management_service - INFO - Found email mapping: ziad@gmail.com → Sheet: 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk, Display: mmk
-2025-11-24 18:09:16,111 - src.services.user_management_service - INFO - Client found via EmailMappings for ziad@gmail.com: mmk
-2025-11-24 18:09:16,111 - src.utils.helpers - INFO - get_client_by_email executed in 9.366s
-2025-11-24 18:09:25,250 - src.services.user_management_service - INFO - User found: ziad@gmail.com in client sheet 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk
-2025-11-24 18:09:25,250 - src.utils.helpers - INFO - get_user_info executed in 9.139s
-2025-11-24 18:09:25,319 - src.services.user_management_service - INFO - User credentials validated successfully: ziad@gmail.com for client mmk
-2025-11-24 18:09:25,319 - src.utils.helpers - INFO - validate_user_credentials executed in 18.573s
-2025-11-24 18:09:25,320 - src.api.user_routes - INFO - User validated successfully: ziad@gmail.com
-2025-11-24 18:09:25,323 - src.utils.helpers - INFO - validate_user executed in 18.578s
-2025-11-24 18:09:25,324 - __main__ - INFO - Response: 200 - user.validate_user
-2025-11-24 18:09:25,324 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:09:25] "POST /api/v1/user/validate HTTP/1.1" 200 -
-2025-11-24 18:11:34,950 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/user/admin/users/create - 127.0.0.1
-2025-11-24 18:11:34,953 - __main__ - INFO - Response: 405 - None
-2025-11-24 18:11:34,954 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:11:34] "[31m[1mGET /api/v1/user/admin/users/create HTTP/1.1[0m" 405 -
-2025-11-24 18:11:40,666 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/user/admin/users/create - 127.0.0.1
-2025-11-24 18:11:40,667 - __main__ - INFO - Response: 405 - None
-2025-11-24 18:11:40,667 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:11:40] "[31m[1mGET /api/v1/user/admin/users/create HTTP/1.1[0m" 405 -
-2025-11-24 18:12:01,894 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/create-user - 127.0.0.1
-2025-11-24 18:12:06,519 - src.services.user_management_service - INFO - Client found via domain matching for ziad2@moe.gov.sa: Ministry of Education
-2025-11-24 18:12:06,520 - src.utils.helpers - INFO - get_client_by_email executed in 4.623s
-2025-11-24 18:12:08,970 - src.services.user_management_service - INFO - User found: ziad2@moe.gov.sa in client sheet 17jLMvuldHzpizbtvTYqe8Gz5UCx58mkQmjOX1INUHIg
-2025-11-24 18:12:08,971 - src.utils.helpers - INFO - get_user_info executed in 2.451s
-2025-11-24 18:12:08,973 - src.services.user_management_service - WARNING - User ziad2@moe.gov.sa already exists in client Ministry of Education
-2025-11-24 18:12:08,974 - src.utils.helpers - INFO - create_user executed in 7.077s
-2025-11-24 18:12:08,975 - src.api.user_routes - WARNING - User creation failed - user already exists: ziad2@moe.gov.sa
-2025-11-24 18:12:08,975 - src.utils.helpers - INFO - create_user executed in 7.080s
-2025-11-24 18:12:08,976 - __main__ - INFO - Response: 409 - user.create_user
-2025-11-24 18:12:08,977 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:12:08] "[31m[1mPOST /api/v1/user/create-user HTTP/1.1[0m" 409 -
-2025-11-24 18:12:44,684 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/create-user - 127.0.0.1
-2025-11-24 18:12:44,684 - src.services.user_management_service - WARNING - No client found for email: ziad2@gmail.com (domain: gmail.com)
-2025-11-24 18:12:44,684 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 18:12:44,684 - src.services.user_management_service - WARNING - Cannot create user ziad2@gmail.com: no matching client found
-2025-11-24 18:12:44,684 - src.utils.helpers - INFO - create_user executed in 0.000s
-2025-11-24 18:12:44,686 - src.api.user_routes - WARNING - User creation failed - no matching client: ziad2@gmail.com
-2025-11-24 18:12:44,686 - src.utils.helpers - INFO - create_user executed in 0.002s
-2025-11-24 18:12:44,686 - __main__ - INFO - Response: 400 - user.create_user
-2025-11-24 18:12:44,686 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:12:44] "[31m[1mPOST /api/v1/user/create-user HTTP/1.1[0m" 400 -
-2025-11-24 18:12:47,781 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/create-user - 127.0.0.1
-2025-11-24 18:12:47,781 - src.services.user_management_service - WARNING - No client found for email: ziad2@gmail.com (domain: gmail.com)
-2025-11-24 18:12:47,781 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 18:12:47,781 - src.services.user_management_service - WARNING - Cannot create user ziad2@gmail.com: no matching client found
-2025-11-24 18:12:47,783 - src.utils.helpers - INFO - create_user executed in 0.002s
-2025-11-24 18:12:47,783 - src.api.user_routes - WARNING - User creation failed - no matching client: ziad2@gmail.com
-2025-11-24 18:12:47,784 - src.utils.helpers - INFO - create_user executed in 0.003s
-2025-11-24 18:12:47,785 - __main__ - INFO - Response: 400 - user.create_user
-2025-11-24 18:12:47,785 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:12:47] "[31m[1mPOST /api/v1/user/create-user HTTP/1.1[0m" 400 -
-2025-11-24 18:12:48,568 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/create-user - 127.0.0.1
-2025-11-24 18:12:48,568 - src.services.user_management_service - WARNING - No client found for email: ziad2@gmail.com (domain: gmail.com)
-2025-11-24 18:12:48,568 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 18:12:48,569 - src.services.user_management_service - WARNING - Cannot create user ziad2@gmail.com: no matching client found
-2025-11-24 18:12:48,569 - src.utils.helpers - INFO - create_user executed in 0.001s
-2025-11-24 18:12:48,569 - src.api.user_routes - WARNING - User creation failed - no matching client: ziad2@gmail.com
-2025-11-24 18:12:48,569 - src.utils.helpers - INFO - create_user executed in 0.001s
-2025-11-24 18:12:48,570 - __main__ - INFO - Response: 400 - user.create_user
-2025-11-24 18:12:48,570 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:12:48] "[31m[1mPOST /api/v1/user/create-user HTTP/1.1[0m" 400 -
-2025-11-24 18:12:49,274 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/create-user - 127.0.0.1
-2025-11-24 18:12:49,274 - src.services.user_management_service - WARNING - No client found for email: ziad2@gmail.com (domain: gmail.com)
-2025-11-24 18:12:49,274 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 18:12:49,276 - src.services.user_management_service - WARNING - Cannot create user ziad2@gmail.com: no matching client found
-2025-11-24 18:12:49,276 - src.utils.helpers - INFO - create_user executed in 0.002s
-2025-11-24 18:12:49,276 - src.api.user_routes - WARNING - User creation failed - no matching client: ziad2@gmail.com
-2025-11-24 18:12:49,276 - src.utils.helpers - INFO - create_user executed in 0.002s
-2025-11-24 18:12:49,276 - __main__ - INFO - Response: 400 - user.create_user
-2025-11-24 18:12:49,276 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:12:49] "[31m[1mPOST /api/v1/user/create-user HTTP/1.1[0m" 400 -
-2025-11-24 18:13:33,392 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/user/validate - 127.0.0.1
-2025-11-24 18:13:42,775 - src.services.user_management_service - INFO - Found email mapping: ziad@gmail.com → Sheet: 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk, Display: mmk
-2025-11-24 18:13:42,775 - src.services.user_management_service - INFO - Client found via EmailMappings for ziad@gmail.com: mmk
-2025-11-24 18:13:42,776 - src.utils.helpers - INFO - get_client_by_email executed in 9.384s
-2025-11-24 18:13:52,042 - src.services.user_management_service - INFO - User found: ziad@gmail.com in client sheet 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk
-2025-11-24 18:13:52,043 - src.utils.helpers - INFO - get_user_info executed in 9.267s
-2025-11-24 18:13:52,130 - src.services.user_management_service - INFO - User credentials validated successfully: ziad@gmail.com for client mmk
-2025-11-24 18:13:52,131 - src.utils.helpers - INFO - validate_user_credentials executed in 18.739s
-2025-11-24 18:13:52,131 - src.api.user_routes - INFO - User validated successfully: ziad@gmail.com
-2025-11-24 18:13:52,131 - src.utils.helpers - INFO - validate_user executed in 18.739s
-2025-11-24 18:13:52,131 - __main__ - INFO - Response: 200 - user.validate_user
-2025-11-24 18:13:52,132 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:13:52] "POST /api/v1/user/validate HTTP/1.1" 200 -
-2025-11-24 18:16:14,334 - __main__ - INFO - POST http://localhost:5000/api/v1/user/admin/users/create - 127.0.0.1
-2025-11-24 18:16:19,413 - src.services.user_management_service - INFO - Found email mapping: ziad@gmail.com → Sheet: 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk, Display: mmk
-2025-11-24 18:16:19,414 - src.services.user_management_service - INFO - Client found via EmailMappings for ziad@gmail.com: mmk
-2025-11-24 18:16:19,414 - src.utils.helpers - INFO - get_client_by_email executed in 5.074s
-2025-11-24 18:16:24,170 - src.services.user_management_service - INFO - User details found for ziad@gmail.com in sheet 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk
-2025-11-24 18:16:24,170 - src.utils.helpers - INFO - get_user_details_from_client_sheet executed in 4.755s
-2025-11-24 18:16:24,170 - src.api.user_routes - WARNING - Admin create user failed - user already exists: ziad@gmail.com
-2025-11-24 18:16:24,171 - src.utils.helpers - INFO - admin_create_user executed in 9.836s
-2025-11-24 18:16:24,172 - __main__ - INFO - Response: 409 - user.admin_create_user
-2025-11-24 18:16:24,173 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:16:24] "[31m[1mPOST /api/v1/user/admin/users/create HTTP/1.1[0m" 409 -
-2025-11-24 18:16:29,556 - __main__ - INFO - POST http://localhost:5000/api/v1/user/admin/users/create - 127.0.0.1
-2025-11-24 18:16:29,557 - src.utils.helpers - INFO - get_client_by_email executed in 0.000s
-2025-11-24 18:16:30,389 - src.services.user_management_service - WARNING - User ziad2@gmail.com not found in Users worksheet of sheet 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk
-2025-11-24 18:16:30,390 - src.utils.helpers - INFO - get_user_details_from_client_sheet executed in 0.833s
-2025-11-24 18:16:33,316 - src.utils.helpers - INFO - check_if_email_needs_mapping executed in 0.001s
-2025-11-24 18:16:36,451 - src.services.user_management_service - INFO - Added email mapping: ziad2@gmail.com → 1s150RSZoOTPjlxqqI8AItImI4jVYOIcPFsuBiMXe1dk
-2025-11-24 18:16:36,451 - src.utils.helpers - INFO - add_email_mapping executed in 3.134s
-2025-11-24 18:16:36,451 - src.api.user_routes - INFO - Added EmailMapping for public email domain: ziad2@gmail.com
-2025-11-24 18:16:36,451 - src.api.user_routes - INFO - Admin 'ziad@gmail.com' created user: ziad2@gmail.com with role: admin
-2025-11-24 18:16:36,453 - src.utils.helpers - INFO - admin_create_user executed in 6.894s
-2025-11-24 18:16:36,453 - __main__ - INFO - Response: 201 - user.admin_create_user
-2025-11-24 18:16:36,453 - werkzeug - INFO - 127.0.0.1 - - [24/Nov/2025 18:16:36] "[35m[1mPOST /api/v1/user/admin/users/create HTTP/1.1[0m" 201 -
+  File "D:\shobbak\AutomatingLetter\src\api\archive_routes.py", line 399, in process_letter_docx_archive_in_background
+    logger.info(f"[DOCX BACKGROUND] Creating DOCX document for letter ID: {letter_id} with template: {template}")
+                                                                                                      ^^^^^^^^
+NameError: name 'template' is not defined
+2025-11-26 10:11:57,325 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 10:11:57] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
+2025-11-26 10:12:52,193 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\api\\archive_routes.py', reloading
+2025-11-26 10:12:52,527 - werkzeug - INFO -  * Restarting with stat
+2025-11-26 10:12:54,643 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 10:12:54,660 - werkzeug - WARNING -  * Debugger is active!
+2025-11-26 10:12:54,667 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-26 10:13:05,691 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\api\\archive_routes.py', reloading
+2025-11-26 10:13:05,927 - werkzeug - INFO -  * Restarting with stat
+2025-11-26 10:13:07,924 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 10:13:07,943 - werkzeug - WARNING -  * Debugger is active!
+2025-11-26 10:13:07,946 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-26 10:13:19,128 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
+2025-11-26 10:13:19,129 - src.api.archive_routes - INFO - DOCX Archive request from user: Aljabre.haya@gmail.com, client: EMAIL-MAP-aljabre.haya, sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI, drive: 1foNQ0MscYFyNV8veEDGPP6s-TRU2SAP0
+2025-11-26 10:13:19,130 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd5523
+2025-11-26 10:13:19,130 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd5523 (sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI)
+2025-11-26 10:13:19,131 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-11-26 10:13:19,132 - src.utils.helpers - INFO - archive_letter_docx executed in 0.003s
+2025-11-26 10:13:19,133 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Creating DOCX document for letter ID: LET-202510sdfsd5523 with template: default
+2025-11-26 10:13:19,133 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
+2025-11-26 10:13:19,134 - src.services.doc_services - INFO - Using template 'default': D:\shobbak\AutomatingLetter\LetterToPdf\templates\default.docx
+2025-11-26 10:13:19,134 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 10:13:19] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
+2025-11-26 10:13:19,627 - src.services.doc_services - INFO - Starting raw letter content parsing with GPT-4o
+2025-11-26 10:13:27,083 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-26 10:13:27,103 - src.services.doc_services - INFO - Letter content parsed successfully
+2025-11-26 10:13:27,104 - src.services.doc_services - INFO - Document letter ID set to: LET-202510sdfsd5523
+2025-11-26 10:13:27,129 - src.services.doc_services - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\default.docx
+2025-11-26 10:13:32,748 - src.services.doc_services - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd5523)
+2025-11-26 10:13:32,755 - src.services.doc_services - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd5523.docx
+2025-11-26 10:13:32,755 - src.api.archive_routes - INFO - [DOCX BACKGROUND] DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd5523.docx
+2025-11-26 10:13:32,755 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd5523
+2025-11-26 10:13:32,787 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-11-26 10:13:33,710 - src.services.drive_logger - ERROR - Error uploading file to Drive: <HttpError 404 when requesting None returned "File not found: 1foNQ0MscYFyNV8veEDGPP6s-TRU2SAP0.". Details: "[{'message': 'File not found: 1foNQ0MscYFyNV8veEDGPP6s-TRU2SAP0.', 'domain': 'global', 'reason': 'notFound', 'location': 'fileId', 'locationType': 'parameter'}]">
+2025-11-26 10:13:33,711 - src.services.drive_logger - ERROR - Failed to upload DOCX letter LET-202510sdfsd5523 to Drive: <HttpError 404 when requesting None returned "File not found: 1foNQ0MscYFyNV8veEDGPP6s-TRU2SAP0.". Details: "[{'message': 'File not found: 1foNQ0MscYFyNV8veEDGPP6s-TRU2SAP0.', 'domain': 'global', 'reason': 'notFound', 'location': 'fileId', 'locationType': 'parameter'}]">
+2025-11-26 10:13:33,712 - src.api.archive_routes - ERROR - [DOCX BACKGROUND] ❌ Background DOCX archiving failed for letter ID: LET-202510sdfsd5523: Drive upload failed: <HttpError 404 when requesting None returned "File not found: 1foNQ0MscYFyNV8veEDGPP6s-TRU2SAP0.". Details: "[{'message': 'File not found: 1foNQ0MscYFyNV8veEDGPP6s-TRU2SAP0.', 'domain': 'global', 'reason': 'notFound', 'location': 'fileId', 'locationType': 'parameter'}]">
+2025-11-26 10:15:59,024 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
+2025-11-26 10:15:59,025 - src.api.archive_routes - INFO - DOCX Archive request from user: Aljabre.haya@gmail.com, client: EMAIL-MAP-aljabre.haya, sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI, drive: 1foNQ0MscYFyNV8veEDGPP6s-TRU2SAP0
+2025-11-26 10:15:59,025 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd5523
+2025-11-26 10:15:59,025 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd5523 (sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI)
+2025-11-26 10:15:59,026 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Creating DOCX document for letter ID: LET-202510sdfsd5523 with template: default
+2025-11-26 10:15:59,026 - src.utils.helpers - INFO - archive_letter_docx executed in 0.001s
+2025-11-26 10:15:59,026 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
+2025-11-26 10:15:59,026 - src.services.doc_services - INFO - Using template 'default': D:\shobbak\AutomatingLetter\LetterToPdf\templates\default.docx
+2025-11-26 10:15:59,027 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 10:15:59] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
+2025-11-26 10:15:59,028 - src.services.doc_services - INFO - Starting raw letter content parsing with GPT-4o
+2025-11-26 10:16:03,000 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-26 10:16:03,021 - src.services.doc_services - INFO - Letter content parsed successfully
+2025-11-26 10:16:03,021 - src.services.doc_services - INFO - Document letter ID set to: LET-202510sdfsd5523
+2025-11-26 10:16:03,032 - src.services.doc_services - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\default.docx
+2025-11-26 10:16:03,038 - src.services.doc_services - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd5523)
+2025-11-26 10:16:03,048 - src.services.doc_services - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd5523.docx
+2025-11-26 10:16:03,048 - src.api.archive_routes - INFO - [DOCX BACKGROUND] DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd5523.docx
+2025-11-26 10:16:03,048 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd5523
+2025-11-26 10:16:03,052 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-11-26 10:16:06,638 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_LET-202510sdfsd5523.docx (ID: 1I9T6hXlhc63cyOaQXzHjIUs_0DNrfhox)
+2025-11-26 10:16:10,310 - src.services.google_services - INFO - Successfully logged 1 entries to sheet 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI, worksheet 'Submissions'
+2025-11-26 10:16:10,310 - src.utils.helpers - INFO - log_entries_by_id executed in 3.671s
+2025-11-26 10:16:10,311 - src.services.drive_logger - INFO - Successfully archived DOCX letter LET-202510sdfsd5523 to Drive and logged to sheet 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI
+2025-11-26 10:16:10,311 - src.api.archive_routes - INFO - [DOCX BACKGROUND] ✅ Background DOCX archiving completed successfully for letter ID: LET-202510sdfsd5523
+2025-11-26 10:16:10,311 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Drive URL: https://docs.google.com/document/d/1I9T6hXlhc63cyOaQXzHjIUs_0DNrfhox/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
+2025-11-26 10:18:36,002 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
+2025-11-26 10:18:36,516 - werkzeug - INFO -  * Restarting with stat
+2025-11-26 10:18:39,018 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 10:18:39,043 - werkzeug - WARNING -  * Debugger is active!
+2025-11-26 10:18:39,047 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-26 10:18:55,994 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
+2025-11-26 10:18:55,995 - src.api.archive_routes - INFO - DOCX Archive request from user: Aljabre.haya@gmail.com, client: EMAIL-MAP-aljabre.haya, sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI, drive: 1foNQ0MscYFyNV8veEDGPP6s-TRU2SAP0
+2025-11-26 10:18:55,996 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd5523
+2025-11-26 10:18:55,996 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd5523 (sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI)
+2025-11-26 10:18:55,996 - src.utils.helpers - INFO - archive_letter_docx executed in 0.001s
+2025-11-26 10:18:55,997 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
+2025-11-26 10:18:55,997 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-11-26 10:18:55,997 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 10:18:55] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
+2025-11-26 10:18:55,997 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Creating DOCX document for letter ID: LET-202510sdfsd5523 with template: default
+2025-11-26 10:18:55,998 - src.services.doc_services - INFO - Using template 'default': D:\shobbak\AutomatingLetter\LetterToPdf\templates\default.docx
+2025-11-26 10:18:56,346 - src.services.doc_services - INFO - Starting raw letter content parsing with GPT-4o
+2025-11-26 10:19:00,460 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-26 10:19:00,488 - src.services.doc_services - INFO - Letter content parsed successfully
+2025-11-26 10:19:00,489 - src.services.doc_services - INFO - Document letter ID set to: LET-202510sdfsd5523
+2025-11-26 10:19:00,496 - src.services.doc_services - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\default.docx
+2025-11-26 10:19:00,609 - src.services.doc_services - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd5523)
+2025-11-26 10:19:00,616 - src.services.doc_services - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd5523.docx
+2025-11-26 10:19:00,617 - src.api.archive_routes - INFO - [DOCX BACKGROUND] DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd5523.docx
+2025-11-26 10:19:00,617 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd5523
+2025-11-26 10:19:00,623 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-11-26 10:19:06,141 - src.services.drive_logger - INFO - File made public: Invitation Letter_LET-202510sdfsd5523.docx (ID: 1R7mP1oT2pCk96-izbGtzK5her73S_2XY)
+2025-11-26 10:19:06,642 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_LET-202510sdfsd5523.docx (ID: 1R7mP1oT2pCk96-izbGtzK5her73S_2XY)
+2025-11-26 10:19:09,513 - src.services.google_services - INFO - Successfully logged 1 entries to sheet 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI, worksheet 'Submissions'
+2025-11-26 10:19:09,514 - src.utils.helpers - INFO - log_entries_by_id executed in 2.872s
+2025-11-26 10:19:09,515 - src.services.drive_logger - INFO - Successfully archived DOCX letter LET-202510sdfsd5523 to Drive and logged to sheet 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI
+2025-11-26 10:19:09,516 - src.api.archive_routes - INFO - [DOCX BACKGROUND] ✅ Background DOCX archiving completed successfully for letter ID: LET-202510sdfsd5523
+2025-11-26 10:19:09,517 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Drive URL: https://docs.google.com/document/d/1R7mP1oT2pCk96-izbGtzK5her73S_2XY/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
+2025-11-26 10:20:08,063 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
+2025-11-26 10:20:08,547 - werkzeug - INFO -  * Restarting with stat
+2025-11-26 10:20:11,026 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 10:20:11,050 - werkzeug - WARNING -  * Debugger is active!
+2025-11-26 10:20:11,053 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-26 10:20:12,817 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
+2025-11-26 10:20:12,817 - src.api.archive_routes - INFO - DOCX Archive request from user: Aljabre.haya@gmail.com, client: EMAIL-MAP-aljabre.haya, sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI, drive: 1foNQ0MscYFyNV8veEDGPP6s-TRU2SAP0
+2025-11-26 10:20:12,818 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd5523
+2025-11-26 10:20:12,818 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd5523 (sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI)
+2025-11-26 10:20:12,819 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-11-26 10:20:12,819 - src.utils.helpers - INFO - archive_letter_docx executed in 0.002s
+2025-11-26 10:20:12,820 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Creating DOCX document for letter ID: LET-202510sdfsd5523 with template: default
+2025-11-26 10:20:12,820 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
+2025-11-26 10:20:12,820 - src.services.doc_services - INFO - Using template 'default': D:\shobbak\AutomatingLetter\LetterToPdf\templates\default.docx
+2025-11-26 10:20:12,822 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 10:20:12] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
+2025-11-26 10:20:13,098 - src.services.doc_services - INFO - Starting raw letter content parsing with GPT-4o
+2025-11-26 10:20:17,992 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-26 10:20:18,007 - src.services.doc_services - INFO - Letter content parsed successfully
+2025-11-26 10:20:18,008 - src.services.doc_services - INFO - Document letter ID set to: LET-202510sdfsd5523
+2025-11-26 10:20:18,013 - src.services.doc_services - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\default.docx
+2025-11-26 10:20:18,093 - src.services.doc_services - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd5523)
+2025-11-26 10:20:18,102 - src.services.doc_services - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd5523.docx
+2025-11-26 10:20:18,102 - src.api.archive_routes - INFO - [DOCX BACKGROUND] DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd5523.docx
+2025-11-26 10:20:18,102 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd5523
+2025-11-26 10:20:18,106 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-11-26 10:20:21,433 - src.services.drive_logger - WARNING - Could not make file public (file still uploaded): <HttpError 400 when requesting https://www.googleapis.com/drive/v3/files/1ibX5mO0PTfPvOty9L3fDK6DuCBWoBhuX/permissions?alt=json returned "The specified permission role is invalid. Valid values are 'reader', 'commenter', 'writer', 'fileOrganizer', 'organizer', and 'owner'.". Details: "[{'message': "The specified permission role is invalid. Valid values are 'reader', 'commenter', 'writer', 'fileOrganizer', 'organizer', and 'owner'.", 'domain': 'global', 'reason': 'invalid', 'location': 'permission.role', 'locationType': 'other'}]">
+2025-11-26 10:20:21,935 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_LET-202510sdfsd5523.docx (ID: 1ibX5mO0PTfPvOty9L3fDK6DuCBWoBhuX)
+2025-11-26 10:20:25,745 - src.services.google_services - INFO - Successfully logged 1 entries to sheet 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI, worksheet 'Submissions'
+2025-11-26 10:20:25,746 - src.utils.helpers - INFO - log_entries_by_id executed in 3.810s
+2025-11-26 10:20:25,746 - src.services.drive_logger - INFO - Successfully archived DOCX letter LET-202510sdfsd5523 to Drive and logged to sheet 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI
+2025-11-26 10:20:25,747 - src.api.archive_routes - INFO - [DOCX BACKGROUND] ✅ Background DOCX archiving completed successfully for letter ID: LET-202510sdfsd5523
+2025-11-26 10:20:25,747 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Drive URL: https://docs.google.com/document/d/1ibX5mO0PTfPvOty9L3fDK6DuCBWoBhuX/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
+2025-11-26 10:20:38,995 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
+2025-11-26 10:20:39,366 - werkzeug - INFO -  * Restarting with stat
+2025-11-26 10:20:41,314 - root - INFO - Logging initialized: logs/app.log (time-based rotation, 30 day retention)
+2025-11-26 10:20:41,333 - werkzeug - WARNING -  * Debugger is active!
+2025-11-26 10:20:41,337 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-11-26 10:20:52,197 - __main__ - INFO - POST http://127.0.0.1:5000/api/v1/archive/letter/docx - 127.0.0.1
+2025-11-26 10:20:52,197 - src.api.archive_routes - INFO - DOCX Archive request from user: Aljabre.haya@gmail.com, client: EMAIL-MAP-aljabre.haya, sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI, drive: 1foNQ0MscYFyNV8veEDGPP6s-TRU2SAP0
+2025-11-26 10:20:52,198 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Starting background DOCX archiving for letter ID: LET-202510sdfsd5523
+2025-11-26 10:20:52,198 - src.api.archive_routes - INFO - Letter DOCX archiving initiated for ID: LET-202510sdfsd5523 (sheet: 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI)
+2025-11-26 10:20:52,202 - src.utils.helpers - INFO - archive_letter_docx executed in 0.006s
+2025-11-26 10:20:52,203 - __main__ - INFO - Response: 200 - archive.archive_letter_docx
+2025-11-26 10:20:52,204 - werkzeug - INFO - 127.0.0.1 - - [26/Nov/2025 10:20:52] "POST /api/v1/archive/letter/docx HTTP/1.1" 200 -
+2025-11-26 10:20:52,237 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-11-26 10:20:52,238 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Creating DOCX document for letter ID: LET-202510sdfsd5523 with template: default
+2025-11-26 10:20:52,238 - src.services.doc_services - INFO - Using template 'default': D:\shobbak\AutomatingLetter\LetterToPdf\templates\default.docx
+2025-11-26 10:20:52,635 - src.services.doc_services - INFO - Starting raw letter content parsing with GPT-4o
+2025-11-26 10:20:56,204 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-26 10:20:56,222 - src.services.doc_services - INFO - Letter content parsed successfully
+2025-11-26 10:20:56,222 - src.services.doc_services - INFO - Document letter ID set to: LET-202510sdfsd5523
+2025-11-26 10:20:56,228 - src.services.doc_services - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\default.docx
+2025-11-26 10:20:56,397 - src.services.doc_services - INFO - Document created successfully from JSON (Letter ID: LET-202510sdfsd5523)
+2025-11-26 10:20:56,407 - src.services.doc_services - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd5523.docx
+2025-11-26 10:20:56,407 - src.api.archive_routes - INFO - [DOCX BACKGROUND] DOCX generated successfully: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\Invitation Letter_LET-202510sdfsd5523.docx
+2025-11-26 10:20:56,407 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Uploading DOCX to Drive and logging for letter ID: LET-202510sdfsd5523
+2025-11-26 10:20:56,412 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-11-26 10:21:03,073 - src.services.drive_logger - INFO - File made public: Invitation Letter_LET-202510sdfsd5523.docx (ID: 1VBKjwID_dpH9rbPSC6YaiYe3hhyj_K8O)
+2025-11-26 10:21:03,574 - src.services.drive_logger - INFO - File uploaded to Drive: Invitation Letter_LET-202510sdfsd5523.docx (ID: 1VBKjwID_dpH9rbPSC6YaiYe3hhyj_K8O)
+2025-11-26 10:21:06,031 - src.services.google_services - INFO - Successfully logged 1 entries to sheet 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI, worksheet 'Submissions'
+2025-11-26 10:21:06,032 - src.utils.helpers - INFO - log_entries_by_id executed in 2.457s
+2025-11-26 10:21:06,032 - src.services.drive_logger - INFO - Successfully archived DOCX letter LET-202510sdfsd5523 to Drive and logged to sheet 1OQhlAoiWU8YRKAMZqpuDFnAGnUbK6QZT1I47YuO7IyI
+2025-11-26 10:21:06,033 - src.api.archive_routes - INFO - [DOCX BACKGROUND] ✅ Background DOCX archiving completed successfully for letter ID: LET-202510sdfsd5523
+2025-11-26 10:21:06,033 - src.api.archive_routes - INFO - [DOCX BACKGROUND] Drive URL: https://docs.google.com/document/d/1VBKjwID_dpH9rbPSC6YaiYe3hhyj_K8O/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
