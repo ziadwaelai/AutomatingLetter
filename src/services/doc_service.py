@@ -133,13 +133,20 @@ class CreateDocument:
 
 استخرج المعلومات التالية وأعد الاستجابة بتنسيق JSON صحيح:
 
-1. **besmallah**: الفقرة الأولى أو بداية الخطاب (عادة "بسم الله الرحمن الرحيم" أو ما يشابهها)
-2. **title**: عنوان الخطاب الرئيسي (عادة يكون بعد البسملة مباشرة أو في الأسطر الأولى)
-3. **date**: التاريخ إن وجد (قد يكون في البداية أو النهاية)
-4. **body**: محتوى الخطاب الرئيسي (يشمل كل المحتوى بين العنوان والختام)
-5. **footer**: الختام والتوقيع (عادة في نهاية الخطاب مثل "وتفضلوا بقبول فائق الاحترام والتقدير")
+1. **besmallah**: الفقرة الأولى أو بداية الخطاب (عادة "بسم الله الرحمن الرحيم" أو ما يشابهها). إذا لم توجد، استخدم سطر فارغ ""
+2. **title**: عنوان الخطاب الرئيسي (REQUIRED - إلزامي). ابحث عن العنوان في:
+   - السطور الأولى بعد البسملة
+   - أي نص مكتوب بخط عريض أو مميز
+   - الموضوع الرئيسي للخطاب
+   - إذا لم تجد عنوان واضح، استنتج عنوانًا مناسبًا من محتوى الخطاب (مثل: "طلب...", "إفادة...", "خطاب رسمي...")
+   - **يجب أن يكون العنوان موجودًا دائمًا ولا يمكن أن يكون فارغًا**
+3. **date**: التاريخ إن وجد (قد يكون في البداية أو النهاية). إذا لم يوجد، استخدم سطر فارغ ""
+4. **body**: محتوى الخطاب الرئيسي (REQUIRED - إلزامي). يشمل كل المحتوى بين العنوان والختام
+5. **footer**: الختام والتوقيع (عادة في نهاية الخطاب مثل "وتفضلوا بقبول فائق الاحترام والتقدير"). إذا لم يوجد، استخدم سطر فارغ ""
 
-تأكد من:
+⚠️ **مهم جداً:**
+- الحقول **title** و **body** إلزامية ويجب أن تحتوي على قيمة
+- إذا لم تجد عنوانًا صريحًا، استنتج عنوانًا من المحتوى
 - الحفاظ على الترتيب الطبيعي للخطاب
 - استخراج كل جزء بشكل كامل ودقيق
 - عدم ترك أي محتوى مهم خارج body
@@ -168,6 +175,28 @@ class CreateDocument:
 
             logger.info("Letter content parsed successfully")
             logger.debug(f"Parsed fields: {list(result.keys())}")
+
+            # Validate that required fields are present and not empty
+            if not result.get('title') or not result.get('title').strip():
+                # Extract a title from the first non-empty line of body as fallback
+                body_lines = result.get('body', '').split('\n')
+                extracted_title = None
+                for line in body_lines:
+                    line = line.strip()
+                    if line and len(line) < 100:  # Use first short line as title
+                        extracted_title = line
+                        break
+
+                if extracted_title:
+                    result['title'] = extracted_title
+                    logger.warning(f"Title was empty, extracted from body: {extracted_title}")
+                else:
+                    result['title'] = "خطاب رسمي"
+                    logger.warning("Title was empty, using default: خطاب رسمي")
+
+            if not result.get('body') or not result.get('body').strip():
+                logger.error("Body field is empty after parsing")
+                raise ValueError("Failed to extract body content from letter")
 
             return result
 
