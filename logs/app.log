@@ -7565,3 +7565,199 @@ TypeError: DriveLoggerService.save_letter_to_drive_and_log() got an unexpected k
 2025-11-23 23:58:54,224 - src.utils.helpers - INFO - validate_letter executed in 3.702s
 2025-11-23 23:58:54,224 - __main__ - INFO - Response: 200 - letter.validate_letter
 2025-11-23 23:58:54,225 - werkzeug - INFO - 127.0.0.1 - - [23/Nov/2025 23:58:54] "POST /api/v1/letter/validate HTTP/1.1" 200 -
+2025-12-01 12:46:42,456 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.216.221.147:5000
+2025-12-01 12:46:42,456 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-01 12:46:42,456 - werkzeug - INFO -  * Restarting with stat
+2025-12-01 12:46:48,046 - werkzeug - WARNING -  * Debugger is active!
+2025-12-01 12:46:48,048 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-12-01 12:48:22,743 - __main__ - INFO - PUT http://127.0.0.1:5000/api/v1/archive/update - 127.0.0.1
+2025-12-01 12:48:22,743 - src.api.archive_routes - INFO - Starting background update for letter ID: 251106-97103
+2025-12-01 12:48:22,743 - src.api.archive_routes - INFO - Letter update initiated for ID: 251106-97103
+2025-12-01 12:48:22,743 - src.utils.helpers - INFO - update_letter executed in 0.000s
+2025-12-01 12:48:22,743 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-12-01 12:48:22,751 - __main__ - INFO - Response: 200 - archive.update_letter
+2025-12-01 12:48:22,752 - src.api.archive_routes - ERROR - Error in background update for letter ID 251106-97103: DriveLoggerService.update_letter_pdf_and_log() got an unexpected keyword argument 'include_signature'
+Traceback (most recent call last):
+  File "D:\shobbak\AutomatingLetter\src\api\archive_routes.py", line 508, in process_letter_update_in_background
+    result = drive_logger.update_letter_pdf_and_log(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: DriveLoggerService.update_letter_pdf_and_log() got an unexpected keyword argument 'include_signature'
+2025-12-01 12:48:22,752 - werkzeug - INFO - 127.0.0.1 - - [01/Dec/2025 12:48:22] "PUT /api/v1/archive/update HTTP/1.1" 200 -
+2025-12-01 12:50:50,787 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
+2025-12-01 12:50:51,470 - werkzeug - INFO -  * Restarting with stat
+2025-12-01 12:50:57,398 - werkzeug - WARNING -  * Debugger is active!
+2025-12-01 12:50:57,407 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-12-01 12:51:12,511 - __main__ - INFO - PUT http://127.0.0.1:5000/api/v1/archive/update - 127.0.0.1
+2025-12-01 12:51:12,520 - src.api.archive_routes - INFO - Starting background update for letter ID: 251106-97103
+2025-12-01 12:51:12,520 - src.api.archive_routes - INFO - Letter update initiated for ID: 251106-97103
+2025-12-01 12:51:12,520 - src.utils.helpers - INFO - update_letter executed in 0.000s
+2025-12-01 12:51:12,520 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-12-01 12:51:12,520 - __main__ - INFO - Response: 200 - archive.update_letter
+2025-12-01 12:51:12,528 - werkzeug - INFO - 127.0.0.1 - - [01/Dec/2025 12:51:12] "PUT /api/v1/archive/update HTTP/1.1" 200 -
+2025-12-01 12:51:17,470 - src.services.drive_logger - INFO - Found old file ID: 1k3NVueNXn-K1TsNtULaFsKl18yIeE5uS
+2025-12-01 12:51:17,486 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 12:51:19,671 - src.services.enhanced_pdf_service - INFO - Enhanced PDF service initialized
+2025-12-01 12:51:40,731 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-01 12:51:40,836 - src.services.enhanced_pdf_service - INFO - Debug HTML file created: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\letter_pdfs\debug_output_251201-70344.html
+2025-12-01 12:52:11,457 - src.services.enhanced_pdf_service - INFO - PDF generated successfully: 251106-97103_251201-70344.pdf (431721 bytes) in 0.00s
+2025-12-01 12:52:11,457 - src.services.drive_logger - INFO - New PDF generated for letter ID 251106-97103: 251106-97103_251201-70344.pdf
+2025-12-01 12:52:11,473 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 12:52:13,208 - src.services.drive_logger - INFO - Deleted old file from Drive: 1k3NVueNXn-K1TsNtULaFsKl18yIeE5uS
+2025-12-01 12:52:13,208 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 12:52:22,605 - src.services.google_services - INFO - Successfully updated row 128 for ID '251106-97103' in AI Letter Generating/Submissions
+2025-12-01 12:52:22,605 - src.utils.helpers - INFO - update_row_by_id executed in 5.432s
+2025-12-01 12:52:22,605 - src.services.drive_logger - INFO - Successfully updated letter 251106-97103 - replaced PDF in Drive and updated sheet entry
+2025-12-01 12:52:22,605 - src.api.archive_routes - INFO - Background update completed successfully for letter ID: 251106-97103
+2025-12-01 12:52:22,605 - src.api.archive_routes - INFO - New Drive URL: https://drive.google.com/file/d/1UG_aelB2n-7wX1c08WCzn8ly8vNLRp46/view?usp=drivesdk
+2025-12-01 12:53:44,991 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
+2025-12-01 12:53:45,644 - werkzeug - INFO -  * Restarting with stat
+2025-12-01 12:53:51,631 - werkzeug - WARNING -  * Debugger is active!
+2025-12-01 12:53:51,631 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-12-01 12:54:04,276 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
+2025-12-01 12:54:04,859 - werkzeug - INFO -  * Restarting with stat
+2025-12-01 12:54:11,340 - werkzeug - WARNING -  * Debugger is active!
+2025-12-01 12:54:11,348 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-12-01 12:54:24,212 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
+2025-12-01 12:54:24,688 - werkzeug - INFO -  * Restarting with stat
+2025-12-01 12:54:30,574 - werkzeug - WARNING -  * Debugger is active!
+2025-12-01 12:54:30,582 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-12-01 13:03:55,342 - __main__ - INFO - PUT http://127.0.0.1:5000/api/v1/archive/update - 127.0.0.1
+2025-12-01 13:03:55,349 - src.api.archive_routes - INFO - Starting background update for letter ID: 251106-97103
+2025-12-01 13:03:55,349 - src.api.archive_routes - INFO - Letter update initiated for ID: 251106-97103
+2025-12-01 13:03:55,349 - src.utils.helpers - INFO - update_letter executed in 0.000s
+2025-12-01 13:03:55,349 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-12-01 13:03:55,349 - __main__ - INFO - Response: 200 - archive.update_letter
+2025-12-01 13:03:55,349 - werkzeug - INFO - 127.0.0.1 - - [01/Dec/2025 13:03:55] "PUT /api/v1/archive/update HTTP/1.1" 200 -
+2025-12-01 13:04:00,121 - src.services.drive_logger - INFO - Found old file ID: 1UG_aelB2n-7wX1c08WCzn8ly8vNLRp46
+2025-12-01 13:04:00,138 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 13:04:01,531 - src.services.drive_logger - INFO - Generating DOCX for letter ID 251106-97103 with include_signature=True
+2025-12-01 13:04:01,531 - src.services.doc_service - INFO - Using default template path: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-12-01 13:04:02,430 - src.services.doc_service - INFO - Starting raw letter content parsing with GPT-4o
+2025-12-01 13:04:11,139 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-01 13:04:11,235 - src.services.doc_service - INFO - Letter content parsed successfully
+2025-12-01 13:04:11,235 - src.services.drive_logger - INFO - Adding signature parameters to parsed data
+2025-12-01 13:04:11,285 - src.services.doc_service - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-12-01 13:04:14,038 - src.services.doc_service - ERROR - Downloaded file is not a valid image: cannot identify image file <_io.BytesIO object at 0x000001EC69036660>
+2025-12-01 13:04:14,038 - src.services.doc_service - WARNING - Failed to download signature image, continuing without image
+2025-12-01 13:04:14,055 - src.services.doc_service - INFO - Document created successfully from JSON (Letter ID: None)
+2025-12-01 13:04:14,055 - src.services.drive_logger - ERROR - Error updating letter DOCX and log for ID 251106-97103: 'Document' object has no attribute 'filename'
+2025-12-01 13:04:14,063 - src.api.archive_routes - ERROR - Background update failed for letter ID: 251106-97103: Error updating letter DOCX and log for ID 251106-97103: 'Document' object has no attribute 'filename'
+2025-12-01 13:06:26,482 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
+2025-12-01 13:06:27,127 - werkzeug - INFO -  * Restarting with stat
+2025-12-01 13:06:33,684 - werkzeug - WARNING -  * Debugger is active!
+2025-12-01 13:06:33,704 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-12-01 13:06:39,237 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\drive_logger.py', reloading
+2025-12-01 13:06:39,776 - werkzeug - INFO -  * Restarting with stat
+2025-12-01 13:06:49,456 - werkzeug - WARNING -  * Debugger is active!
+2025-12-01 13:06:49,500 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-12-01 13:08:18,953 - __main__ - INFO - PUT http://127.0.0.1:5000/api/v1/archive/update - 127.0.0.1
+2025-12-01 13:08:18,957 - src.api.archive_routes - INFO - Starting background update for letter ID: 251106-97103
+2025-12-01 13:08:18,957 - src.api.archive_routes - INFO - Letter update initiated for ID: 251106-97103
+2025-12-01 13:08:18,957 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-12-01 13:08:18,957 - src.utils.helpers - INFO - update_letter executed in 0.004s
+2025-12-01 13:08:18,957 - __main__ - INFO - Response: 200 - archive.update_letter
+2025-12-01 13:08:18,965 - werkzeug - INFO - 127.0.0.1 - - [01/Dec/2025 13:08:18] "PUT /api/v1/archive/update HTTP/1.1" 200 -
+2025-12-01 13:08:22,590 - src.services.drive_logger - INFO - Found old file ID: 1UG_aelB2n-7wX1c08WCzn8ly8vNLRp46
+2025-12-01 13:08:22,624 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 13:08:24,125 - src.services.drive_logger - INFO - Generating DOCX for letter ID 251106-97103 with include_signature=True
+2025-12-01 13:08:24,125 - src.services.doc_service - INFO - Using default template path: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-12-01 13:08:25,070 - src.services.doc_service - INFO - Starting raw letter content parsing with GPT-4o
+2025-12-01 13:08:33,760 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-01 13:08:33,817 - src.services.doc_service - INFO - Letter content parsed successfully
+2025-12-01 13:08:33,817 - src.services.drive_logger - INFO - Adding signature parameters to parsed data
+2025-12-01 13:08:33,817 - src.services.doc_service - INFO - Document letter ID set to: 251106-97103
+2025-12-01 13:08:33,857 - src.services.doc_service - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-12-01 13:08:45,642 - src.services.doc_service - ERROR - Downloaded file is not a valid image: cannot identify image file <_io.BytesIO object at 0x000002387F42AFC0>
+2025-12-01 13:08:45,642 - src.services.doc_service - WARNING - Failed to download signature image, continuing without image
+2025-12-01 13:08:45,650 - src.services.doc_service - INFO - Document created successfully from JSON (Letter ID: 251106-97103)
+2025-12-01 13:08:45,699 - src.services.doc_service - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\letter_251106-97103.docx
+2025-12-01 13:08:45,699 - src.services.drive_logger - INFO - New DOCX generated for letter ID 251106-97103: letter_251106-97103.docx (369607 bytes)
+2025-12-01 13:08:45,715 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 13:08:48,017 - src.services.drive_logger - INFO - Deleted old file from Drive: 1UG_aelB2n-7wX1c08WCzn8ly8vNLRp46
+2025-12-01 13:08:48,033 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 13:08:57,535 - src.services.google_services - INFO - Successfully updated row 128 for ID '251106-97103' in AI Letter Generating/Submissions
+2025-12-01 13:08:57,535 - src.utils.helpers - INFO - update_row_by_id executed in 5.701s
+2025-12-01 13:08:57,535 - src.services.drive_logger - INFO - Successfully updated letter 251106-97103 - replaced DOCX in Drive and updated sheet entry
+2025-12-01 13:08:57,543 - src.api.archive_routes - INFO - Background update completed successfully for letter ID: 251106-97103
+2025-12-01 13:08:57,543 - src.api.archive_routes - INFO - New Drive URL: https://docs.google.com/document/d/1L64qXXMK2XvxsLKXKoDVGTwDsTZO8BdE/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
+2025-12-01 13:11:34,297 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_service.py', reloading
+2025-12-01 13:11:35,083 - werkzeug - INFO -  * Restarting with stat
+2025-12-01 13:11:45,533 - werkzeug - WARNING -  * Debugger is active!
+2025-12-01 13:11:45,549 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-12-01 13:12:00,370 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_service.py', reloading
+2025-12-01 13:12:00,687 - werkzeug - INFO -  * Restarting with stat
+2025-12-01 13:12:07,279 - werkzeug - WARNING -  * Debugger is active!
+2025-12-01 13:12:07,287 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-12-01 13:13:29,062 - __main__ - INFO - PUT http://127.0.0.1:5000/api/v1/archive/update - 127.0.0.1
+2025-12-01 13:13:29,062 - src.api.archive_routes - INFO - Starting background update for letter ID: 251106-97103
+2025-12-01 13:13:29,062 - src.api.archive_routes - INFO - Letter update initiated for ID: 251106-97103
+2025-12-01 13:13:29,062 - src.utils.helpers - INFO - update_letter executed in 0.000s
+2025-12-01 13:13:29,062 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-12-01 13:13:29,062 - __main__ - INFO - Response: 200 - archive.update_letter
+2025-12-01 13:13:29,067 - werkzeug - INFO - 127.0.0.1 - - [01/Dec/2025 13:13:29] "PUT /api/v1/archive/update HTTP/1.1" 200 -
+2025-12-01 13:13:33,592 - src.services.drive_logger - INFO - Found old file ID: 1L64qXXMK2XvxsLKXKoDVGTwDsTZO8BdE
+2025-12-01 13:13:33,600 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 13:13:35,435 - src.services.drive_logger - INFO - Generating DOCX for letter ID 251106-97103 with include_signature=True
+2025-12-01 13:13:35,435 - src.services.doc_service - INFO - Using default template path: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-12-01 13:13:36,157 - src.services.doc_service - INFO - Starting raw letter content parsing with GPT-4o
+2025-12-01 13:13:42,416 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-01 13:13:42,452 - src.services.doc_service - INFO - Letter content parsed successfully
+2025-12-01 13:13:42,452 - src.services.drive_logger - INFO - Adding signature parameters to parsed data
+2025-12-01 13:13:42,455 - src.services.doc_service - INFO - Document letter ID set to: 251106-97103
+2025-12-01 13:13:42,468 - src.services.doc_service - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-12-01 13:13:42,689 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 13:13:44,752 - src.services.doc_service - INFO - Successfully downloaded image via service account API (size: 545883 bytes)
+2025-12-01 13:13:44,775 - src.services.doc_service - INFO - Image validated successfully (format: PNG)
+2025-12-01 13:13:44,789 - src.services.doc_service - INFO - Document created successfully from JSON (Letter ID: 251106-97103)
+2025-12-01 13:13:44,832 - src.services.doc_service - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\letter_251106-97103.docx
+2025-12-01 13:13:44,840 - src.services.drive_logger - INFO - New DOCX generated for letter ID 251106-97103: letter_251106-97103.docx (878024 bytes)
+2025-12-01 13:13:44,844 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 13:13:45,938 - src.services.drive_logger - INFO - Deleted old file from Drive: 1L64qXXMK2XvxsLKXKoDVGTwDsTZO8BdE
+2025-12-01 13:13:45,945 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 13:13:56,901 - src.services.google_services - INFO - Successfully updated row 128 for ID '251106-97103' in AI Letter Generating/Submissions
+2025-12-01 13:13:56,901 - src.utils.helpers - INFO - update_row_by_id executed in 5.615s
+2025-12-01 13:13:56,901 - src.services.drive_logger - INFO - Successfully updated letter 251106-97103 - replaced DOCX in Drive and updated sheet entry
+2025-12-01 13:13:56,901 - src.api.archive_routes - INFO - Background update completed successfully for letter ID: 251106-97103
+2025-12-01 13:13:56,908 - src.api.archive_routes - INFO - New Drive URL: https://docs.google.com/document/d/1mTPG0uxz6XIZpMfLuWxZRpsSV8EtrxFt/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
+2025-12-01 13:18:24,931 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\services\\doc_service.py', reloading
+2025-12-01 13:18:25,427 - werkzeug - INFO -  * Restarting with stat
+2025-12-01 13:18:31,222 - werkzeug - WARNING -  * Debugger is active!
+2025-12-01 13:18:31,230 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-12-01 13:18:46,575 - __main__ - INFO - PUT http://127.0.0.1:5000/api/v1/archive/update - 127.0.0.1
+2025-12-01 13:18:46,575 - src.api.archive_routes - INFO - Starting background update for letter ID: 251106-97103
+2025-12-01 13:18:46,575 - src.api.archive_routes - INFO - Letter update initiated for ID: 251106-97103
+2025-12-01 13:18:46,575 - src.services.drive_logger - INFO - Drive Logger service initialized
+2025-12-01 13:18:46,583 - src.utils.helpers - INFO - update_letter executed in 0.000s
+2025-12-01 13:18:46,583 - __main__ - INFO - Response: 200 - archive.update_letter
+2025-12-01 13:18:46,584 - werkzeug - INFO - 127.0.0.1 - - [01/Dec/2025 13:18:46] "PUT /api/v1/archive/update HTTP/1.1" 200 -
+2025-12-01 13:18:50,608 - src.services.drive_logger - INFO - Found old file ID: 1mTPG0uxz6XIZpMfLuWxZRpsSV8EtrxFt
+2025-12-01 13:18:50,616 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 13:18:51,874 - src.services.drive_logger - INFO - Generating DOCX for letter ID 251106-97103 with include_signature=True
+2025-12-01 13:18:51,874 - src.services.doc_service - INFO - Using default template path: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-12-01 13:18:52,424 - src.services.doc_service - INFO - Starting raw letter content parsing with GPT-4o
+2025-12-01 13:18:56,923 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-01 13:18:56,972 - src.services.doc_service - INFO - Letter content parsed successfully
+2025-12-01 13:18:56,972 - src.services.drive_logger - INFO - Adding signature parameters to parsed data
+2025-12-01 13:18:56,972 - src.services.doc_service - INFO - Document letter ID set to: 251106-97103
+2025-12-01 13:18:56,989 - src.services.doc_service - INFO - Template loaded successfully from: D:\shobbak\AutomatingLetter\LetterToPdf\templates\Netzero.docx
+2025-12-01 13:18:57,201 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 13:18:59,012 - src.services.doc_service - INFO - Successfully downloaded image via service account API (size: 545883 bytes)
+2025-12-01 13:18:59,052 - src.services.doc_service - INFO - Image validated successfully (format: PNG)
+2025-12-01 13:18:59,052 - src.services.doc_service - INFO - Document created successfully from JSON (Letter ID: 251106-97103)
+2025-12-01 13:18:59,102 - src.services.doc_service - INFO - Document saved successfully to: C:\Users\ZIAD~1.ABD\AppData\Local\Temp\letter_251106-97103.docx
+2025-12-01 13:18:59,102 - src.services.drive_logger - INFO - New DOCX generated for letter ID 251106-97103: letter_251106-97103.docx (878010 bytes)
+2025-12-01 13:18:59,110 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 13:19:00,632 - src.services.drive_logger - INFO - Deleted old file from Drive: 1mTPG0uxz6XIZpMfLuWxZRpsSV8EtrxFt
+2025-12-01 13:19:00,640 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-12-01 13:19:09,442 - src.services.google_services - INFO - Successfully updated row 128 for ID '251106-97103' in AI Letter Generating/Submissions
+2025-12-01 13:19:09,442 - src.utils.helpers - INFO - update_row_by_id executed in 3.705s
+2025-12-01 13:19:09,442 - src.services.drive_logger - INFO - Successfully updated letter 251106-97103 - replaced DOCX in Drive and updated sheet entry
+2025-12-01 13:19:09,447 - src.api.archive_routes - INFO - Background update completed successfully for letter ID: 251106-97103
+2025-12-01 13:19:09,447 - src.api.archive_routes - INFO - New Drive URL: https://docs.google.com/document/d/1JJAuYQki_RL23vxgvTEExr_8b9O4l7Xl/edit?usp=drivesdk&ouid=110299286448075581316&rtpof=true&sd=true
+2025-12-01 13:32:56,430 - werkzeug - INFO -  * Detected change in 'D:\\shobbak\\AutomatingLetter\\src\\api\\whatsapp_routes.py', reloading
+2025-12-01 13:32:57,253 - werkzeug - INFO -  * Restarting with stat
+2025-12-01 13:33:02,979 - werkzeug - WARNING -  * Debugger is active!
+2025-12-01 13:33:02,987 - werkzeug - INFO -  * Debugger PIN: 129-536-069
