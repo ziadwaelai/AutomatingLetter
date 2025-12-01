@@ -7761,3 +7761,20 @@ TypeError: DriveLoggerService.update_letter_pdf_and_log() got an unexpected keyw
 2025-12-01 13:32:57,253 - werkzeug - INFO -  * Restarting with stat
 2025-12-01 13:33:02,979 - werkzeug - WARNING -  * Debugger is active!
 2025-12-01 13:33:02,987 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-12-01 20:40:57,379 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.11:5000
+2025-12-01 20:40:57,379 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-01 20:40:57,383 - werkzeug - INFO -  * Restarting with stat
+2025-12-01 20:41:00,030 - werkzeug - WARNING -  * Debugger is active!
+2025-12-01 20:41:00,034 - werkzeug - INFO -  * Debugger PIN: 129-536-069
+2025-12-01 20:41:49,511 - __main__ - INFO - GET http://127.0.0.1:5000/api/v1/whatsapp/assigned-letter/201123808495 - 127.0.0.1
+2025-12-01 20:41:49,513 - src.api.whatsapp_routes - INFO - Getting assigned letter_id for phone number: 201123808495
+2025-12-01 20:41:53,354 - src.api.whatsapp_routes - INFO - Found assigned letter_id 251106-97103 for phone number 201123808495
+2025-12-01 20:41:53,354 - src.utils.helpers - INFO - get_assigned_letter_id executed in 3.843s
+2025-12-01 20:41:53,354 - __main__ - INFO - Response: 200 - whatsapp.get_assigned_letter_id
+2025-12-01 20:41:53,356 - werkzeug - INFO - 127.0.0.1 - - [01/Dec/2025 20:41:53] "GET /api/v1/whatsapp/assigned-letter/201123808495 HTTP/1.1" 200 -
+2025-12-01 20:41:53,505 - __main__ - INFO - GET http://127.0.0.1:5000/favicon.ico - 127.0.0.1
+2025-12-01 20:41:53,506 - __main__ - INFO - Response: 404 - None
+2025-12-01 20:41:53,506 - werkzeug - INFO - 127.0.0.1 - - [01/Dec/2025 20:41:53] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
