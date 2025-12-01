@@ -397,7 +397,8 @@ def get_assigned_letter_id(phone_number: str):
         phone_number: Phone number to check
 
     Returns:
-        Assigned letter ID, Title, Sign (signature info) or error message
+        Assigned letter ID, Name, Title (from WhatsApp sheet with fallback to Submissions),
+        Sign URL (from WhatsApp sheet) or error message
     """
     with ErrorContext("get_assigned_letter_id"):
         try:
@@ -422,11 +423,15 @@ def get_assigned_letter_id(phone_number: str):
                 # Find the record with matching phone number
                 assigned_letter_id = None
                 name = None
+                sign = None
+                title_from_whatsapp = None
 
                 for record in whatsapp_records:
                     if str(record.get('Number', '')).strip() == str(phone_number).strip():
                         assigned_letter_id = str(record.get('Letter_Id', '')).strip()
                         name = str(record.get('Name', '')).strip()
+                        sign = str(record.get('Sign', '')).strip()
+                        title_from_whatsapp = str(record.get('Title', '')).strip()
                         break
 
                 if assigned_letter_id is None:
@@ -442,32 +447,32 @@ def get_assigned_letter_id(phone_number: str):
                         "phone_number": phone_number,
                         "name": name,
                         "assigned_letter_id": None,
-                        "title": None,
-                        "sign": None,
+                        "title": title_from_whatsapp if title_from_whatsapp else None,
+                        "sign": sign if sign else None,
                         "is_assigned": False
                     }), 200
 
                 logger.info(f"Found assigned letter_id {assigned_letter_id} for phone number {phone_number}")
 
-                # Fetch Title and Sign from Submissions sheet
-                title = None
-                sign = None
+                # Fetch Title from Submissions sheet as fallback
+                title = title_from_whatsapp  # Use WhatsApp sheet title first
 
-                try:
-                    submissions_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("Submissions")
-                    submissions_records = submissions_worksheet.get_all_records()
+                # If no title in WhatsApp sheet, try to get it from Submissions sheet
+                if not title:
+                    try:
+                        submissions_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("Submissions")
+                        submissions_records = submissions_worksheet.get_all_records()
 
-                    # Find the record with matching letter ID
-                    for submission in submissions_records:
-                        if str(submission.get('ID', '')).strip() == str(assigned_letter_id).strip():
-                            title = str(submission.get('Title', '')).strip()
-                            sign = str(submission.get('Sign', '')).strip()
-                            logger.info(f"Found Title: {title}, Sign: {sign} for letter_id {assigned_letter_id}")
-                            break
+                        # Find the record with matching letter ID
+                        for submission in submissions_records:
+                            if str(submission.get('ID', '')).strip() == str(assigned_letter_id).strip():
+                                title = str(submission.get('Title', '')).strip()
+                                logger.info(f"Found Title from Submissions: {title} for letter_id {assigned_letter_id}")
+                                break
 
-                except Exception as submissions_error:
-                    logger.warning(f"Could not fetch Title/Sign from Submissions sheet: {submissions_error}")
-                    # Continue with None values if we can't fetch from Submissions
+                    except Exception as submissions_error:
+                        logger.warning(f"Could not fetch Title from Submissions sheet: {submissions_error}")
+                        # Continue with None value if we can't fetch from Submissions
 
                 return jsonify({
                     "message": "Letter assignment found",
