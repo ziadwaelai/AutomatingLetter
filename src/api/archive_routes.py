@@ -438,7 +438,17 @@ def update_letter():
             # Start background processing
             background_thread = threading.Thread(
                 target=process_letter_update_in_background,
-                args=(update_request.letter_id, update_request.content, update_request.template, folder_id)
+                args=(
+                    update_request.letter_id,
+                    update_request.content,
+                    update_request.template,
+                    folder_id,
+                    update_request.include_signature,
+                    update_request.signature_image_url,
+                    update_request.signature_name,
+                    update_request.signature_job_title,
+                    update_request.signature_section_title
+                )
             )
             background_thread.daemon = True
             background_thread.start()
@@ -464,39 +474,55 @@ def update_letter():
 
 def process_letter_update_in_background(
     letter_id: str,
-    new_content: str, 
+    new_content: str,
     template: str,
-    folder_id: str
+    folder_id: str,
+    include_signature: bool = False,
+    signature_image_url: str = None,
+    signature_name: str = None,
+    signature_job_title: str = None,
+    signature_section_title: str = "التوقيع"
 ) -> None:
     """
     Process letter update in background thread.
-    
+
     Args:
         letter_id: ID of the letter to update
         new_content: New letter content
         template: Template name for PDF generation
         folder_id: Google Drive folder ID
+        include_signature: Whether to include signature section (default: False)
+        signature_image_url: Google Drive URL for signature image (optional)
+        signature_name: Name of the signer (optional)
+        signature_job_title: Job title of the signer (optional)
+        signature_section_title: Custom signature section title (default: "التوقيع")
     """
     try:
         logger.info(f"Starting background update for letter ID: {letter_id}")
-        
+        logger.debug(f"[BACKGROUND] DEBUG: include_signature={include_signature}")
+
         # Get drive logger service
         drive_logger = get_drive_logger_service()
-        
+
         # Update letter: generate new PDF, upload to Drive, and update sheet
         result = drive_logger.update_letter_pdf_and_log(
             letter_id=letter_id,
             new_content=new_content,
             folder_id=folder_id,
-            template=template
+            template=template,
+            include_signature=include_signature,
+            signature_image_url=signature_image_url,
+            signature_name=signature_name,
+            signature_job_title=signature_job_title,
+            signature_section_title=signature_section_title
         )
-        
+
         if result["status"] == "success":
             logger.info(f"Background update completed successfully for letter ID: {letter_id}")
             logger.info(f"New Drive URL: {result.get('file_url', 'N/A')}")
         else:
             logger.error(f"Background update failed for letter ID: {letter_id}: {result.get('message', 'Unknown error')}")
-            
+
     except Exception as e:
         logger.error(f"Error in background update for letter ID {letter_id}: {str(e)}", exc_info=True)
 

@@ -11,6 +11,8 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from dotenv import load_dotenv
+import requests
+from PIL import Image
 
 # Load environment variables from .env file
 load_dotenv()
@@ -210,6 +212,11 @@ class CreateDocument:
                        - date: Document date
                        - body: Main content of the document
                        - footer: Footer text (optional)
+                       - include_signature: Boolean flag to include signature section (optional)
+                       - signature_image_url: Google Drive URL for signature image (required if include_signature=True)
+                       - signature_name: Name of the signer (required if include_signature=True)
+                       - signature_job_title: Job title of the signer (required if include_signature=True)
+                       - signature_section_title: Custom title for signature section (optional, default: "التوقيع")
             letter_id: Optional letter ID to embed in the document (LET-YYYYMMDD-XXXXX format)
 
         Returns:
@@ -263,6 +270,28 @@ class CreateDocument:
         # Add footer if provided
         if data.get('footer'):
             self.add_footer(data['footer'])
+
+        # Add signature section if requested
+        if data.get('include_signature', False):
+            signature_image_url = data.get('signature_image_url', '').strip()
+            signature_name = data.get('signature_name', '').strip()
+            signature_job_title = data.get('signature_job_title', '').strip()
+            signature_section_title = data.get('signature_section_title', 'التوقيع').strip()
+
+            # Validate signature fields
+            if not signature_image_url or not signature_name or not signature_job_title:
+                logger.warning(
+                    "include_signature is True but missing required signature fields "
+                    "(signature_image_url, signature_name, signature_job_title). Skipping signature section."
+                )
+            else:
+                # Add signature section
+                self.add_signature_section(
+                    signature_image_url=signature_image_url,
+                    job_title=signature_job_title,
+                    name=signature_name,
+                    section_title=signature_section_title
+                )
 
         logger.info(f"Document created successfully from JSON (Letter ID: {self.letter_id})")
         return self.document
@@ -445,11 +474,214 @@ class CreateDocument:
 
         run = para.add_run(footer)
         run.font.size = Pt(15)
-        run.font.rtl = True 
+        run.font.rtl = True
         run.font.name = 'Tajawal'
         run.font.italic = True
 
         logger.debug("Footer added to document")
+
+    def _download_image_from_drive_url(self, drive_url: str) -> Optional[BytesIO]:
+        """
+        Download image from Google Drive URL and return as BytesIO.
+        Tries two methods: 1) Service account API, 2) Public URL download
+
+        Args:
+            drive_url: Google Drive direct link or share link
+
+        Returns:
+            BytesIO object containing the image, or None if download fails
+        """
+        try:
+            # Extract file ID from URL
+            file_id = None
+
+            if 'drive.google.com' in drive_url:
+                if '/file/d/' in drive_url:
+                    # Format: https://drive.google.com/file/d/FILE_ID/view
+                    file_id = drive_url.split('/file/d/')[1].split('/')[0]
+                elif '/document/d/' in drive_url or '/d/' in drive_url:
+                    # Format: https://docs.google.com/document/d/FILE_ID/edit or /d/FILE_ID/
+                    file_id = drive_url.split('/d/')[1].split('/')[0]
+                elif 'id=' in drive_url:
+                    # Format: https://drive.google.com/uc?id=FILE_ID
+                    file_id = drive_url.split('id=')[1].split('&')[0]
+
+            if not file_id:
+                logger.error(f"Could not extract file ID from URL: {drive_url}")
+                return None
+
+            logger.debug(f"Extracted file ID: {file_id}")
+
+            # Method 1: Try using service account API (more reliable)
+            try:
+                from google.oauth2 import service_account
+                from googleapiclient.discovery import build
+                from googleapiclient.http import MediaIoBaseDownload
+
+                service_account_file = 'automating-letter-creations.json'
+                scopes = ['https://www.googleapis.com/auth/drive.readonly']
+
+                creds = service_account.Credentials.from_service_account_file(
+                    service_account_file, scopes=scopes
+                )
+                drive_service = build('drive', 'v3', credentials=creds)
+
+                # Download file using Drive API
+                request = drive_service.files().get_media(fileId=file_id)
+                image_bytes = BytesIO()
+                downloader = MediaIoBaseDownload(image_bytes, request)
+
+                done = False
+                while not done:
+                    status, done = downloader.next_chunk()
+
+                image_bytes.seek(0)
+                logger.info(f"Successfully downloaded image via service account API (size: {len(image_bytes.getvalue())} bytes)")
+
+                # Validate it's an image
+                try:
+                    img = Image.open(image_bytes)
+                    img.verify()
+                    image_bytes.seek(0)
+                    logger.info(f"Image validated successfully (format: {img.format})")
+                    return image_bytes
+                except Exception as e:
+                    logger.error(f"Downloaded file via API is not a valid image: {e}")
+                    return None
+
+            except Exception as api_error:
+                logger.warning(f"Service account API download failed: {api_error}. Trying public URL method...")
+
+            # Method 2: Try public URL download
+            if 'drive.google.com' in drive_url:
+                if file_id:
+                    # Create direct download link
+                    download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
+                else:
+                    download_url = drive_url
+            else:
+                download_url = drive_url
+
+            logger.debug(f"Downloading image from: {download_url}")
+
+            # Download the image
+            response = requests.get(download_url, timeout=30)
+            response.raise_for_status()
+
+            # Log response details for debugging
+            logger.debug(f"Response status: {response.status_code}")
+            logger.debug(f"Response content-type: {response.headers.get('content-type', 'unknown')}")
+            logger.debug(f"Response content length: {len(response.content)} bytes")
+
+            # Check if response is HTML (common issue with Google Drive)
+            if 'text/html' in response.headers.get('content-type', ''):
+                logger.error(f"Received HTML instead of image. Google Drive may require authentication or different URL format.")
+                logger.debug(f"First 500 chars of response: {response.text[:500]}")
+                return None
+
+            # Verify it's an image
+            image_bytes = BytesIO(response.content)
+
+            # Try to open with PIL to validate it's an image
+            try:
+                img = Image.open(image_bytes)
+                img.verify()
+                logger.info(f"Image downloaded successfully (format: {img.format}, size: {img.size})")
+            except Exception as e:
+                logger.error(f"Downloaded file is not a valid image: {e}")
+                logger.debug(f"First 100 bytes (hex): {response.content[:100].hex()}")
+                return None
+
+            # Reset BytesIO position
+            image_bytes.seek(0)
+            return image_bytes
+
+        except Exception as e:
+            logger.error(f"Failed to download image from Drive URL: {e}")
+            return None
+
+    def add_signature_section(
+        self,
+        signature_image_url: str,
+        job_title: str,
+        name: str,
+        section_title: str = "التوقيع"
+    ) -> bool:
+        """
+        Add a signature section to the document with job title, image, and name.
+        Layout: Left-aligned, Order: job_title → image → name
+
+        Args:
+            signature_image_url: Google Drive URL of the signature image
+            job_title: Job title of the signer
+            name: Name of the signer
+            section_title: Title for the signature section (not used in new layout)
+
+        Returns:
+            True if signature section added successfully, False otherwise
+        """
+        try:
+            logger.info(f"Adding signature section for: {name} ({job_title})")
+
+            # Add spacing before signature section
+            spacing_para = self.document.add_paragraph()
+            spacing_para.paragraph_format.space_before = Pt(18)
+            spacing_para.paragraph_format.space_after = Pt(6)
+
+            # Add job title first (left-aligned)
+            job_para = self.document.add_paragraph()
+            job_para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+            job_run = job_para.add_run(job_title)
+            job_run.font.size = Pt(14)
+            job_run.font.bold = True
+            job_run.font.name = 'Tajawal'
+            job_para.paragraph_format.space_before = Pt(0)
+            job_para.paragraph_format.space_after = Pt(6)
+
+            # Download and add signature image
+            image_bytes = self._download_image_from_drive_url(signature_image_url)
+
+            if image_bytes:
+                # Add image paragraph (left-aligned)
+                image_para = self.document.add_paragraph()
+                image_para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+
+                # Add image with larger size (3 inches width)
+                image_run = image_para.add_run()
+                image_run.add_picture(image_bytes, width=Inches(3.0))
+
+                image_para.paragraph_format.space_before = Pt(0)
+                image_para.paragraph_format.space_after = Pt(6)
+
+                logger.debug("Signature image added successfully")
+            else:
+                logger.warning("Failed to download signature image, continuing without image")
+                # Add a placeholder text if image fails (left-aligned)
+                placeholder_para = self.document.add_paragraph()
+                placeholder_para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+                placeholder_run = placeholder_para.add_run("[صورة التوقيع]")
+                placeholder_run.font.size = Pt(12)
+                placeholder_run.font.italic = True
+                placeholder_run.font.name = 'Tajawal'
+                placeholder_para.paragraph_format.space_before = Pt(0)
+                placeholder_para.paragraph_format.space_after = Pt(6)
+
+            # Add name last (left-aligned)
+            name_para = self.document.add_paragraph()
+            name_para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+            name_run = name_para.add_run(name)
+            name_run.font.size = Pt(14)
+            name_run.font.bold = True
+            name_run.font.name = 'Tajawal'
+            name_para.paragraph_format.space_before = Pt(0)
+            name_para.paragraph_format.space_after = Pt(12)
+
+            logger.info(f"Signature section added successfully for {name}")
+            return True
+
+        except Exception as e:
+            logger.error(f"Failed to add signature section: {e}")
+            return False
 
     def save(self, output_path: str) -> str:
         """
