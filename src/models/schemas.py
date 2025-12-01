@@ -114,7 +114,14 @@ class UpdateLetterRequest(BaseModel):
     letter_id: str = Field(..., min_length=1, max_length=50, description="ID of the letter to update")
     content: str = Field(..., min_length=10, max_length=5000, description="New letter content")
     template: str = Field(default="default_template", max_length=100, description="Template to use for PDF generation")
-    
+
+    # Signature section parameters (optional)
+    include_signature: bool = Field(default=False, description="Whether to include signature section")
+    signature_image_url: Optional[str] = Field(None, max_length=500, description="Google Drive URL for signature image")
+    signature_name: Optional[str] = Field(None, max_length=200, description="Name of the signer")
+    signature_job_title: Optional[str] = Field(None, max_length=200, description="Job title of the signer")
+    signature_section_title: Optional[str] = Field(default="التوقيع", max_length=100, description="Custom signature section title")
+
     @validator('letter_id')
     def validate_letter_id(cls, v):
         """Validate letter ID format."""
@@ -125,7 +132,7 @@ class UpdateLetterRequest(BaseModel):
         if len(v.strip()) > 50:
             raise ValueError('رقم الخطاب طويل جداً')
         return v.strip()
-    
+
     @validator('content')
     def validate_content(cls, v):
         """Validate letter content."""

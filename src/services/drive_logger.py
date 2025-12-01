@@ -231,23 +231,33 @@ class DriveLoggerService:
                                   folder_id: str,
                                   template: str = "default_template",
                                   spreadsheet_name: str = "AI Letter Generating",
-                                  worksheet_name: str = "Submissions") -> Dict[str, Any]:
+                                  worksheet_name: str = "Submissions",
+                                  include_signature: bool = False,
+                                  signature_image_url: str = None,
+                                  signature_name: str = None,
+                                  signature_job_title: str = None,
+                                  signature_section_title: str = "التوقيع") -> Dict[str, Any]:
         """
-        Update an existing letter: regenerate PDF, replace old file in Drive, and update Google Sheets.
-        
+        Update an existing letter: regenerate DOCX, replace old file in Drive, and update Google Sheets.
+
         Args:
             letter_id: ID of the letter to update
             new_content: New letter content
             folder_id: Google Drive folder ID
-            template: Template name for PDF generation
+            template: Template name for DOCX generation
             spreadsheet_name: Name of the spreadsheet
             worksheet_name: Name of the worksheet
-            
+            include_signature: Whether to include signature section (default: False)
+            signature_image_url: Google Drive URL for signature image (optional)
+            signature_name: Name of the signer (optional)
+            signature_job_title: Job title of the signer (optional)
+            signature_section_title: Custom signature section title (default: "التوقيع")
+
         Returns:
             Result dictionary with file info and update result
         """
         try:
-            from .enhanced_pdf_service import get_enhanced_pdf_service
+            from .doc_service import get_enhanced_docx_service
             from google.oauth2 import service_account
             from googleapiclient.discovery import build
             
@@ -292,22 +302,44 @@ class DriveLoggerService:
                         
                     except Exception as e:
                         logger.warning(f"Could not get original filename: {e}")
-                        original_filename = f"letter_{letter_id}.pdf"
-                
+                        original_filename = f"letter_{letter_id}.docx"
+
             except Exception as e:
                 logger.warning(f"Could not retrieve old file info: {e}")
-                original_filename = f"letter_{letter_id}.pdf"
-            
-            # Generate new PDF
-            pdf_service = get_enhanced_pdf_service()
-            pdf_result = pdf_service.generate_pdf(
-                title=letter_id,  # Use just the ID for cleaner filename
-                content=new_content,
-                template_name=template
-            )
-            
-            logger.info(f"New PDF generated for letter ID {letter_id}: {pdf_result.filename}")
-            
+                original_filename = f"letter_{letter_id}.docx"
+
+            # Generate new DOCX with signature support
+            logger.info(f"Generating DOCX for letter ID {letter_id} with include_signature={include_signature}")
+
+            docx_service = get_enhanced_docx_service()
+
+            # Parse the raw letter content with GPT-4o
+            parsed_data = docx_service._parse_raw_letter_content(new_content)
+
+            # Add signature parameters if requested
+            if include_signature:
+                logger.info(f"Adding signature parameters to parsed data")
+                parsed_data['include_signature'] = True
+                parsed_data['signature_image_url'] = signature_image_url
+                parsed_data['signature_name'] = signature_name
+                parsed_data['signature_job_title'] = signature_job_title
+                parsed_data['signature_section_title'] = signature_section_title
+
+            # Add template to parsed data
+            parsed_data['template'] = template
+
+            # Generate DOCX document from parsed data (returns Document object, stored in docx_service)
+            docx_service.create_from_json(parsed_data, letter_id=letter_id)
+
+            # Save DOCX to temporary file
+            temp_docx_path = os.path.join(tempfile.gettempdir(), f"letter_{letter_id}.docx")
+            saved_path = docx_service.save(temp_docx_path)
+
+            # Get file size
+            file_size = os.path.getsize(saved_path)
+
+            logger.info(f"New DOCX generated for letter ID {letter_id}: {os.path.basename(saved_path)} ({file_size} bytes)")
+
             # Delete old file from Drive if we found it
             if old_file_id:
                 try:
@@ -319,11 +351,11 @@ class DriveLoggerService:
                     logger.info(f"Deleted old file from Drive: {old_file_id}")
                 except Exception as e:
                     logger.warning(f"Could not delete old file {old_file_id}: {e}")
-            
-            # Upload new PDF with original filename (or generate one if not found)
-            filename = original_filename if original_filename else f"letter_{letter_id}.pdf"
-            file_id, file_url = self.upload_file_to_drive(pdf_result.file_path, folder_id, filename, make_public=False)
-            
+
+            # Upload new DOCX with original filename (or generate one if not found)
+            filename = original_filename if original_filename else f"letter_{letter_id}.docx"
+            file_id, file_url = self.upload_file_to_drive(saved_path, folder_id, filename, make_public=False)
+
             # Update the row in Google Sheets with new content and URL
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             updates = {
@@ -331,22 +363,22 @@ class DriveLoggerService:
                 "URL": file_url,
                 "Timestamp": timestamp  # Update timestamp to reflect when it was updated
             }
-            
+
             update_result = self.sheets_service.update_row_by_id(
                 spreadsheet_name=spreadsheet_name,
                 worksheet_name=worksheet_name,
                 letter_id=letter_id,
                 updates=updates
             )
-            
-            # Clean up temporary PDF file
+
+            # Clean up temporary DOCX file
             try:
-                self.cleanup_temp_file(pdf_result.file_path)
+                self.cleanup_temp_file(saved_path)
             except Exception as cleanup_error:
                 logger.warning(f"Error cleaning up temporary file for {letter_id}: {cleanup_error}")
-            
-            logger.info(f"Successfully updated letter {letter_id} - replaced PDF in Drive and updated sheet entry")
-            
+
+            logger.info(f"Successfully updated letter {letter_id} - replaced DOCX in Drive and updated sheet entry")
+
             return {
                 "status": "success",
                 "letter_id": letter_id,
@@ -356,15 +388,14 @@ class DriveLoggerService:
                 "old_file_deleted": old_file_id is not None,
                 "old_file_id": old_file_id,
                 "update_result": update_result,
-                "pdf_info": {
-                    "pdf_id": pdf_result.pdf_id,
-                    "file_size": pdf_result.file_size,
-                    "generated_at": pdf_result.generated_at.isoformat()
+                "docx_info": {
+                    "file_size": file_size,
+                    "generated_at": timestamp
                 }
             }
-            
+
         except Exception as e:
-            error_message = f"Error updating letter PDF and log for ID {letter_id}: {str(e)}"
+            error_message = f"Error updating letter DOCX and log for ID {letter_id}: {str(e)}"
             logger.error(error_message)
             return {
                 "status": "error",

@@ -391,13 +391,13 @@ def get_letter_by_id(letter_id: str):
 @measure_performance
 def get_assigned_letter_id(phone_number: str):
     """
-    Get assigned letter ID by phone number from WhatsApp sheet.
+    Get assigned letter ID, Title, and Sign by phone number from WhatsApp sheet.
 
     Args:
         phone_number: Phone number to check
 
     Returns:
-        Assigned letter ID or error message
+        Assigned letter ID, Title, Sign (signature info) or error message
     """
     with ErrorContext("get_assigned_letter_id"):
         try:
@@ -442,16 +442,40 @@ def get_assigned_letter_id(phone_number: str):
                         "phone_number": phone_number,
                         "name": name,
                         "assigned_letter_id": None,
+                        "title": None,
+                        "sign": None,
                         "is_assigned": False
                     }), 200
 
                 logger.info(f"Found assigned letter_id {assigned_letter_id} for phone number {phone_number}")
+
+                # Fetch Title and Sign from Submissions sheet
+                title = None
+                sign = None
+
+                try:
+                    submissions_worksheet = sheets_service.client.open(sheets_service.config.database.spreadsheet_name).worksheet("Submissions")
+                    submissions_records = submissions_worksheet.get_all_records()
+
+                    # Find the record with matching letter ID
+                    for submission in submissions_records:
+                        if str(submission.get('ID', '')).strip() == str(assigned_letter_id).strip():
+                            title = str(submission.get('Title', '')).strip()
+                            sign = str(submission.get('Sign', '')).strip()
+                            logger.info(f"Found Title: {title}, Sign: {sign} for letter_id {assigned_letter_id}")
+                            break
+
+                except Exception as submissions_error:
+                    logger.warning(f"Could not fetch Title/Sign from Submissions sheet: {submissions_error}")
+                    # Continue with None values if we can't fetch from Submissions
 
                 return jsonify({
                     "message": "Letter assignment found",
                     "phone_number": phone_number,
                     "name": name,
                     "assigned_letter_id": assigned_letter_id,
+                    "title": title if title else None,
+                    "sign": sign if sign else None,
                     "is_assigned": True
                 }), 200
 
