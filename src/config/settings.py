@@ -20,7 +20,7 @@ class DatabaseConfig:
     logs_worksheet: str = "Logs"
     instructions_worksheet: str = "Instructions"
     ideal_worksheet: str = "Ideal"
-    info_worksheet: str = "Info"
+    info_worksheet: str = "Poc"
     intro_worksheet: str = "Intro"
 
 @dataclass
