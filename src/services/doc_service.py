@@ -672,10 +672,10 @@ class CreateDocument:
             image_bytes = self._download_image_from_drive_url(signature_image_url)
 
             if image_bytes:
-                # Add image paragraph (left-aligned with 0.5 inch indent)
+                # Add image paragraph (left-aligned with no indent)
                 image_para = self.document.add_paragraph()
                 image_para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-                image_para.paragraph_format.left_indent = Inches(0.5)  # 0.5 inch left indent
+                image_para.paragraph_format.left_indent = Inches(0)  # No indent, align at zero
 
                 # Add image with 1.81 inches width (height auto)
                 image_run = image_para.add_run()
