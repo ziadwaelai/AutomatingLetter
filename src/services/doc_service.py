@@ -657,9 +657,10 @@ class CreateDocument:
             spacing_para.paragraph_format.space_before = Pt(18)
             spacing_para.paragraph_format.space_after = Pt(6)
 
-            # Add job title first (left-aligned)
+            # Add job title first (left-aligned with 0.5 inch indent)
             job_para = self.document.add_paragraph()
             job_para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+            job_para.paragraph_format.left_indent = Inches(0.5)  # 0.5 inch left indent
             job_run = job_para.add_run(job_title)
             job_run.font.size = Pt(14)
             job_run.font.bold = True
@@ -671,13 +672,14 @@ class CreateDocument:
             image_bytes = self._download_image_from_drive_url(signature_image_url)
 
             if image_bytes:
-                # Add image paragraph (left-aligned)
+                # Add image paragraph (left-aligned with 0.5 inch indent)
                 image_para = self.document.add_paragraph()
                 image_para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+                image_para.paragraph_format.left_indent = Inches(0.5)  # 0.5 inch left indent
 
-                # Add image with larger size (3 inches width)
+                # Add image with 1.81 inches width (height auto)
                 image_run = image_para.add_run()
-                image_run.add_picture(image_bytes, width=Inches(3.0))
+                image_run.add_picture(image_bytes, width=Inches(1.81))
 
                 image_para.paragraph_format.space_before = Pt(0)
                 image_para.paragraph_format.space_after = Pt(6)
@@ -685,9 +687,10 @@ class CreateDocument:
                 logger.debug("Signature image added successfully")
             else:
                 logger.warning("Failed to download signature image, continuing without image")
-                # Add a placeholder text if image fails (left-aligned)
+                # Add a placeholder text if image fails (left-aligned with 0.5 inch indent)
                 placeholder_para = self.document.add_paragraph()
                 placeholder_para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+                placeholder_para.paragraph_format.left_indent = Inches(0.5)  # 0.5 inch left indent
                 placeholder_run = placeholder_para.add_run("[صورة التوقيع]")
                 placeholder_run.font.size = Pt(12)
                 placeholder_run.font.italic = True
@@ -695,9 +698,10 @@ class CreateDocument:
                 placeholder_para.paragraph_format.space_before = Pt(0)
                 placeholder_para.paragraph_format.space_after = Pt(6)
 
-            # Add name last (left-aligned)
+            # Add name last (left-aligned with 0.5 inch indent)
             name_para = self.document.add_paragraph()
             name_para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+            name_para.paragraph_format.left_indent = Inches(0.5)  # 0.5 inch left indent
             name_run = name_para.add_run(name)
             name_run.font.size = Pt(14)
             name_run.font.bold = True
