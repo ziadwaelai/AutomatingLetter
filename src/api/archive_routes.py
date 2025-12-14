@@ -73,16 +73,29 @@ def archive_letter():
         )
         background_thread.daemon = True
         background_thread.start()
-        
-        # Return immediate success response
-        response = ArchiveResponse(
-            status="success",
-            message=f"Letter archiving started for ID: {letter_id}",
-            processing="background",
-            letter_id=letter_id
-        )
-        
-        logger.info(f"Letter archiving initiated for ID: {letter_id}")
+
+        # Wait for background thread to complete (up to 15 seconds)
+        # This ensures the letter is fully archived to Google Drive and Sheets before returning success
+        logger.info(f"Waiting for background archiving to complete for letter ID: {letter_id}")
+        background_thread.join(timeout=15)
+
+        if background_thread.is_alive():
+            logger.warning(f"Background archiving still running after 15s for letter ID: {letter_id}")
+            response = ArchiveResponse(
+                status="processing",
+                message=f"Letter archiving is taking longer than expected for ID: {letter_id}",
+                processing="background",
+                letter_id=letter_id
+            )
+        else:
+            logger.info(f"Background archiving completed successfully for letter ID: {letter_id}")
+            response = ArchiveResponse(
+                status="success",
+                message=f"Letter archived successfully for ID: {letter_id}",
+                processing="completed",
+                letter_id=letter_id
+            )
+
         return jsonify(response.model_dump()), 200
         
     except ValidationError as e:
@@ -207,15 +220,28 @@ def archive_letter_docx():
         background_thread.daemon = False
         background_thread.start()
 
-        # Return immediate success response
-        response = ArchiveResponse(
-            status="success",
-            message=f"Letter DOCX archiving started for ID: {letter_id}",
-            processing="background",
-            letter_id=letter_id
-        )
+        # Wait for background thread to complete (up to 15 seconds)
+        # This ensures the DOCX is fully generated and uploaded before returning success
+        logger.info(f"Waiting for background DOCX archiving to complete for letter ID: {letter_id}")
+        background_thread.join(timeout=15)
 
-        logger.info(f"Letter DOCX archiving initiated for ID: {letter_id}")
+        if background_thread.is_alive():
+            logger.warning(f"Background DOCX archiving still running after 15s for letter ID: {letter_id}")
+            response = ArchiveResponse(
+                status="processing",
+                message=f"Letter DOCX archiving is taking longer than expected for ID: {letter_id}",
+                processing="background",
+                letter_id=letter_id
+            )
+        else:
+            logger.info(f"Background DOCX archiving completed successfully for letter ID: {letter_id}")
+            response = ArchiveResponse(
+                status="success",
+                message=f"Letter DOCX archived successfully for ID: {letter_id}",
+                processing="completed",
+                letter_id=letter_id
+            )
+
         return jsonify(response.model_dump()), 200
 
     except ValidationError as e:
@@ -452,17 +478,31 @@ def update_letter():
             )
             background_thread.daemon = True
             background_thread.start()
-            
-            # Return immediate success response
-            response = {
-                "status": "success",
-                "message": f"Letter update started for ID: {update_request.letter_id}",
-                "processing": "background",
-                "letter_id": update_request.letter_id,
-                "template": update_request.template
-            }
-            
-            logger.info(f"Letter update initiated for ID: {update_request.letter_id}")
+
+            # Wait for background thread to complete (up to 15 seconds)
+            # This ensures the letter is fully updated in Google Sheets before returning success
+            logger.info(f"Waiting for background update to complete for letter ID: {update_request.letter_id}")
+            background_thread.join(timeout=15)
+
+            if background_thread.is_alive():
+                logger.warning(f"Background update still running after 15s for letter ID: {update_request.letter_id}")
+                response = {
+                    "status": "processing",
+                    "message": f"Letter update is taking longer than expected for ID: {update_request.letter_id}",
+                    "processing": "background",
+                    "letter_id": update_request.letter_id,
+                    "template": update_request.template
+                }
+            else:
+                logger.info(f"Background update completed successfully for letter ID: {update_request.letter_id}")
+                response = {
+                    "status": "success",
+                    "message": f"Letter updated successfully for ID: {update_request.letter_id}",
+                    "processing": "completed",
+                    "letter_id": update_request.letter_id,
+                    "template": update_request.template
+                }
+
             return jsonify(response), 200
             
         except ValidationError as e:
