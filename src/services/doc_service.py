@@ -5,6 +5,7 @@ from io import BytesIO
 from docx.oxml.ns import qn
 import os
 import json
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from typing import Dict, Optional, Union
 import logging
 from langchain_openai import ChatOpenAI
@@ -375,25 +376,25 @@ class CreateDocument:
             gregorian_arabic = ""
             hijri_arabic = ""
 
+        # Add Hijri date
+        para2 = self.document.add_paragraph()
+        para2.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+        run2 = para2.add_run(f"التاريخ: {hijri_arabic} ھ")
+        run2.font.size = Pt(8)
+        run2.font.name = 'Tajawal'
+        para2.paragraph_format.space_before = Pt(0)
+        para2.paragraph_format.space_after = Pt(0)
+        para2.paragraph_format.line_spacing = 1.0
         # Add Gregorian date
         para1 = self.document.add_paragraph()
         para1.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-        run1 = para1.add_run(f"التاريخ: {gregorian_arabic} ميلادي")
+        run1 = para1.add_run(f"الموافق: {gregorian_arabic} م")
         run1.font.size = Pt(8)
         run1.font.name = 'Tajawal'
         para1.paragraph_format.space_before = Pt(0)
         para1.paragraph_format.space_after = Pt(0)
         para1.paragraph_format.line_spacing = 1.0
 
-        # Add Hijri date
-        para2 = self.document.add_paragraph()
-        para2.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-        run2 = para2.add_run(f"الموافق: {hijri_arabic} هجري")
-        run2.font.size = Pt(8)
-        run2.font.name = 'Tajawal'
-        para2.paragraph_format.space_before = Pt(0)
-        para2.paragraph_format.space_after = Pt(0)
-        para2.paragraph_format.line_spacing = 1.0
 
         # Add Letter ID - format with proper RTL order
         para3 = self.document.add_paragraph()
@@ -419,7 +420,7 @@ class CreateDocument:
         paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
         run = paragraph.add_run(text)
-        run.font.size = Pt(20)
+        run.font.size = Pt(16)
         run.font.bold = True
         run.font.name = 'Tajawal'
 
@@ -437,7 +438,7 @@ class CreateDocument:
         paragraph.style = 'Heading 1'
 
         run = paragraph.add_run(title)
-        run.font.size = Pt(19)
+        run.font.size = Pt(16)
         run.font.bold = True
         # underline
         run.font.underline = True
@@ -447,44 +448,37 @@ class CreateDocument:
         logger.debug(f"Title added: {title}")
 
     def add_body(self, body: str) -> None:
-        """
-        Add body content to the document.
-        Handles multi-paragraph content by splitting on double newlines.
-
-        Args:
-            body: The main content (can contain multiple paragraphs)
-        """
-        # Split content into paragraphs if multiple newlines exist
+        # 1. Clean the text and split into paragraphs
         paragraphs = body.split('\n\n') if '\n\n' in body else [body]
 
         for para_text in paragraphs:
-            para_text = para_text.strip()
-            if not para_text:
-                continue
+            if not para_text.strip(): continue
 
-            # Split single lines by single newlines
-            lines = para_text.split('\n')
+            # 2. Add the Paragraph
+            paragraph = self.document.add_paragraph()
+            
+            # --- THE SIMPLE SETTINGS ---
+            
+            # A. Set Direction to Right-to-Left (The only "magic" line needed)
+            # We do this directly here to avoid complex functions.
+            paragraph.paragraph_format.element.get_or_add_pPr().set(qn('w:bidi'), '1')
 
-            for line in lines:
-                line = line.strip()
-                if not line:
-                    continue
+            # B. Alignment for Google Docs
+            # TRY 'RIGHT' FIRST. If it is still centered or wrong in Google Docs, 
+            # change this to 'WD_ALIGN_PARAGRAPH.LEFT'.
+            paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+            paragraph.alignment= WD_PARAGRAPH_ALIGNMENT.RIGHT
 
-                paragraph = self.document.add_paragraph()
-                paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-
-                run = paragraph.add_run(line)
-                run.font.size = Pt(15)
-
-                run.font.rtl = True 
-                run.font.name = 'Tajawal'
-                # r = run._r
-                # r.get_or_add_rPr().rFonts.set(qn('w:cs'), 'Tajawal') # Sets font for Arabic
-                
-                # Add spacing between paragraphs
-                paragraph.paragraph_format.line_spacing = 1
-
-        logger.debug("Body content added to document")
+            # 3. Add Content & Font
+            # We join lines with a space to avoid "choppy" text in Google Docs
+            
+            run = paragraph.add_run(para_text)
+            run.font.name = 'Tajawal'
+            run.font.size = Pt(14)
+            # run.font.rtl = True 
+            
+            # # (Optional) Ensure font works for Arabic characters
+            # run._r.get_or_add_rPr().rFonts.set(qn('w:cs'), 'Tajawal')
 
     def add_footer(self, footer: str) -> None:
         """
@@ -495,6 +489,7 @@ class CreateDocument:
         """
         # Add spacing before footer
         paragraph = self.document.add_paragraph()
+        paragraph.paragraph_format.element.get_or_add_pPr().set(qn('w:bidi'), '1')
         paragraph.paragraph_format.space_before = Pt(12)
 
         # Add footer content
@@ -505,7 +500,7 @@ class CreateDocument:
         run.font.size = Pt(15)
         run.font.rtl = True
         run.font.name = 'Tajawal'
-        run.font.italic = True
+        # run.font.italic = True
 
         logger.debug("Footer added to document")
 
