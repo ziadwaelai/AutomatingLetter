@@ -10,3 +10,7 @@ logs/
 logs
 venv/
 data
+
+# n8n workflow files (contains credentials)
+What'sUp Flow.json
+*.n8n.json
