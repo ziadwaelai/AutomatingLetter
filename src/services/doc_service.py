@@ -1,129 +1,43 @@
-from docx import Document
-from docx.shared import Inches, Pt, RGBColor
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from io import BytesIO
-from docx.oxml.ns import qn
 import os
 import json
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from typing import Dict, Optional, Union
 import logging
+from typing import Dict, Optional
+from datetime import datetime
+import pytz
+from hijri_converter import Gregorian
+
+# AI / LangChain Imports
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from dotenv import load_dotenv
-import requests
-from PIL import Image
 
-# Load environment variables from .env file
+# Google Client Imports
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+
+# Load environment variables
 load_dotenv()
-
 logger = logging.getLogger(__name__)
 
+# --- Configuration ---
+SCOPES = [
+    'https://www.googleapis.com/auth/documents',
+    'https://www.googleapis.com/auth/drive'
+]
+SERVICE_ACCOUNT_FILE = 'automating-letter-creations.json'
 
-class CreateDocument:
-    """
-    A class to create Word documents from JSON input.
-    Takes JSON with date, title, body, besmallah, and footer fields
-    and generates a formatted Word document based on the Netzero template.
-    """
+TEMPLATE_DOC_ID = "1qS8cAX8tFOm4d1Brb5Kpn8loTLrdJc3-XDB6I_7OmA0" 
 
-    def __init__(self, template_path: Optional[str] = None):
-        """
-        Initialize the CreateDocument service.
+class LetterContentParser:
+    def __init__(self, api_key: Optional[str] = None):
+        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
+        if not self.api_key:
+            raise ValueError("OpenAI API Key is required.")
 
-        Args:
-            template_path: Path to the Netzero.docx template.
-                          If None, tries environment variable or relative path.
-        """
-        if template_path is None:
-            # Try to get template path from environment variable
-            env_template_path = os.getenv("DOCX_TEMPLATE_PATH")
-
-            if env_template_path:
-                self.template_path = env_template_path
-                logger.info(f"Using template path from DOCX_TEMPLATE_PATH env var: {self.template_path}")
-            else:
-                # Use relative path from current directory (server-safe)
-                # This will work on any server regardless of location
-                base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-                self.template_path = os.path.join(base_dir, "LetterToPdf", "templates", "Netzero.docx")
-                logger.info(f"Using default template path: {self.template_path}")
-
-            # If template doesn't exist, log warning and set to None (will create blank document)
-            if not os.path.exists(self.template_path):
-                logger.warning(f"Template file not found at: {self.template_path}, will create blank document")
-                self.template_path = None
-        else:
-            self.template_path = template_path
-            # If custom path doesn't exist, log warning but allow blank document creation
-            if not os.path.exists(self.template_path):
-                logger.warning(f"Custom template path not found: {self.template_path}, will create blank document")
-                self.template_path = None
-
-        self.document = None
-        self.letter_id = None  # Store letter ID for the document
-
-    def load_template(self) -> Document:
-        """
-        Load the template document.
-
-        Returns:
-            Loaded Document object
-        """
+    def parse(self, content: str) -> Dict[str, str]:
         try:
-            self.document = Document(self.template_path)
-            logger.info(f"Template loaded successfully from: {self.template_path}")
-            return self.document
-        except Exception as e:
-            logger.error(f"Failed to load template: {e}")
-            raise
-
-    def _parse_raw_letter_content(self, letter_content: str) -> Dict[str, str]:
-        """
-        Parse raw letter content using OpenAI GPT-4 to extract structured fields.
-
-        Args:
-            letter_content: Raw letter text containing all content in one string
-
-        Returns:
-            Dictionary with extracted fields: title, body, besmallah, footer, date
-
-        Raises:
-            ValueError: If parsing fails or OpenAI API is not available
-        """
-        try:
-            # Try to import config, with fallback for direct script execution
-            try:
-                from ..config import get_config
-                config = get_config()
-            except (ImportError, ValueError):
-                # Fallback: try to get from environment for direct execution
-                import os
-                openai_api_key = os.getenv("OPENAI_API_KEY")
-                if not openai_api_key:
-                    raise ValueError(
-                        "OpenAI API key not found. Please set OPENAI_API_KEY environment variable "
-                        "or configure it in your settings."
-                    )
-                # Create a simple config object
-                class SimpleConfig:
-                    pass
-                config = SimpleConfig()
-                config.openai_api_key = openai_api_key
-
-            if not config.openai_api_key:
-                raise ValueError("OpenAI API key is not configured")
-
-            # Initialize LLM with GPT-4o (latest model with better parsing)
-            llm = ChatOpenAI(
-                model="gpt-4o",
-                temperature=0.3,
-                openai_api_key=config.openai_api_key,
-                timeout=30,
-            )
-
-            # Create parsing prompt
+            llm = ChatOpenAI(model="gpt-4.1", temperature=0.3, openai_api_key=self.api_key)
             prompt = PromptTemplate.from_template("""
 أنت مساعد متخصص في تحليل وتنسيق الخطابات الرسمية العربية.
 
@@ -162,672 +76,252 @@ class CreateDocument:
     "footer": "..."
 }}
 """)
-
-            # Create parser
-            parser = JsonOutputParser()
-
-            # Create chain
-            chain = prompt | llm | parser
-
-            logger.info("Starting raw letter content parsing with GPT-4o")
-
-            # Parse the content
-            result = chain.invoke({"letter_content": letter_content})
-
-            logger.info("Letter content parsed successfully")
-            logger.debug(f"Parsed fields: {list(result.keys())}")
-
-            # Validate that required fields are present and not empty
-            if not result.get('title') or not result.get('title').strip():
-                # Extract a title from the first non-empty line of body as fallback
-                body_lines = result.get('body', '').split('\n')
-                extracted_title = None
-                for line in body_lines:
-                    line = line.strip()
-                    if line and len(line) < 100:  # Use first short line as title
-                        extracted_title = line
-                        break
-
-                if extracted_title:
-                    result['title'] = extracted_title
-                    logger.warning(f"Title was empty, extracted from body: {extracted_title}")
-                else:
-                    result['title'] = "خطاب رسمي"
-                    logger.warning("Title was empty, using default: خطاب رسمي")
-
-            if not result.get('body') or not result.get('body').strip():
-                logger.error("Body field is empty after parsing")
-                raise ValueError("Failed to extract body content from letter")
-
+            chain = prompt | llm | JsonOutputParser()
+            result = chain.invoke({"letter_content": content})
+            if not result.get('title'): result['title'] = "خطاب رسمي"
             return result
-
         except Exception as e:
-            logger.error(f"Failed to parse letter content: {e}")
-            raise ValueError(f"Failed to parse letter content using OpenAI: {str(e)}")
+            logger.error(f"AI Parsing failed: {e}")
+            raise
+class GoogleDocsGenerator:
+    def __init__(self, service_account_path: str = SERVICE_ACCOUNT_FILE):
+        self.creds = service_account.Credentials.from_service_account_file(
+            service_account_path, scopes=SCOPES
+        )
+        self.docs_service = build('docs', 'v1', credentials=self.creds)
+        self.drive_service = build('drive', 'v3', credentials=self.creds)
+        self.requests = []
+        self.doc_id = None
 
-    def create_from_raw_content(self, letter_content: str) -> Document:
-        """
-        Create a document from raw letter content.
-        This method uses OpenAI to parse the raw content and extract structured fields.
+    def create_doc_from_template(self, title: str, template_id: str) -> str:
+        """Copies the template to a new file."""
+        try:
+            body = {'name': title}
+            drive_response = self.drive_service.files().copy(
+                fileId=template_id, body=body
+            ).execute()
+            self.doc_id = drive_response.get('id')
+            self._set_public_permissions()
+            return self.doc_id
+        except Exception as e:
+            logger.error(f"Failed to copy template: {e}")
+            raise
 
-        Args:
-            letter_content: Raw letter text as a single string
+    def _set_public_permissions(self):
+        try:
+            permission = {'type': 'anyone', 'role': 'writer'}
+            self.drive_service.permissions().create(
+                fileId=self.doc_id, body=permission, fields='id'
+            ).execute()
+        except Exception as e:
+            logger.error(f"Failed to set permissions: {e}")
 
-        Returns:
-            Document object
+    def generate_full_doc(self, data: Dict, letter_id: Optional[str] = None):
+        """Generates content matching your python-docx style exactly."""
+        
+        # 1. Find Start Index
+        try:
+            doc = self.docs_service.documents().get(documentId=self.doc_id).execute()
+            content = doc.get('body').get('content')
+            current_index = content[-1]['endIndex'] - 1 
+        except:
+            current_index = 1 
 
-        Raises:
-            ValueError: If parsing fails or required fields are missing
-        """
-        logger.info("Creating document from raw letter content")
+        self.requests = [] 
 
-        # Parse the raw content using GPT-4
-        parsed_data = self._parse_raw_letter_content(letter_content)
+        # --- Helper Function with SPACING support ---
+        def append_block(text, font_size=12, bold=False, underline=False, 
+                         align='START', rtl=True, 
+                         line_spacing_pct=100, space_below=0):
+            nonlocal current_index
+            if not text: return
+            
+            # Ensure text ends with newline
+            content = text + "\n"
+            
+            # 1. Insert Text
+            self.requests.append({
+                'insertText': {
+                    'location': {'index': current_index},
+                    'text': content
+                }
+            })
+            
+            end_index = current_index + len(content)
 
-        # Validate that we have at least title and body
-        if not parsed_data.get("title") or not parsed_data.get("body"):
-            raise ValueError("Failed to extract title or body from the letter content")
+            # 2. Text Style (Bold, Font, Underline)
+            self.requests.append({
+                'updateTextStyle': {
+                    'range': {'startIndex': current_index, 'endIndex': end_index},
+                    'textStyle': {
+                        'fontSize': {'magnitude': font_size, 'unit': 'PT'},
+                        'weightedFontFamily': {'fontFamily': 'Tajawal', 'weight': 700 if bold else 400},
+                        'bold': bold,
+                        'underline': underline
+                    },
+                    'fields': 'fontSize,weightedFontFamily,bold,underline'
+                }
+            })
 
-        # Use the structured create_from_json method
-        return self.create_from_json(parsed_data)
+            # 3. Paragraph Style (Alignment, Bidi, Spacing)
+            self.requests.append({
+                'updateParagraphStyle': {
+                    'range': {'startIndex': current_index, 'endIndex': end_index},
+                    'paragraphStyle': {
+                        'direction': 'RIGHT_TO_LEFT' if rtl else 'LEFT_TO_RIGHT',
+                        'alignment': align,
+                        # Line Spacing: 115 means 1.15
+                        'lineSpacing': line_spacing_pct, 
+                        # Spacing After Paragraph
+                        'spaceBelow': {'magnitude': space_below, 'unit': 'PT'}
+                    },
+                    'fields': 'direction,alignment,lineSpacing,spaceBelow'
+                }
+            })
+            
+            current_index = end_index
 
-    def create_from_json(self, json_input: Union[str, Dict], letter_id: Optional[str] = None) -> Document:
-        """
-        Create a document from JSON input.
-
-        Args:
-            json_input: Either a JSON string or a dictionary containing:
-                       - besmallah: Opening Islamic greeting (optional)
-                       - title: Document title
-                       - date: Document date
-                       - body: Main content of the document
-                       - footer: Footer text (optional)
-                       - include_signature: Boolean flag to include signature section (optional)
-                       - signature_image_url: Google Drive URL for signature image (required if include_signature=True)
-                       - signature_name: Name of the signer (required if include_signature=True)
-                       - signature_job_title: Job title of the signer (required if include_signature=True)
-                       - signature_section_title: Custom title for signature section (optional, default: "التوقيع")
-            letter_id: Optional letter ID to embed in the document (LET-YYYYMMDD-XXXXX format)
-
-        Returns:
-            Document object
-        """
-        # Parse JSON if string is provided
-        if isinstance(json_input, str):
-            try:
-                data = json.loads(json_input)
-            except json.JSONDecodeError as e:
-                logger.error(f"Invalid JSON input: {e}")
-                raise ValueError(f"Invalid JSON input: {e}")
-        else:
-            data = json_input
-
-        # Check if letter_id is in the data dictionary
-        if letter_id is None and isinstance(data, dict) and 'letter_id' in data:
-            letter_id = data.get('letter_id')
-
-        # Store letter_id for later use
+        
+        # A. Header Info (Single spacing 1.0, No extra space below)
         if letter_id:
-            self.letter_id = letter_id
-            logger.info(f"Document letter ID set to: {letter_id}")
+            dates = self._get_formatted_dates()
+            header_text = f"التاريخ: {dates['hijri']} ھ\nالموافق: {dates['gregorian']} م\nالرقم: {letter_id}"
+            append_block(header_text, font_size=10, align='START', rtl=True, line_spacing_pct=100, space_below=0)
 
-        # Validate required fields
-        required_fields = ['title', 'body']
-        missing_fields = [field for field in required_fields if field not in data or not data[field]]
-        if missing_fields:
-            raise ValueError(f"Missing required fields: {', '.join(missing_fields)}")
-
-        # Load template
-        self.load_template()
-
-        # Clear existing content (keep structure)
-        self._clear_document_content()
-
-        # Add document info header (date and letter ID) if letter_id is provided
-        if self.letter_id:
-            self.add_document_info_header(self.letter_id)
-
-        # Add besmallah if provided
+        # B. Besmallah (Center, Bold, 1.0 spacing)
         if data.get('besmallah'):
-            self.add_besmallah(data['besmallah'])
+            append_block(data['besmallah'], font_size=16, bold=True, align='CENTER', space_below=12)
 
-        # Add title
-        self.add_title(data['title'])
+        # C. Title (Center, Bold, Underline, 1.0 spacing)
+        append_block(data['title'], font_size=16, bold=True, underline=True, align='CENTER', space_below=18)
 
-        # Add body content
-        self.add_body(data['body'])
+        # D. Body Content (Sections with 1.15 Spacing)
+        body_text = data.get('body', '')
+        if body_text:
+            # 1. Split by Double Newline to identify sections/paragraphs
+            if '\n\n' in body_text:
+                paragraphs = body_text.split('\n\n')
+            else:
+                paragraphs = body_text.splitlines()
 
-        # Add footer if provided
+            for para in paragraphs:
+                cleaned_para = para.strip()
+                if not cleaned_para: continue
+                
+                append_block(
+                    cleaned_para, 
+                    font_size=14, 
+                    align='START', 
+                    rtl=True, 
+                    line_spacing_pct=115,  # <--- 1.15 Spacing
+                )
+
+        # E. Footer
         if data.get('footer'):
-            self.add_footer(data['footer'])
+            append_block("\n", font_size=12) 
+            append_block(data['footer'], font_size=15, align='CENTER', rtl=True, line_spacing_pct=115)
 
-        # Add signature section if requested
-        if data.get('include_signature', False):
-            signature_image_url = data.get('signature_image_url', '').strip()
-            signature_name = data.get('signature_name', '').strip()
-            signature_job_title = data.get('signature_job_title', '').strip()
-            signature_section_title = data.get('signature_section_title', 'التوقيع').strip()
+        # F. Signature
+        if data.get('include_signature'):
+            sig_text = f"\n{data.get('signature_job_title')}\n\n\n{data.get('signature_name')}"
+            append_block(sig_text, font_size=14, bold=True, align='END', line_spacing_pct=100)
 
-            # Validate signature fields
-            if not signature_image_url or not signature_name or not signature_job_title:
-                logger.warning(
-                    "include_signature is True but missing required signature fields "
-                    "(signature_image_url, signature_name, signature_job_title). Skipping signature section."
-                )
-            else:
-                # Add signature section
-                self.add_signature_section(
-                    signature_image_url=signature_image_url,
-                    job_title=signature_job_title,
-                    name=signature_name,
-                    section_title=signature_section_title
-                )
+        # Execute Batch
+        if self.requests:
+            self.docs_service.documents().batchUpdate(
+                documentId=self.doc_id, body={'requests': self.requests}
+            ).execute()
+            logger.info("Batch update successful.")
 
-        logger.info(f"Document created successfully from JSON (Letter ID: {self.letter_id})")
-        return self.document
+        return f"https://docs.google.com/document/d/{self.doc_id}"
 
-    def _clear_document_content(self):
-        """
-        Clear the document content while preserving structure.
-        Removes all paragraphs and tables after the first one.
-        """
+    def _get_formatted_dates(self) -> Dict[str, str]:
         try:
-            # Keep the first paragraph (style preservation)
-            # Remove all other paragraphs
-            for paragraph in self.document.paragraphs[1:]:
-                p = paragraph._element
-                p.getparent().remove(p)
-
-            # Remove all tables
-            for table in self.document.tables:
-                tbl = table._element
-                tbl.getparent().remove(tbl)
-
-            logger.debug("Document content cleared")
-        except Exception as e:
-            logger.warning(f"Error clearing document content: {e}")
-
-    def add_document_info_header(self, letter_id: str) -> None:
-        """
-        Add document info header (date and letter ID) matching PDF style.
-        Displays Gregorian date, Hijri date, and letter ID.
-
-        Args:
-            letter_id: The letter ID (e.g., "LET-20251105-12345")
-        """
-        # Get current dates in both formats
-        from hijri_converter import Gregorian
-        import pytz
-        from datetime import datetime
-
-        try:
-            # Get current date in KSA timezone
             ksa_tz = pytz.timezone('Asia/Riyadh')
-            now_ksa = datetime.now(ksa_tz)
+            now = datetime.now(ksa_tz)
+            g_date = f"{now.day}/{now.month}/{now.year}"
+            h = Gregorian(now.year, now.month, now.day).to_hijri()
+            h_date = f"{h.day}/{h.month}/{h.year}"
+            return {"gregorian": g_date, "hijri": h_date}
+        except:
+            return {"gregorian": "", "hijri": ""}
+class DocumentService:
+    def __init__(self):
+        self.parser = LetterContentParser()
+        self.generator = GoogleDocsGenerator()
 
-            # Gregorian date in Arabic
-            gregorian_arabic = f"{now_ksa.day} / {now_ksa.month} / {now_ksa.year}"
+    def process_request(self, raw_text: str, letter_id: str, signature_data: Optional[Dict] = None):
+        parsed_data = self.parser.parse(raw_text)
+        if signature_data:
+            parsed_data.update(signature_data)
+            parsed_data['include_signature'] = True
 
-            # Hijri date
-            hijri_date = Gregorian(now_ksa.year, now_ksa.month, now_ksa.day).to_hijri()
-            hijri_arabic = f"{hijri_date.day} / {hijri_date.month} / {hijri_date.year}"
-        except Exception as e:
-            logger.warning(f"Error getting dates: {e}")
-            gregorian_arabic = ""
-            hijri_arabic = ""
+        doc_title = f"{parsed_data.get('title', 'Letter')} - {letter_id}"
+        
+        # IMPORTANT: Use the Template ID here
+        self.generator.create_doc_from_template(doc_title, TEMPLATE_DOC_ID)
 
-        # Add Hijri date
-        para2 = self.document.add_paragraph()
-        para2.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-        run2 = para2.add_run(f"التاريخ: {hijri_arabic} ھ")
-        run2.font.size = Pt(8)
-        run2.font.name = 'Tajawal'
-        para2.paragraph_format.space_before = Pt(0)
-        para2.paragraph_format.space_after = Pt(0)
-        para2.paragraph_format.line_spacing = 1.0
-        # Add Gregorian date
-        para1 = self.document.add_paragraph()
-        para1.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-        run1 = para1.add_run(f"الموافق: {gregorian_arabic} م")
-        run1.font.size = Pt(8)
-        run1.font.name = 'Tajawal'
-        para1.paragraph_format.space_before = Pt(0)
-        para1.paragraph_format.space_after = Pt(0)
-        para1.paragraph_format.line_spacing = 1.0
+        doc_url = self.generator.generate_full_doc(parsed_data, letter_id=letter_id)
+        return doc_url
 
-
-        # Add Letter ID - format with proper RTL order
-        para3 = self.document.add_paragraph()
-        para3.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-        # Format: put letter_id first, then the label (RTL order)
-        run3 = para3.add_run(f"{letter_id} : الرقم")
-        run3.font.size = Pt(8)
-        run3.font.name = 'Tajawal'
-        para3.paragraph_format.space_before = Pt(0)
-        para3.paragraph_format.space_after = Pt(6)
-        para3.paragraph_format.line_spacing = 1.0
-
-        logger.debug(f"Document info header added: {letter_id}")
-
-    def add_besmallah(self, text: str) -> None:
+    def _parse_raw_letter_content(self, raw_text: str) -> Dict[str, str]:
         """
-        Add Besmallah (Islamic opening) to the document.
-
-        Args:
-            text: The besmallah text (e.g., "بسم الله الرحمن الرحيم")
+        Backward compatibility method for parsing raw letter content.
+        Uses the LetterContentParser to parse the text.
         """
-        paragraph = self.document.add_paragraph()
-        paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        self.parsed_data = self.parser.parse(raw_text)
+        return self.parsed_data
 
-        run = paragraph.add_run(text)
-        run.font.size = Pt(16)
-        run.font.bold = True
-        run.font.name = 'Tajawal'
-
-        logger.debug("Besmallah added to document")
-
-    def add_title(self, title: str) -> None:
+    def create_from_json(self, parsed_data: Dict, letter_id: str, signature_data: Optional[Dict] = None):
         """
-        Add document title.
-
-        Args:
-            title: The document title text
+        Backward compatibility method for creating a Google Doc from parsed JSON data.
         """
-        paragraph = self.document.add_paragraph()
-        paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-        paragraph.style = 'Heading 1'
+        # Store parsed data
+        self.parsed_data = parsed_data.copy()
 
-        run = paragraph.add_run(title)
-        run.font.size = Pt(16)
-        run.font.bold = True
-        # underline
-        run.font.underline = True
-        run.font.name = 'Tajawal'
-        color = RGBColor(0, 0, 0)  # Black color
-        run.font.color.rgb = color
-        logger.debug(f"Title added: {title}")
+        # Merge Signature Data if provided
+        if signature_data:
+            self.parsed_data.update(signature_data)
+            self.parsed_data['include_signature'] = True
 
-    def add_body(self, body: str) -> None:
-        # 1. Clean the text and split into paragraphs
-        paragraphs = body.split('\n\n') if '\n\n' in body else [body]
+        # Create Doc from Template
+        doc_title = f"{self.parsed_data.get('title', 'Letter')} - {letter_id}"
+        self.generator.create_doc_from_template(doc_title, TEMPLATE_DOC_ID)
 
-        for para_text in paragraphs:
-            if not para_text.strip(): continue
-
-            # 2. Add the Paragraph
-            paragraph = self.document.add_paragraph()
-            
-            # --- THE SIMPLE SETTINGS ---
-            
-            # A. Set Direction to Right-to-Left (The only "magic" line needed)
-            # We do this directly here to avoid complex functions.
-            paragraph.paragraph_format.element.get_or_add_pPr().set(qn('w:bidi'), '1')
-
-            # B. Alignment for Google Docs
-            # TRY 'RIGHT' FIRST. If it is still centered or wrong in Google Docs, 
-            # change this to 'WD_ALIGN_PARAGRAPH.LEFT'.
-            paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-            paragraph.alignment= WD_PARAGRAPH_ALIGNMENT.RIGHT
-
-            # 3. Add Content & Font
-            # We join lines with a space to avoid "choppy" text in Google Docs
-            
-            run = paragraph.add_run(para_text)
-            run.font.name = 'Tajawal'
-            run.font.size = Pt(14)
-            # run.font.rtl = True 
-            
-            # # (Optional) Ensure font works for Arabic characters
-            # run._r.get_or_add_rPr().rFonts.set(qn('w:cs'), 'Tajawal')
-
-    def add_footer(self, footer: str) -> None:
-        """
-        Add footer text to the document.
-
-        Args:
-            footer: The footer text
-        """
-        # Add spacing before footer
-        paragraph = self.document.add_paragraph()
-        paragraph.paragraph_format.element.get_or_add_pPr().set(qn('w:bidi'), '1')
-        paragraph.paragraph_format.space_before = Pt(12)
-
-        # Add footer content
-        para = self.document.add_paragraph()
-        para.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-
-        run = para.add_run(footer)
-        run.font.size = Pt(15)
-        run.font.rtl = True
-        run.font.name = 'Tajawal'
-        # run.font.italic = True
-
-        logger.debug("Footer added to document")
-
-    def _download_image_from_drive_url(self, drive_url: str) -> Optional[BytesIO]:
-        """
-        Download image from Google Drive URL and return as BytesIO.
-        Tries two methods: 1) Service account API, 2) Public URL download
-
-        Args:
-            drive_url: Google Drive direct link or share link
-
-        Returns:
-            BytesIO object containing the image, or None if download fails
-        """
-        try:
-            # Extract file ID from URL
-            file_id = None
-
-            if 'drive.google.com' in drive_url:
-                if '/file/d/' in drive_url:
-                    # Format: https://drive.google.com/file/d/FILE_ID/view
-                    file_id = drive_url.split('/file/d/')[1].split('/')[0]
-                elif '/document/d/' in drive_url or '/d/' in drive_url:
-                    # Format: https://docs.google.com/document/d/FILE_ID/edit or /d/FILE_ID/
-                    file_id = drive_url.split('/d/')[1].split('/')[0]
-                elif 'id=' in drive_url:
-                    # Format: https://drive.google.com/uc?id=FILE_ID
-                    file_id = drive_url.split('id=')[1].split('&')[0]
-
-            if not file_id:
-                logger.error(f"Could not extract file ID from URL: {drive_url}")
-                return None
-
-            logger.debug(f"Extracted file ID: {file_id}")
-
-            # Method 1: Try using service account API (more reliable)
-            try:
-                from google.oauth2 import service_account
-                from googleapiclient.discovery import build
-                from googleapiclient.http import MediaIoBaseDownload
-
-                service_account_file = 'automating-letter-creations.json'
-                scopes = ['https://www.googleapis.com/auth/drive.readonly']
-
-                creds = service_account.Credentials.from_service_account_file(
-                    service_account_file, scopes=scopes
-                )
-                drive_service = build('drive', 'v3', credentials=creds)
-
-                # Download file using Drive API
-                request = drive_service.files().get_media(fileId=file_id)
-                image_bytes = BytesIO()
-                downloader = MediaIoBaseDownload(image_bytes, request)
-
-                done = False
-                while not done:
-                    status, done = downloader.next_chunk()
-
-                image_bytes.seek(0)
-                logger.info(f"Successfully downloaded image via service account API (size: {len(image_bytes.getvalue())} bytes)")
-
-                # Validate it's an image
-                try:
-                    img = Image.open(image_bytes)
-                    img.verify()
-                    image_bytes.seek(0)
-                    logger.info(f"Image validated successfully (format: {img.format})")
-                    return image_bytes
-                except Exception as e:
-                    logger.error(f"Downloaded file via API is not a valid image: {e}")
-                    return None
-
-            except Exception as api_error:
-                logger.warning(f"Service account API download failed: {api_error}. Trying public URL method...")
-
-            # Method 2: Try public URL download
-            if 'drive.google.com' in drive_url:
-                if file_id:
-                    # Create direct download link
-                    download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
-                else:
-                    download_url = drive_url
-            else:
-                download_url = drive_url
-
-            logger.debug(f"Downloading image from: {download_url}")
-
-            # Download the image
-            response = requests.get(download_url, timeout=30)
-            response.raise_for_status()
-
-            # Log response details for debugging
-            logger.debug(f"Response status: {response.status_code}")
-            logger.debug(f"Response content-type: {response.headers.get('content-type', 'unknown')}")
-            logger.debug(f"Response content length: {len(response.content)} bytes")
-
-            # Check if response is HTML (common issue with Google Drive)
-            if 'text/html' in response.headers.get('content-type', ''):
-                logger.error(f"Received HTML instead of image. Google Drive may require authentication or different URL format.")
-                logger.debug(f"First 500 chars of response: {response.text[:500]}")
-                return None
-
-            # Verify it's an image
-            image_bytes = BytesIO(response.content)
-
-            # Try to open with PIL to validate it's an image
-            try:
-                img = Image.open(image_bytes)
-                img.verify()
-                logger.info(f"Image downloaded successfully (format: {img.format}, size: {img.size})")
-            except Exception as e:
-                logger.error(f"Downloaded file is not a valid image: {e}")
-                logger.debug(f"First 100 bytes (hex): {response.content[:100].hex()}")
-                return None
-
-            # Reset BytesIO position
-            image_bytes.seek(0)
-            return image_bytes
-
-        except Exception as e:
-            logger.error(f"Failed to download image from Drive URL: {e}")
-            return None
-
-    def add_signature_section(
-        self,
-        signature_image_url: str,
-        job_title: str,
-        name: str,
-        section_title: str = "التوقيع"
-    ) -> bool:
-        """
-        Add a signature section to the document with job title, image, and name.
-        Layout: Left-aligned, Order: job_title → image → name
-
-        Args:
-            signature_image_url: Google Drive URL of the signature image
-            job_title: Job title of the signer
-            name: Name of the signer
-            section_title: Title for the signature section (not used in new layout)
-
-        Returns:
-            True if signature section added successfully, False otherwise
-        """
-        try:
-            logger.info(f"Adding signature section for: {name} ({job_title})")
-
-            # Add spacing before signature section
-            spacing_para = self.document.add_paragraph()
-            spacing_para.paragraph_format.space_before = Pt(18)
-            spacing_para.paragraph_format.space_after = Pt(6)
-
-            # Add job title first (left-aligned with 0.5 inch indent)
-            job_para = self.document.add_paragraph()
-            job_para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-            job_para.paragraph_format.left_indent = Inches(0.5)  # 0.5 inch left indent
-            job_run = job_para.add_run(job_title)
-            job_run.font.size = Pt(14)
-            job_run.font.bold = True
-            job_run.font.name = 'Tajawal'
-            job_para.paragraph_format.space_before = Pt(0)
-            job_para.paragraph_format.space_after = Pt(6)
-
-            # Download and add signature image
-            image_bytes = self._download_image_from_drive_url(signature_image_url)
-
-            if image_bytes:
-                # Add image paragraph (left-aligned with no indent)
-                image_para = self.document.add_paragraph()
-                image_para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-                image_para.paragraph_format.left_indent = Inches(0)  # No indent, align at zero
-
-                # Add image with 1.81 inches width (height auto)
-                image_run = image_para.add_run()
-                image_run.add_picture(image_bytes, width=Inches(1.81))
-
-                image_para.paragraph_format.space_before = Pt(0)
-                image_para.paragraph_format.space_after = Pt(6)
-
-                logger.debug("Signature image added successfully")
-            else:
-                logger.warning("Failed to download signature image, continuing without image")
-                # Add a placeholder text if image fails (left-aligned with 0.5 inch indent)
-                placeholder_para = self.document.add_paragraph()
-                placeholder_para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-                placeholder_para.paragraph_format.left_indent = Inches(0.5)  # 0.5 inch left indent
-                placeholder_run = placeholder_para.add_run("[صورة التوقيع]")
-                placeholder_run.font.size = Pt(12)
-                placeholder_run.font.italic = True
-                placeholder_run.font.name = 'Tajawal'
-                placeholder_para.paragraph_format.space_before = Pt(0)
-                placeholder_para.paragraph_format.space_after = Pt(6)
-
-            # Add name last (left-aligned with 0.5 inch indent)
-            name_para = self.document.add_paragraph()
-            name_para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-            name_para.paragraph_format.left_indent = Inches(0.5)  # 0.5 inch left indent
-            name_run = name_para.add_run(name)
-            name_run.font.size = Pt(14)
-            name_run.font.bold = True
-            name_run.font.name = 'Tajawal'
-            name_para.paragraph_format.space_before = Pt(0)
-            name_para.paragraph_format.space_after = Pt(12)
-
-            logger.info(f"Signature section added successfully for {name}")
-            return True
-
-        except Exception as e:
-            logger.error(f"Failed to add signature section: {e}")
-            return False
+        # Generate Content
+        self.doc_url = self.generator.generate_full_doc(self.parsed_data, letter_id=letter_id)
 
     def save(self, output_path: str) -> str:
         """
-        Save the document to a file.
-
-        Args:
-            output_path: Path where the document will be saved
-
-        Returns:
-            The absolute path of the saved file
+        Backward compatibility method for saving the document.
+        Note: Google Docs API doesn't support direct local file saving.
+        This method returns the Google Docs URL instead.
         """
-        if self.document is None:
-            raise ValueError("No document loaded. Call create_from_json() first.")
+        if not self.doc_url:
+            raise ValueError("No document has been created yet. Call create_from_json first.")
 
-        try:
-            # Create directory if it doesn't exist
-            os.makedirs(os.path.dirname(output_path) if os.path.dirname(output_path) else '.', exist_ok=True)
+        logger.info(f"Document created at Google Docs: {self.doc_url}")
+        logger.warning(f"Note: Local file saving to {output_path} is not supported with Google Docs API. Use the Google Docs URL instead.")
 
-            self.document.save(output_path)
-            absolute_path = os.path.abspath(output_path)
-            logger.info(f"Document saved successfully to: {absolute_path}")
-            return absolute_path
-        except Exception as e:
-            logger.error(f"Failed to save document: {e}")
-            raise
-
-    def get_bytes(self) -> BytesIO:
-        """
-        Get the document as bytes (useful for sending as response/email).
-
-        Returns:
-            BytesIO object containing the document
-        """
-        if self.document is None:
-            raise ValueError("No document loaded. Call create_from_json() first.")
-
-        try:
-            bytes_io = BytesIO()
-            self.document.save(bytes_io)
-            bytes_io.seek(0)
-            logger.info("Document converted to bytes")
-            return bytes_io
-        except Exception as e:
-            logger.error(f"Failed to convert document to bytes: {e}")
-            raise
+        # Return the Google Docs URL
+        return self.doc_url
 
 
-# # Usage Examples
-# if __name__ == "__main__":
-#     # Example 1: Create from JSON input (structured data)
-#     json_data = {
-#         "besmallah": "بسم الله الرحمن الرحيم",
-#         "title": "خطاب رسمي",
-#         "date": "5 نوفمبر 2025",
-#         "body": "محتوى الخطاب يأتي هنا.\n\nهذه فقرة ثانية من الخطاب.",
-#         "footer": "مع خالص التحيات والاحترام"
-#     }
-
-#     try:
-#         # Create document from JSON
-#         doc_service = CreateDocument()
-#         doc = doc_service.create_from_json(json_data)
-
-#         # Save to file
-#         output_path = "output_letter.docx"
-#         saved_path = doc_service.save(output_path)
-#         print(f"Document saved to: {saved_path}")
-
-#     except Exception as e:
-#         print(f"Error (JSON method): {e}")
-
-#     # Example 2: Create from raw letter content (GPT-4 parsing)
-#     raw_letter = """بسم الله الرحمن الرحيم
-# دعوة لحضور الافتتاح
-# صاحب السمو الملكي فايز بن علي الأسمري حفظه الله
-# السلام عليكم ورحمة الله وبركاته،
-# نود في هذا الخطاب أن نقدم لكم تعريفاً بشركة "نت زيرو"، وهي مشروع اجتماعي
-# وطني يرتبط ببرنامج سدرة التابع لوزارة البيئة والمياه والزراعة. تهدف الشركة إلى
-# تعزيز الاستدامة البيئية وتحقيق أهداف الحياد الكربوني في المملكة، وذلك من خلال
-# تطوير حلول تقنية مبتكرة تدعم التحول نحو مجتمع أكثر وعياً ومسؤولية تجاه البيئة.
-# بناءً على ذلك، ندعوكم لحضور الافتتاح، ونأمل أن تشرفونا بحضوركم الكريم
-# والمشاركة في هذه المناسبة المهمة، لما تمثله من خطوة فاعلة نحو تحقيق أهداف
-# التنمية المستدامة.
-# للتنسيق أو الاستفسار يمكنكم التواصل مع مدير العمليات في "نت زيرو"، زياد وائل
-# عبد الحميد عبر البريد الإلكتروني: ziadwael@gmail.com أو رقم الجوال:
-# 01123808495
-
-# نتقدم إليكم بجزيل الشكر والتقدير على اهتمامكم وتعاونكم، ونتطلع لرؤيتكم
-# وتشريفكم.
-# وتفضلوا بقبول فائق الاحترام والتقدير،،،"""
-
-#     try:
-#         # Create document from raw content (GPT-4 will parse it)
-#         doc_service2 = CreateDocument()
-#         doc2 = doc_service2.create_from_raw_content(raw_letter)
-
-#         # Save to file
-#         output_path2 = "output_letter_parsed.docx"
-#         saved_path2 = doc_service2.save(output_path2)
-#         print(f"Document saved to: {saved_path2}")
-
-#         # Or get as bytes for sending via email/API response
-#         # doc_bytes = doc_service2.get_bytes()
-
-#     except Exception as e:
-#         print(f"Error (Raw content method): {e}")
 
 
-# Create an alias for backward compatibility
-EnhancedDOCXService = CreateDocument
+# Factory functions for compatibility with old code
+_document_service_instance = None
 
-# Global service instance
-_docx_service = None
+def get_enhanced_docx_service():
+    """
+    Factory function to get DocumentService instance.
+    Returns the new DocumentService which creates Google Docs.
+    """
+    global _document_service_instance
+    if _document_service_instance is None:
+        _document_service_instance = DocumentService()
+    return _document_service_instance
 
-
-def get_enhanced_docx_service() -> CreateDocument:
-    """Get the global DOCX document service instance."""
-    global _docx_service
-    if _docx_service is None:
-        _docx_service = CreateDocument()
-    return _docx_service
+# Alias for backward compatibility
+CreateDocument = DocumentService
+EnhancedDOCXService = DocumentService

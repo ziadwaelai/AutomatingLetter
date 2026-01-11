@@ -11,7 +11,14 @@ from .google_services import (
     upload_file_path_to_drive
 )
 from .enhanced_pdf_service import EnhancedPDFService, get_enhanced_pdf_service
-from .doc_service import CreateDocument, EnhancedDOCXService, get_enhanced_docx_service
+from .doc_service import (
+    DocumentService,
+    LetterContentParser,
+    GoogleDocsGenerator,
+    get_enhanced_docx_service,
+    CreateDocument,
+    EnhancedDOCXService
+)
 from .drive_logger import DriveLoggerService, get_drive_logger_service
 from .chat_service import ChatService, get_chat_service
 from .memory_service import MemoryService, get_memory_service
